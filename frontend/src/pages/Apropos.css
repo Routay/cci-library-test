@@ -1,0 +1,340 @@
+/* ══════════════════════════════════════════════════════
+   À PROPOS — Styles premium
+══════════════════════════════════════════════════════ */
+
+/* ── Scroll reveal ── */
+.ap-reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s var(--ease-smooth), transform 0.7s var(--ease-smooth);
+}
+.ap-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── HERO ─────────────────────────────────────────────── */
+.ap-hero {
+  margin-top: var(--nav-h);
+  background: linear-gradient(135deg, #1A3A2A 0%, #0D2218 55%, #1A3A2A 100%);
+  padding: 80px 0 72px;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+.ap-hero-content { position: relative; z-index: 1; }
+
+/* Orbes */
+.ap-hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.ap-hero-orb-1 {
+  width: 480px; height: 480px;
+  background: rgba(184,146,42,0.12);
+  top: -120px; right: -60px;
+  animation: orbFloat1 16s ease-in-out infinite;
+}
+.ap-hero-orb-2 {
+  width: 300px; height: 300px;
+  background: rgba(74,222,128,0.06);
+  bottom: -80px; left: -40px;
+  animation: orbFloat2 20s ease-in-out infinite;
+}
+
+/* Arabesque décoratif */
+.ap-hero-bismillah {
+  position: absolute;
+  bottom: 24px;
+  right: 48px;
+  text-align: right;
+  pointer-events: none;
+}
+.ap-hero-arabic {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 1.3rem;
+  color: rgba(212, 170, 69, 0.85); /* Plus lumineux et visible */
+  direction: rtl;
+  letter-spacing: 1px;
+}
+.ap-hero-trans {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.ap-hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.05;
+  margin: 10px 0 12px;
+}
+.ap-hero-sub {
+  color: rgba(255,255,255,0.65);
+  font-size: 1rem;
+  max-width: 520px;
+  line-height: 1.7;
+}
+
+/* ─── SECTION ALTERNÉE ─────────────────────────────────── */
+.ap-section-bg-alt { background: var(--bg2); }
+.ap-section-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+.ap-section-desc {
+  color: var(--txt2);
+  font-size: 0.97rem;
+  line-height: 1.8;
+  max-width: 680px;
+  margin: 16px auto 0;
+}
+
+/* ─── MISSION GRID ─────────────────────────────────────── */
+.ap-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.ap-mission-card {
+  padding: 36px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.ap-mission-icon {
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+}
+.ap-mission-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--txt1);
+}
+.ap-mission-card p {
+  font-size: 0.88rem;
+  color: var(--txt2);
+  line-height: 1.7;
+}
+
+/* ─── LIBRARY LAYOUT ───────────────────────────────────── */
+.ap-lib-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.ap-lib-desc {
+  color: var(--txt2);
+  font-size: 0.97rem;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.ap-lib-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+.ap-lib-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: var(--txt2);
+}
+.ap-lib-features li span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+/* ─── CATEGORIES MINI GRID ─────────────────────────────── */
+.ap-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.ap-cat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--r-md);
+}
+.ap-cat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  width: 40px;
+  height: 40px;
+  opacity: 0.85;
+}
+.ap-cat-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--txt1);
+}
+.ap-cat-desc  { font-size: 0.75rem; color: var(--txt2); }
+
+/* ─── STATS BANNER ─────────────────────────────────────── */
+.ap-stats-section {
+  background: linear-gradient(135deg, #1A3A2A 0%, #0D2218 50%, #1A3A2A 100%);
+  padding: 56px 0;
+  position: relative;
+  overflow: hidden;
+}
+.ap-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.ap-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.ap-stat-item:last-child { border-right: none; }
+.ap-stat-icon-wrap {
+  color: rgba(184,146,42,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.ap-stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--gold-l);
+  line-height: 1;
+}
+.ap-stat-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+}
+
+/* ─── CONTACT ──────────────────────────────────────────── */
+.ap-contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.ap-contact-card { padding: 36px; }
+.ap-contact-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--txt1);
+  margin-bottom: 24px;
+}
+.ap-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+}
+.ap-contact-list li {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
+  font-size: 0.88rem;
+  align-items: baseline;
+}
+.ap-contact-key {
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--txt3);
+}
+.ap-contact-list li span:last-child { color: var(--txt2); }
+.ap-contact-link {
+  color: var(--gold-l);
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.ap-contact-link:hover { color: var(--gold); }
+
+/* Citation card */
+.ap-citation-card {
+  background: linear-gradient(135deg, rgba(26,58,42,0.6), rgba(13,34,24,0.4));
+  border: 1px solid rgba(184,146,42,0.25);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--r-lg);
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  backdrop-filter: blur(12px);
+}
+.ap-citation-arabic {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 1.4rem;
+  color: var(--txt1);
+  direction: rtl;
+  text-align: right;
+  line-height: 2.1;
+}
+.ap-citation-trans {
+  font-style: italic;
+  color: var(--txt2);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.ap-citation-ref {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.ap-citation-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .ap-lib-layout      { grid-template-columns: 1fr; gap: 40px; }
+  .ap-contact-layout  { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .ap-mission-grid  { grid-template-columns: 1fr; }
+  .ap-cat-grid      { grid-template-columns: repeat(2, 1fr); }
+  .ap-stats-grid    { grid-template-columns: repeat(2, 1fr); }
+  .ap-stat-item:nth-child(2) { border-right: none; }
+}
+@media (max-width: 480px) {
+  .ap-hero            { padding: 60px 0 52px; }
+  .ap-cat-grid        { grid-template-columns: 1fr 1fr; }
+  .ap-citation-card   { padding: 28px 22px; }
+}

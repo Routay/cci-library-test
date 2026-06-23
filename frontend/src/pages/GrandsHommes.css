@@ -1,0 +1,388 @@
+/* ══════════════════════════════════════════════════════
+   GRANDS HOMMES PAGE — Full Dark/Light Mode Support
+══════════════════════════════════════════════════════ */
+
+.grands-hommes-page {
+  min-height: 100vh;
+  background-color: var(--bg);
+  padding-bottom: 80px;
+  color: var(--txt1);
+}
+
+/* ── Hero Section ── */
+.gh-hero {
+  position: relative;
+  height: 420px;
+  background-image: url('https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=2000');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  color: white;
+  overflow: hidden;
+}
+
+.gh-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(184, 146, 42, 0.15) 100%
+  );
+  z-index: 1;
+}
+
+.gh-hero-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 100%);
+  z-index: 1;
+}
+
+.gh-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.gh-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  transition: color 0.3s ease, transform 0.3s ease;
+  font-weight: 500;
+}
+
+.gh-back-btn:hover {
+  color: var(--gold-l);
+  transform: translateX(-4px);
+}
+
+.gh-hero-text h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  background: linear-gradient(to right, #ffffff, var(--gold-l));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gh-hero-text p {
+  font-size: 1.15rem;
+  max-width: 600px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ── Section Header ── */
+.gh-content-section {
+  padding-top: 60px;
+}
+
+.gh-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.gh-header h2 {
+  font-size: 2.2rem;
+  color: var(--txt1);
+  margin-bottom: 10px;
+}
+
+.gh-subtitle {
+  color: var(--txt2);
+  font-size: 1.1rem;
+}
+
+/* ── Grid ── */
+.gh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+/* ── Card ── */
+.gh-card {
+  background: var(--bg2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.4s ease,
+              border-color 0.3s ease;
+  animation: slideUpFade 0.6s ease-out backwards;
+  display: flex;
+  flex-direction: column;
+}
+
+.gh-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(184, 152, 92, 0.18);
+  border-color: rgba(184, 152, 92, 0.35);
+}
+
+/* Dark mode card glow */
+[data-theme="dark"] .gh-card {
+  background: var(--bg2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .gh-card:hover {
+  box-shadow: 0 15px 50px rgba(184, 146, 42, 0.15), 0 0 30px rgba(184, 146, 42, 0.05);
+  border-color: rgba(184, 146, 42, 0.4);
+}
+
+/* ── Card Image ── */
+.gh-card-img-wrapper {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background: var(--bg3);
+}
+
+.gh-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  color: var(--txt1);
+  font-family: var(--font-display, inherit);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.gh-card:hover .gh-card-img {
+  transform: scale(1.08);
+}
+
+.gh-card-dates {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* ── Card Body ── */
+.gh-card-body {
+  padding: 24px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.gh-card-title {
+  font-size: 1.5rem;
+  color: var(--txt1);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.gh-card-subtitle {
+  font-size: 0.95rem;
+  color: var(--gold-l);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* ── Tags ── */
+.gh-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.gh-tag {
+  font-size: 0.75rem;
+  background: rgba(184, 146, 42, 0.12);
+  color: var(--gold-l);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid rgba(184, 146, 42, 0.2);
+  letter-spacing: 0.3px;
+}
+
+[data-theme="dark"] .gh-tag {
+  background: rgba(184, 146, 42, 0.15);
+  color: var(--gold-pale, #F0D98A);
+  border-color: rgba(184, 146, 42, 0.25);
+}
+
+/* ── Card Description ── */
+.gh-card-desc {
+  font-size: 0.95rem;
+  color: var(--txt2);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+[data-theme="dark"] .gh-card-desc {
+  color: var(--txt2);
+}
+
+/* ── Card Footer ── */
+.gh-card-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.gh-read-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px;
+  background: transparent;
+  color: var(--gold-l);
+  border: 1px solid rgba(184, 146, 42, 0.35);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Outfit', sans-serif;
+}
+
+.gh-read-more:hover {
+  background: linear-gradient(135deg, var(--gold), #8A6A18);
+  color: #ffffff;
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(184, 146, 42, 0.3);
+}
+
+[data-theme="dark"] .gh-read-more {
+  color: var(--gold-l);
+  border-color: rgba(184, 146, 42, 0.3);
+  background: rgba(184, 146, 42, 0.06);
+}
+
+[data-theme="dark"] .gh-read-more:hover {
+  background: linear-gradient(135deg, var(--gold), #8A6A18);
+  color: #ffffff;
+  border-color: var(--gold);
+  box-shadow: 0 4px 20px rgba(184, 146, 42, 0.35);
+}
+
+/* ── Info Banner ── */
+.gh-info-banner {
+  background: linear-gradient(135deg, rgba(184, 146, 42, 0.08) 0%, rgba(184, 146, 42, 0.02) 100%);
+  border: 1px solid rgba(184, 146, 42, 0.2);
+  border-radius: 16px;
+  padding: 30px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+[data-theme="dark"] .gh-info-banner {
+  background: linear-gradient(135deg, rgba(184, 146, 42, 0.1) 0%, rgba(13, 20, 16, 0.8) 100%);
+  border-color: rgba(184, 146, 42, 0.25);
+}
+
+.gh-info-icon {
+  background: linear-gradient(135deg, var(--gold), #8A6A18);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(184, 146, 42, 0.3);
+}
+
+.gh-info-banner h3 {
+  color: var(--txt1);
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+.gh-info-banner p {
+  color: var(--txt2);
+  line-height: 1.7;
+}
+
+/* ── Section header dark mode ── */
+[data-theme="dark"] .gh-header h2 {
+  color: var(--txt1);
+}
+
+[data-theme="dark"] .gh-subtitle {
+  color: var(--txt2);
+}
+
+/* ── Animations ── */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .gh-hero {
+    height: 350px;
+  }
+  .gh-hero-text h1 {
+    font-size: 2.4rem;
+  }
+  .gh-hero-text p {
+    font-size: 1rem;
+  }
+  .gh-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .gh-info-banner {
+    flex-direction: column;
+  }
+  .gh-header h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gh-hero {
+    height: 300px;
+  }
+  .gh-hero-text h1 {
+    font-size: 1.8rem;
+  }
+  .gh-card-body {
+    padding: 18px;
+  }
+  .gh-info-banner {
+    padding: 20px;
+  }
+}

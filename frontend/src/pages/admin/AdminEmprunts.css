@@ -1,0 +1,22 @@
+/* ══════════════════════════════════════════════════════
+   ADMIN EMPRUNTS — Premium Design
+══════════════════════════════════════════════════════ */
+.admin-emprunts { padding: 28px 32px 48px; }
+
+/* ─── Layout is now handled globally by AdminLayout.css ─── */
+
+/* ─── Row Alert ────────────────────────────────────── */
+.row-alert td { background: rgba(248,113,113,0.04) !important; }
+.td-overdue { color: #F87171 !important; font-weight: 600; }
+
+/* ─── Responsive ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .admin-emprunts { padding: 20px 16px 32px; }
+  .emp-tabs { flex-wrap: wrap; width: 100%; }
+  .emp-tab { flex: 1; justify-content: center; min-width: 0; padding: 8px 12px; font-size: 0.78rem; }
+  .admin-page-header { flex-direction: column; gap: 12px; }
+  .admin-page-header .btn { width: 100%; text-align: center; justify-content: center; }
+}
+@media (max-width: 600px) {
+  .admin-emprunts { padding: 16px 12px 24px; }
+}

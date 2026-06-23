@@ -1,0 +1,157 @@
+/* ══════════════════════════════════════════════════════
+   ADMIN SEMAINE — Livre de la Semaine
+══════════════════════════════════════════════════════ */
+.admin-semaine { padding: 28px 32px 48px; }
+
+/* ─── Content Grid ─────────────────────────────────── */
+.semaine-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ─── Form Card ────────────────────────────────────── */
+.semaine-form-card {
+  padding: 28px 32px;
+}
+.semaine-form-card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--txt1);
+  margin: 0 0 24px 0;
+}
+
+/* Current Book Info */
+.semaine-current {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 22px;
+}
+.semaine-current-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--txt3);
+  margin-bottom: 6px;
+}
+.semaine-current-title {
+  font-weight: 600;
+  color: var(--txt1);
+  font-size: 0.95rem;
+}
+.semaine-current-author {
+  font-size: 0.84rem;
+  color: var(--txt3);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+/* Form */
+.semaine-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.semaine-form .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.semaine-form .form-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--txt2);
+}
+.semaine-form .form-field select {
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  color: var(--txt1);
+  background: var(--bg3);
+  outline: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.semaine-form .form-field select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow2);
+}
+
+/* ─── Preview Card ─────────────────────────────────── */
+.semaine-preview-card {
+  padding: 24px;
+}
+.semaine-preview-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--txt3);
+  margin-bottom: 16px;
+}
+.semaine-preview-cover {
+  background: linear-gradient(135deg, #1A3A2A, #2D5A3D);
+  border-radius: 12px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  overflow: hidden;
+  position: relative;
+}
+.semaine-preview-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.2) 100%);
+  pointer-events: none;
+}
+.semaine-preview-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.semaine-preview-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--txt1);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.semaine-preview-author {
+  font-size: 0.82rem;
+  color: var(--txt3);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+.semaine-preview-desc {
+  font-size: 0.82rem;
+  color: var(--txt2);
+  line-height: 1.6;
+}
+.semaine-no-selection {
+  color: var(--txt3);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* ─── Responsive ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .admin-semaine { padding: 20px 16px 32px; }
+  .semaine-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .admin-semaine { padding: 16px 12px 24px; }
+  .semaine-form-card { padding: 20px; }
+  .semaine-preview-card { padding: 16px; }
+}

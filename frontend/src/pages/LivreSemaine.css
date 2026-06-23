@@ -1,0 +1,220 @@
+/* ─── PAGE WRAPPER ─────────────────────────────────────── */
+.livre-semaine-page { min-height: calc(100vh - var(--nav-h)); }
+
+/* ─── LOADING ──────────────────────────────────────────── */
+.livre-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--nav-h));
+  margin-top: var(--nav-h);
+}
+
+/* ─── HEADER ───────────────────────────────────────────── */
+.livre-header {
+  background: linear-gradient(135deg, #1A3A2A 0%, #0D2218 60%, #1A3A2A 100%);
+  padding: 64px 0 52px;
+  position: relative;
+  overflow: hidden;
+}
+.livre-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 300;
+  color: #fff;
+  margin-top: 14px;
+  margin-bottom: 8px;
+  line-height: 1.05;
+}
+.livre-header-sub {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+}
+
+/* Orbes de fond */
+.livre-header-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+.livre-header-orb-1 {
+  width: 350px; height: 350px;
+  background: rgba(184,146,42,0.12);
+  top: -100px; right: 10%;
+  animation: orbFloat1 14s ease-in-out infinite;
+}
+.livre-header-orb-2 {
+  width: 250px; height: 250px;
+  background: rgba(74,222,128,0.06);
+  bottom: -80px; left: 5%;
+  animation: orbFloat2 18s ease-in-out infinite;
+}
+
+/* ─── EMPTY STATE ──────────────────────────────────────── */
+.livre-empty {
+  text-align: center;
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 440px;
+  margin: 0 auto;
+}
+.livre-empty-icon { font-size: 3.5rem; }
+.livre-empty p { color: var(--txt2); font-size: 1rem; line-height: 1.6; }
+
+/* ─── DETAIL CARD ──────────────────────────────────────── */
+.livre-detail {
+  display: flex;
+  gap: 56px;
+  padding: 48px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* ── Couverture ── */
+.livre-cover-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 280px;
+}
+.livre-cover-img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  box-shadow: 16px 16px 48px rgba(0,0,0,0.4), 0 0 0 1px var(--border);
+  display: block;
+  transition: transform 0.5s var(--ease-smooth);
+}
+.livre-cover-img:hover { transform: translateY(-8px) rotate(-1deg); }
+.livre-cover-placeholder {
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(145deg, #1A3A2A, #0D2218);
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  box-shadow: 16px 16px 48px rgba(0,0,0,0.4);
+}
+.livre-cover-badge {
+  position: absolute;
+  top: 16px;
+  right: -12px;
+  background: linear-gradient(135deg, var(--gold), #8A6A18);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 5px 12px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 16px rgba(184,146,42,0.45);
+}
+
+/* ── Informations ── */
+.livre-info {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+.livre-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  color: var(--txt1);
+  line-height: 1.1;
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+.livre-author {
+  font-size: 1.1rem;
+  color: var(--gold-l);
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+/* Description */
+.livre-desc-block { margin-bottom: 24px; }
+.livre-desc-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--txt3);
+  margin-bottom: 8px;
+}
+.livre-desc {
+  color: var(--txt2);
+  line-height: 1.8;
+  font-size: 0.97rem;
+}
+
+/* Méta */
+.livre-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.livre-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--txt2);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 50px;
+}
+.livre-meta-icon { font-size: 0.95rem; }
+
+/* Actions */
+.livre-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+/* Citation */
+.livre-citation {
+  background: linear-gradient(135deg, rgba(26,58,42,0.5), rgba(13,34,24,0.3));
+  border: 1px solid rgba(184,146,42,0.2);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--r-md);
+  padding: 18px 22px;
+  margin-top: 4px;
+}
+.livre-citation-arabic {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 1.15rem;
+  color: var(--txt1);
+  direction: rtl;
+  text-align: right;
+  line-height: 2;
+  margin-bottom: 6px;
+}
+.livre-citation-src {
+  font-size: 0.74rem;
+  color: var(--gold-l);
+  text-align: right;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .livre-detail   { flex-direction: column; gap: 32px; padding: 28px; }
+  .livre-cover-wrap { width: 100%; max-width: 280px; margin: 0 auto; }
+}

@@ -1,0 +1,222 @@
+/* ══════════════════════════════════════════════════════
+   LIVRE DETAIL - Premium Design
+══════════════════════════════════════════════════════ */
+.livre-detail-page {
+  padding: 120px 0 80px;
+  min-height: 80vh;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--txt2);
+  margin-bottom: 40px;
+  transition: var(--trans);
+}
+
+.back-link:hover {
+  color: var(--gold);
+  transform: translateX(-4px);
+}
+
+/* ── Hero Section ── */
+.book-hero {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  margin-bottom: 60px;
+}
+
+.book-hero-cover {
+  flex-shrink: 0;
+  width: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.book-hero-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.book-tags {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.book-title-lg {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 400;
+  color: var(--txt1);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.book-author-lg {
+  font-size: 1.2rem;
+  color: var(--txt2);
+  margin: 0;
+}
+
+.book-author-lg span {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.book-actions {
+  margin-top: 24px;
+}
+
+/* ── Content Grid ── */
+.book-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.book-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+}
+
+.ld-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ld-section-header h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--txt1);
+}
+
+.icon-gold {
+  color: var(--gold);
+}
+
+/* ── AI Summary ── */
+.ai-summary {
+  background: linear-gradient(145deg, var(--bg2), rgba(184, 146, 42, 0.03));
+}
+
+.ai-intro {
+  font-size: 0.85rem;
+  color: var(--gold-l);
+  font-style: italic;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(184, 146, 42, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid var(--gold);
+}
+
+.ai-text {
+  font-size: 0.95rem;
+  color: var(--txt2);
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.original-desc {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--border);
+  font-size: 0.9rem;
+}
+
+.original-desc strong {
+  display: block;
+  color: var(--txt1);
+  margin-bottom: 8px;
+}
+
+/* ── Reader Placeholder ── */
+.book-reader {
+  background: var(--bg2);
+}
+
+.reader-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  min-height: 300px;
+  background: var(--bg3);
+  border-radius: 12px;
+  border: 1px dashed var(--border2);
+  gap: 12px;
+}
+
+.reader-icon {
+  color: var(--border2);
+  margin-bottom: 16px;
+}
+
+.reader-placeholder h3 {
+  font-size: 1.1rem;
+  color: var(--txt1);
+  margin: 0;
+}
+
+.reader-placeholder p {
+  font-size: 0.9rem;
+  color: var(--txt2);
+}
+
+.error-card {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.error-card h2 {
+  margin: 20px 0 10px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .book-hero {
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .book-hero-cover {
+    width: 220px;
+    margin: 0 auto;
+  }
+  
+  .book-hero-info {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .book-content-grid {
+    grid-template-columns: 1fr;
+  }
+}

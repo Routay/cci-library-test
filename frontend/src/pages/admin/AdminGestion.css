@@ -1,0 +1,303 @@
+/* ══════════════════════════════════════════════════════
+   ADMIN GESTION — Super Admin Premium Design
+══════════════════════════════════════════════════════ */
+
+/* ─── KPI Row ──────────────────────────────────────── */
+.gestion-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.gestion-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.gestion-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  border-radius: 3px 0 0 3px;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+.gestion-kpi-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.gestion-kpi-card:hover::before {
+  opacity: 1;
+}
+.gestion-kpi-card:nth-child(1)::before { background: #4ADE80; }
+.gestion-kpi-card:nth-child(2)::before { background: #3B82F6; }
+.gestion-kpi-card:nth-child(3)::before { background: var(--gold); }
+.gestion-kpi-card:nth-child(4)::before { background: #F59E0B; }
+
+.gestion-kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.gestion-kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.gestion-kpi-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--txt1);
+  line-height: 1.1;
+}
+.gestion-kpi-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--txt3);
+}
+
+/* ─── Admin Table Enhancements ─────────────────────── */
+.admin-role-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.role-tag-super {
+  background: rgba(74,222,128,0.12);
+  color: #4ADE80;
+  border: 1px solid rgba(74,222,128,0.2);
+}
+.role-tag-admin {
+  background: rgba(96,165,250,0.12);
+  color: #60A5FA;
+  border: 1px solid rgba(96,165,250,0.2);
+}
+
+[data-theme="light"] .role-tag-super {
+  background: #EAF3DE;
+  color: #166534;
+  border-color: #BBF7D0;
+}
+[data-theme="light"] .role-tag-admin {
+  background: #EFF6FF;
+  color: #1E40AF;
+  border-color: #BFDBFE;
+}
+
+/* ─── Admin Avatar ─────────────────────────────────── */
+.gestion-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.gestion-avatar-super {
+  background: rgba(74,222,128,0.12);
+  color: #4ADE80;
+  border-color: rgba(74,222,128,0.25);
+}
+.gestion-avatar-admin {
+  background: rgba(96,165,250,0.12);
+  color: #60A5FA;
+  border-color: rgba(96,165,250,0.25);
+}
+
+/* ─── Action Buttons (icon-only with tooltip) ──────── */
+.gestion-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.gestion-action-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--txt3);
+  transition: all 0.18s;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  flex-shrink: 0;
+}
+.gestion-action-btn:hover {
+  background: var(--bg3);
+  color: var(--txt1);
+  border-color: var(--border2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+/* Tooltip */
+.gestion-action-btn::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--txt1);
+  color: var(--bg);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 100;
+}
+.gestion-action-btn:hover::after {
+  opacity: 1;
+}
+.ga-edit:hover {
+  background: rgba(96,165,250,0.12);
+  border-color: rgba(96,165,250,0.3);
+  color: #60A5FA;
+}
+.ga-key:hover {
+  background: rgba(251,191,36,0.12);
+  border-color: rgba(251,191,36,0.3);
+  color: #FBBF24;
+}
+.ga-toggle-off:hover {
+  background: rgba(248,113,113,0.12);
+  border-color: rgba(248,113,113,0.3);
+  color: #F87171;
+}
+.ga-toggle-on:hover {
+  background: rgba(74,222,128,0.12);
+  border-color: rgba(74,222,128,0.3);
+  color: #4ADE80;
+}
+
+/* ─── Self Badge ───────────────────────────────────── */
+.self-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(184,146,42,0.12);
+  color: var(--gold-l);
+  border: 1px solid rgba(184,146,42,0.25);
+}
+
+/* ─── Password Modal ───────────────────────────────── */
+.password-strength {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.password-strength-bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.password-strength-bar.active-weak { background: #F87171; }
+.password-strength-bar.active-medium { background: #FBBF24; }
+.password-strength-bar.active-strong { background: #4ADE80; }
+
+.password-hint {
+  font-size: 0.72rem;
+  color: var(--txt3);
+  margin-top: 4px;
+}
+
+/* ─── Created Date ─────────────────────────────────── */
+.gestion-date {
+  font-size: 0.78rem;
+  color: var(--txt3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ─── Table card: allow tooltip overflow ───────────── */
+.gestion-table-card {
+  overflow: visible !important;
+}
+.gestion-table-card .table-wrap {
+  overflow-x: auto;
+}
+
+/* ─── Empty State ──────────────────────────────────── */
+.gestion-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--txt3);
+}
+.gestion-empty svg {
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+/* ─── Form Error Banner ────────────────────────────── */
+.form-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 8px;
+  color: #F87171;
+  font-size: 0.82rem;
+}
+
+/* ─── Responsive ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .gestion-kpis {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .gestion-kpis {
+    grid-template-columns: 1fr;
+  }
+  .gestion-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
