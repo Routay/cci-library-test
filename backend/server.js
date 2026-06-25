@@ -10,8 +10,9 @@ import bookRoutes  from './routes/books.js';
 import loanRoutes  from './routes/loans.js';
 import userRoutes  from './routes/users.js';
 import statsRoutes from './routes/stats.js';
-import logRoutes   from './routes/logs.js';
-import adminRoutes from './routes/admin.js';
+import logRoutes          from './routes/logs.js';
+import adminRoutes        from './routes/admin.js';
+import grandsHommesRoutes from './routes/grandsHommes.js';
 import { startCronJobs } from './services/cron.js';
 
 dotenv.config();
@@ -47,8 +48,9 @@ app.use('/api/books', bookRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/stats', statsRoutes);
-app.use('/api/logs',  logRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/logs',          logRoutes);
+app.use('/api/admin',         adminRoutes);
+app.use('/api/grands-hommes', grandsHommesRoutes);
 
 // ── Health check ──────────────────────────────────────────
 app.get('/api/health', (_req, res) =>

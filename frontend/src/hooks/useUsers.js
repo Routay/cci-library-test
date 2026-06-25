@@ -21,8 +21,9 @@ export function useUsers() {
   const createUser   = async d  => { const { data } = await usersAPI.create(d);          setUsers(p => [data,...p]); return data; };
   const updateUser   = async (id,d) => { const { data } = await usersAPI.update(id,d);   setUsers(p => p.map(u => u._id===id?data:u)); return data; };
   const toggleActive = async id => { const { data } = await usersAPI.toggleActive(id);   setUsers(p => p.map(u => u._id===id?data:u)); return data; };
+  const deleteUser   = async id => { await usersAPI.delete(id);                           setUsers(p => p.filter(u => u._id!==id)); };
 
-  return { users, loading, error, refetch: fetch, createUser, updateUser, toggleActive };
+  return { users, loading, error, refetch: fetch, createUser, updateUser, toggleActive, deleteUser };
 }
 
 export function useDashStats() {

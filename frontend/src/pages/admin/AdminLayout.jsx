@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard, BookOpen, ClipboardList, Users, Star,
-  LogOut, FileText, Shield, Sun, Moon, Settings, UserCog,
+  LogOut, FileText, Shield, Sun, Moon, Settings, UserCog, Landmark,
 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import CCI_LOGO from '../../assets/logo.png';
@@ -21,6 +21,7 @@ export default function AdminLayout() {
     { to: '/admin/emprunts',  icon: <ClipboardList size={18} />,    label: 'Emprunts'             },
     { to: '/admin/membres',   icon: <Users size={18} />,            label: 'Membres'              },
     { to: '/admin/semaine',   icon: <Star size={18} />,             label: 'Livre de la semaine'  },
+    { to: '/admin/grands-hommes', icon: <Landmark size={18} />,      label: 'Grands Hommes'        },
   ];
 
   const SUPER_NAV = [

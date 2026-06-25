@@ -37,15 +37,19 @@ export const loansAPI = {
   create:       data => api.post('/api/loans', data),
   requestPublic:data => api.post('/api/loans/public', data),
   markReturned: id   => api.patch(`/api/loans/${id}/return`),
+  extend:       (id, data) => api.patch(`/api/loans/${id}/extend`, data),
   update:       (id,data) => api.put(`/api/loans/${id}`, data),
   delete:       id   => api.delete(`/api/loans/${id}`),
 };
 
 export const usersAPI = {
   getAll:       ()   => api.get('/api/users'),
+  getStats:     ()   => api.get('/api/users/stats'),
   create:       data => api.post('/api/users', data),
   update:       (id,data) => api.put(`/api/users/${id}`, data),
   toggleActive: id   => api.patch(`/api/users/${id}/toggle`),
+  delete:       id   => api.delete(`/api/users/${id}`),
+  getHistory:   id   => api.get(`/api/users/${id}/history`),
 };
 
 export const statsAPI = {
@@ -69,6 +73,16 @@ export const adminAPI = {
 export const settingsAPI = {
   get:    () => api.get('/api/admin/settings'),
   update: data => api.put('/api/admin/settings', data),
+};
+
+export const grandsHommesAPI = {
+  getAll:       ()        => api.get('/api/grands-hommes'),
+  getById:      id        => api.get(`/api/grands-hommes/${id}`),
+  getAllAdmin:   ()        => api.get('/api/grands-hommes/admin/all'),
+  create:       data      => api.post('/api/grands-hommes', data),
+  update:       (id,data) => api.put(`/api/grands-hommes/${id}`, data),
+  toggle:       id        => api.patch(`/api/grands-hommes/${id}/toggle`),
+  delete:       id        => api.delete(`/api/grands-hommes/${id}`),
 };
 
 export default api;

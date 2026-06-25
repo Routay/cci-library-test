@@ -149,6 +149,9 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
       { status: 'retard' }
     );
 
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
     const [
       totalBooks,
       activeLoans,
@@ -158,6 +161,13 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
       recentLoans,
       lowStock,
       activeMembers,
+      // Nouvelles métriques
+      totalReturned,
+      returnedOnTime,
+      returnedThisMonth,
+      topBooks,
+      categoryBreakdown,
+      criticalOverdue,
     ] = await Promise.all([
       Book.countDocuments(),
       Loan.countDocuments({ status: 'actif' }),
@@ -172,12 +182,77 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
       Book.find({ stock: { $lte: 1 } })
         .select('title stock')
         .limit(5),
-      // Membres actifs aptes à emprunter (les 10 derniers)
       User.find({ role: 'membre', actif: true })
         .select('nom prenom email tel createdAt')
         .sort({ createdAt: -1 })
         .limit(10),
+
+      // Total des emprunts rendus
+      Loan.countDocuments({ status: 'rendu' }),
+      // Rendus à temps (returnDate <= dueDate)
+      Loan.countDocuments({
+        status: 'rendu',
+        returnDate: { $ne: null },
+        $expr: { $lte: ['$returnDate', '$dueDate'] },
+      }),
+      // Rendus ce mois-ci
+      Loan.countDocuments({
+        status: 'rendu',
+        returnDate: { $gte: startOfMonth },
+      }),
+      // Top 5 livres les plus empruntés
+      Loan.aggregate([
+        { $group: { _id: '$book', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 5 },
+        { $lookup: {
+            from: 'books',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'bookInfo',
+          }
+        },
+        { $unwind: '$bookInfo' },
+        { $project: {
+            _id: 1,
+            count: 1,
+            title: '$bookInfo.title',
+            author: '$bookInfo.author',
+            category: '$bookInfo.category',
+          }
+        },
+      ]),
+      // Répartition des emprunts par catégorie de livre
+      Loan.aggregate([
+        { $lookup: {
+            from: 'books',
+            localField: 'book',
+            foreignField: '_id',
+            as: 'bookInfo',
+          }
+        },
+        { $unwind: '$bookInfo' },
+        { $group: {
+            _id: '$bookInfo.category',
+            count: { $sum: 1 },
+          }
+        },
+        { $sort: { count: -1 } },
+      ]),
+      // Emprunts en retard critiques (> 7 jours)
+      Loan.find({
+        status: 'retard',
+        dueDate: { $lt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) },
+      })
+        .populate('member', 'nom prenom email')
+        .populate('book', 'title')
+        .sort({ dueDate: 1 })
+        .limit(10),
     ]);
+
+    const returnRate = totalReturned > 0
+      ? Math.round((returnedOnTime / totalReturned) * 100)
+      : 100;
 
     res.json({
       kpis: {
@@ -186,10 +261,15 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
         pendingLoans,
         overdueLoans,
         totalMembers,
+        returnRate,
+        returnedThisMonth,
       },
       recentLoans,
       lowStock,
       activeMembers,
+      topBooks,
+      categoryBreakdown,
+      criticalOverdue,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

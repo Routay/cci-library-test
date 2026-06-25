@@ -207,6 +207,44 @@ export const updateLoan = async (req, res) => {
   }
 };
 
+export const extendLoan = async (req, res) => {
+  try {
+    const { days = 7 } = req.body;
+    const loan = await Loan.findById(req.params.id).populate('book member');
+    if (!loan) return res.status(404).json({ message: 'Emprunt introuvable' });
+    if (loan.status === 'rendu') {
+      return res.status(400).json({ message: 'Impossible de prolonger un emprunt déjà rendu' });
+    }
+
+    const oldDate = new Date(loan.dueDate);
+    const newDate = new Date(oldDate);
+    newDate.setDate(newDate.getDate() + Number(days));
+    loan.dueDate = newDate;
+
+    // Recalcul du statut
+    if (loan.status === 'retard' && newDate > new Date()) {
+      loan.status = 'actif';
+    }
+    await loan.save();
+
+    await loan.populate([
+      { path: 'member', select: 'nom prenom email' },
+      { path: 'book', select: 'title author' },
+    ]);
+
+    await ActivityLog.create({
+      adminId: req.user._id,
+      action: 'UPDATE',
+      entity: 'Loan',
+      details: `Prolongation de l'emprunt du livre "${loan.book.title}" pour "${loan.member.prenom} ${loan.member.nom}" (+${days} jours)`
+    });
+
+    res.json(loan);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 export const deleteLoan = async (req, res) => {
   try {
     const loan = await Loan.findById(req.params.id).populate('book member');

@@ -171,3 +171,40 @@ export const sendAdminNewLoanNotification = async (admins, loan, borrower) => {
     }
   }
 };
+
+export const sendWelcomeEmail = async (user) => {
+  if (!transporter) return;
+
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; text-align: center; border-bottom: 2px solid #b8985c;">
+        <h2 style="color: #f0e6d3; margin: 0; font-size: 22px;">Bienvenue à la CCI Bibliothèque !</h2>
+      </div>
+      <div style="padding: 30px;">
+        <p style="font-size: 16px; color: #555;">Bonjour <strong>${user.prenom} ${user.nom}</strong>,</p>
+        <p style="font-size: 16px; color: #555;">Nous sommes ravis de vous accueillir parmi les membres de la bibliothèque du Centre Culturel Islamique.</p>
+        <div style="background-color: #f0fdfa; border-left: 4px solid #14b8a6; padding: 15px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #0f766e;">Votre compte est actif ✓</h3>
+          <p style="margin: 5px 0; color: #555;">Vous pouvez dès à présent emprunter des livres en passant à la bibliothèque ou en soumettant une demande en ligne.</p>
+        </div>
+        <p style="font-size: 16px; color: #555;">N'hésitez pas à explorer notre catalogue et à profiter de nos ressources.</p>
+        <br />
+        <p style="font-size: 14px; color: #999; margin-bottom: 0;">Bonne lecture !</p>
+        <p style="font-size: 14px; color: #999; margin-top: 0;"><strong>L'équipe CCI Bibliothèque</strong></p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: '"CCI Bibliothèque" <admin@cci.sn>',
+      to: user.email,
+      subject: 'Bienvenue à la CCI Bibliothèque !',
+      text: `Bonjour ${user.prenom}, bienvenue à la CCI Bibliothèque ! Votre compte est actif.`,
+      html: htmlContent,
+    });
+    console.log(`[EMAIL] Bienvenue envoyé à ${user.email}`);
+  } catch (error) {
+    console.error("[EMAIL ERROR] Échec de l'envoi de bienvenue :", error);
+  }
+};

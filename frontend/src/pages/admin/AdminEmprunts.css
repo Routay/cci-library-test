@@ -3,7 +3,66 @@
 ══════════════════════════════════════════════════════ */
 .admin-emprunts { padding: 28px 32px 48px; }
 
-/* ─── Layout is now handled globally by AdminLayout.css ─── */
+/* ─── Search Bar ───────────────────────────────────── */
+.emp-search-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm);
+  padding: 0 14px; margin-bottom: 14px; max-width: 420px;
+  transition: border-color 0.2s;
+}
+.emp-search-bar:focus-within { border-color: var(--gold); }
+.emp-search-bar svg { color: var(--txt3); flex-shrink: 0; }
+.emp-search-bar input {
+  flex: 1; border: none; background: transparent;
+  padding: 9px 0; font-size: 0.85rem; color: var(--txt1);
+  font-family: 'Outfit', sans-serif; outline: none;
+}
+
+/* ─── Days Badge ───────────────────────────────────── */
+.days-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 6px;
+  font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+}
+.days-late { background: rgba(248,113,113,0.12); color: #F87171; }
+.days-today { background: rgba(251,191,36,0.12); color: #FBBF24; }
+.days-soon { background: rgba(251,191,36,0.08); color: #F59E0B; }
+.days-ok { background: rgba(74,222,128,0.08); color: #4ADE80; }
+[data-theme="light"] .days-late { background: #FCEBEB; color: #B91C1C; }
+[data-theme="light"] .days-today { background: #FEF3E2; color: #92400E; }
+[data-theme="light"] .days-soon { background: #FEF9E7; color: #78350F; }
+[data-theme="light"] .days-ok { background: #EAF3DE; color: #27500A; }
+
+/* ─── Extend Modal ─────────────────────────────────── */
+.extend-info { margin-bottom: 16px; padding: 12px; background: var(--bg3); border-radius: 10px; border: 1px solid var(--border); }
+.extend-book { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--txt1); margin: 0 0 4px; font-size: 0.9rem; }
+.extend-book svg { color: var(--txt3); }
+.extend-member { font-size: 0.82rem; color: var(--txt2); margin: 0 0 6px; }
+.extend-current-date { font-size: 0.8rem; color: var(--txt3); margin: 0; }
+.extend-days-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.extend-day-btn {
+  padding: 7px 14px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--bg3);
+  color: var(--txt2); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: var(--trans); font-family: 'Outfit', sans-serif;
+}
+.extend-day-btn:hover { border-color: var(--txt2); color: var(--txt1); }
+.extend-day-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+.extend-custom-input {
+  width: 60px; padding: 7px 8px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--bg2);
+  color: var(--txt1); font-size: 0.82rem; text-align: center;
+  font-family: 'Outfit', sans-serif; outline: none;
+}
+.extend-custom-input:focus { border-color: var(--gold); }
+.extend-new-date { font-size: 0.85rem; color: var(--txt2); margin-top: 12px; }
+.extend-new-date strong { color: var(--txt1); }
+
+/* ─── Row Extend Button ────────────────────────────── */
+.rb-extend {
+  background: rgba(59,130,246,0.08); color: #3B82F6; border-color: rgba(59,130,246,0.2);
+}
+.rb-extend:hover { background: rgba(59,130,246,0.16); }
 
 /* ─── Row Alert ────────────────────────────────────── */
 .row-alert td { background: rgba(248,113,113,0.04) !important; }
@@ -16,6 +75,7 @@
   .emp-tab { flex: 1; justify-content: center; min-width: 0; padding: 8px 12px; font-size: 0.78rem; }
   .admin-page-header { flex-direction: column; gap: 12px; }
   .admin-page-header .btn { width: 100%; text-align: center; justify-content: center; }
+  .emp-search-bar { max-width: 100%; }
 }
 @media (max-width: 600px) {
   .admin-emprunts { padding: 16px 12px 24px; }

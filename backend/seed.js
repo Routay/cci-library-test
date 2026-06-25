@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
-import dotenv   from 'dotenv';
-import Book     from './models/Book.js';
-import User     from './models/User.js';
-import Loan     from './models/Loan.js';
+import mongoose    from 'mongoose';
+import dotenv      from 'dotenv';
+import Book        from './models/Book.js';
+import User        from './models/User.js';
+import Loan        from './models/Loan.js';
+import GrandHomme  from './models/GrandHomme.js';
 
 dotenv.config();
 
@@ -113,6 +114,7 @@ async function seed() {
       Book.deleteMany(),
       User.deleteMany(),
       Loan.deleteMany(),
+      GrandHomme.deleteMany(),
     ]);
     console.log('🗑️  Collections vidées');
 
@@ -162,6 +164,73 @@ async function seed() {
 
     await Loan.insertMany(loans);
     console.log(`📋 ${loans.length} emprunts de test créés`);
+
+    // ── Grands Hommes ─────────────────────────────────────
+    const grandsHommes = [
+      {
+        name: 'Al-Ghazâlî',
+        title: 'Hujjat al-Islam (La preuve de l\'Islam)',
+        dates: '1058 – 1111',
+        description: 'Théologien, philosophe et mystique persan, il a profondément influencé le développement de la théologie islamique et du soufisme. Son œuvre majeure "Revivification des sciences de la religion" (Ihyâ\' \'ulûm ad-dîn) est un classique intemporel qui demeure une référence fondamentale dans le monde musulman.',
+        image: 'https://images.unsplash.com/photo-1584281720498-8fa194ddb656?auto=format&fit=crop&q=80&w=400',
+        tags: ['Théologie', 'Soufisme', 'Philosophie'],
+        ordre: 1,
+        actif: true,
+      },
+      {
+        name: 'Ibn Khaldoun',
+        title: 'Père de la sociologie',
+        dates: '1332 – 1406',
+        description: 'Historien, philosophe, diplomate et sociologue avant l\'heure. Sa célèbre "Muqaddima" (Introduction à l\'histoire universelle) pose les bases de l\'analyse sociologique, de l\'économie et de l\'historiographie moderne. Il est reconnu comme un pionnier dans plusieurs domaines des sciences humaines.',
+        image: 'https://images.unsplash.com/photo-1548624177-3e1ee454eb84?auto=format&fit=crop&q=80&w=400',
+        tags: ['Histoire', 'Sociologie', 'Économie'],
+        ordre: 2,
+        actif: true,
+      },
+      {
+        name: 'Ibn Taymiyya',
+        title: 'Cheikh al-Islam',
+        dates: '1263 – 1328',
+        description: 'Éminent savant hanbalite, juriste et théologien. Ses écrits vastes et profonds sur la croyance (Aqida) et la jurisprudence (Fiqh) ont laissé une empreinte indélébile sur la pensée réformatrice dans le monde musulman. Il est considéré comme l\'un des plus grands savants de l\'histoire islamique.',
+        image: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=400',
+        tags: ['Aqida', 'Fiqh', 'Réforme'],
+        ordre: 3,
+        actif: true,
+      },
+      {
+        name: 'Saladin (Salah al-Din)',
+        title: 'Sultan d\'Égypte et de Syrie',
+        dates: '1138 – 1193',
+        description: 'Leader militaire et politique légendaire, connu pour sa justice, sa clémence et sa bravoure. Il a unifié le monde musulman et repris Jérusalem, tout en gagnant le respect de ses alliés comme de ses ennemis. Son héritage est celui d\'un dirigeant juste et courageux.',
+        image: 'https://images.unsplash.com/photo-1590490359854-dfba196ceaca?auto=format&fit=crop&q=80&w=400',
+        tags: ['Leadership', 'Histoire', 'Bravoure'],
+        ordre: 4,
+        actif: true,
+      },
+      {
+        name: 'Ibn Sina (Avicenne)',
+        title: 'Prince des médecins',
+        dates: '980 – 1037',
+        description: 'Médecin, philosophe et savant persan dont le "Canon de la Médecine" a été le manuel médical de référence en Europe et dans le monde islamique pendant des siècles. Polymathe accompli, il a aussi contribué à la physique, à la philosophie et à l\'astronomie.',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+        tags: ['Médecine', 'Philosophie', 'Science'],
+        ordre: 5,
+        actif: true,
+      },
+      {
+        name: 'Imam Al-Bukhari',
+        title: 'Amir al-Mu\'minin fi al-Hadith',
+        dates: '810 – 870',
+        description: 'Compilateur du Sahih al-Bukhari, le recueil de hadiths le plus authentique de l\'Islam. Sa méthodologie rigoureuse de vérification des chaînes de transmission a établi les standards de la science du hadith pour les générations suivantes.',
+        image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=400',
+        tags: ['Hadith', 'Science', 'Érudition'],
+        ordre: 6,
+        actif: true,
+      },
+    ];
+
+    await GrandHomme.insertMany(grandsHommes);
+    console.log(`🏛️  ${grandsHommes.length} Grands Hommes insérés`);
 
     console.log('\n🎉 Seed terminé avec succès !');
     console.log('────────────────────────────────');

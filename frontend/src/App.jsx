@@ -22,6 +22,7 @@ import AdminSemaine  from './pages/admin/AdminSemaine.jsx';
 import AdminLogs     from './pages/admin/AdminLogs.jsx';
 import AdminGestion  from './pages/admin/AdminGestion.jsx';
 import AdminParametres from './pages/admin/AdminParametres.jsx';
+import AdminGrandsHommes from './pages/admin/AdminGrandsHommes.jsx';
 import LivreDetail from './pages/LivreDetail.jsx';
 
 function ProtectedAdmin() {
@@ -81,6 +82,7 @@ export default function App() {
               <Route path="logs"           element={<AdminLogs />} />
               <Route path="gestion-admins" element={<AdminGestion />} />
               <Route path="parametres"     element={<AdminParametres />} />
+              <Route path="grands-hommes"  element={<AdminGrandsHommes />} />
             </Route>
 
             {/* Pages publiques */}

@@ -5,11 +5,12 @@ import {
   Book, ClipboardList, Clock, AlertTriangle, BookOpen,
   Star, UserPlus, CheckCircle, Users, TrendingUp,
   ArrowUpRight, ArrowDownRight, RefreshCw, BarChart3,
-  Activity, Eye
+  Activity, Eye, Percent, CalendarCheck, Crown, Flame
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import GrowthChart from '../../components/GrowthChart';
 import VisitorChart from '../../components/VisitorChart';
+import CategoryChart from '../../components/CategoryChart';
 import './AdminDashboard.css';
 
 const STATUS_LABELS = { en_attente: 'En attente', actif: 'Actif', retard: 'En retard', rendu: 'Rendu' };
@@ -43,7 +44,15 @@ export default function AdminDashboard() {
   );
   if (!stats) return <div className="admin-dashboard"><Spinner /></div>;
 
-  const { kpis = {}, recentLoans = [], lowStock = [], activeMembers = [] } = stats;
+  const {
+    kpis = {},
+    recentLoans = [],
+    lowStock = [],
+    activeMembers = [],
+    topBooks = [],
+    categoryBreakdown = [],
+    criticalOverdue = [],
+  } = stats;
 
   const KPIS = [
     { label: 'Total livres',    value: kpis.totalBooks   ?? 0, icon: <Book size={22} strokeWidth={1.5} />,          color: 'teal',   link: '/admin/livres'   },
@@ -51,6 +60,8 @@ export default function AdminDashboard() {
     { label: 'En attente',      value: kpis.pendingLoans ?? 0, icon: <Clock size={22} strokeWidth={1.5} />,         color: 'orange', link: '/admin/emprunts' },
     { label: 'En retard',       value: kpis.overdueLoans ?? 0, icon: <AlertTriangle size={22} strokeWidth={1.5} />, color: 'red',    link: '/admin/emprunts' },
     { label: 'Membres actifs',  value: kpis.totalMembers ?? 0, icon: <Users size={22} strokeWidth={1.5} />,         color: 'green',  link: '/admin/membres'  },
+    { label: 'Taux retour',     value: `${kpis.returnRate ?? 100}%`, icon: <Percent size={22} strokeWidth={1.5} />, color: 'purple', link: '/admin/emprunts' },
+    { label: 'Rendus ce mois',  value: kpis.returnedThisMonth ?? 0, icon: <CalendarCheck size={22} strokeWidth={1.5} />, color: 'indigo', link: '/admin/emprunts' },
   ];
 
   const handleReturn = async (id) => {
@@ -97,7 +108,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* ─── KPI Cards ─────────────────────────────────── */}
-      <div className="kpi-grid">
+      <div className="kpi-grid kpi-grid-7">
         {KPIS.map((k) => (
           <Link to={k.link} key={k.label} className={`kpi-card kpi-${k.color}`}>
             <div className="kpi-icon-wrap">{k.icon}</div>
@@ -134,6 +145,50 @@ export default function AdminDashboard() {
             <span className="card-badge">30 jours</span>
           </div>
           <VisitorChart />
+        </div>
+      </div>
+
+      {/* ─── Top Books + Category Breakdown ────────────── */}
+      <div className="charts-grid">
+        <div className="dash-card">
+          <div className="dash-card-header">
+            <div className="card-title-group">
+              <Crown size={18} className="card-title-icon icon-gold" />
+              <h2>Top 5 — Livres les plus empruntés</h2>
+            </div>
+          </div>
+          <div className="top-books-list">
+            {topBooks.length === 0 ? (
+              <div className="top-books-empty">
+                <BookOpen size={20} />
+                <span>Aucun emprunt enregistré</span>
+              </div>
+            ) : (
+              topBooks.map((book, i) => (
+                <div key={book._id} className="top-book-item">
+                  <div className={`top-book-rank rank-${i + 1}`}>{i + 1}</div>
+                  <div className="top-book-info">
+                    <span className="top-book-title">{book.title}</span>
+                    <span className="top-book-author">{book.author || book.category || ''}</span>
+                  </div>
+                  <div className="top-book-count">
+                    <span className="top-book-count-val">{book.count}</span>
+                    <span className="top-book-count-label">emprunts</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="dash-card chart-card">
+          <div className="dash-card-header">
+            <div className="card-title-group">
+              <BarChart3 size={18} className="card-title-icon" />
+              <h2>Répartition par catégorie</h2>
+            </div>
+          </div>
+          <CategoryChart data={categoryBreakdown} />
         </div>
       </div>
 
@@ -202,6 +257,33 @@ export default function AdminDashboard() {
 
         {/* Sidebar */}
         <div className="dash-side">
+          {/* Retards critiques */}
+          {criticalOverdue.length > 0 && (
+            <div className="dash-card critical-card">
+              <div className="dash-card-header">
+                <div className="card-title-group">
+                  <Flame size={18} className="card-title-icon icon-red" />
+                  <h2>Retards critiques</h2>
+                </div>
+                <span className="card-badge badge-alert">{criticalOverdue.length}</span>
+              </div>
+              <ul className="critical-list">
+                {criticalOverdue.map(loan => {
+                  const daysLate = Math.ceil((new Date() - new Date(loan.dueDate)) / (1000 * 60 * 60 * 24));
+                  return (
+                    <li key={loan._id} className="critical-item">
+                      <div className="critical-info">
+                        <span className="critical-member">{loan.member?.prenom} {loan.member?.nom}</span>
+                        <span className="critical-book">{loan.book?.title}</span>
+                      </div>
+                      <span className="critical-days">{daysLate}j</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
           {/* Actions rapides */}
           <div className="dash-card">
             <div className="dash-card-header">
