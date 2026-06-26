@@ -89,6 +89,15 @@
   cursor: none !important;
 }
 
+@media (hover: none) and (pointer: coarse), (max-width: 1024px) {
+  *, *::before, *::after {
+    cursor: auto !important;
+  }
+  .cursor-dot, .cursor-ring {
+    display: none !important;
+  }
+}
+
 /* ══════════════════════════════════════════════════════
    CUSTOM CURSOR
 ══════════════════════════════════════════════════════ */

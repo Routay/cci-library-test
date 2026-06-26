@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useBooks } from '../hooks/useBooks';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CCI_LOGO from '../assets/logo.png';
 import BookCover from '../components/BookCover';
 import { Compass, LayoutGrid, Bookmark, PenLine, Heart, BookMarked, Home, Bell, Search, Eye, Star } from 'lucide-react';
@@ -9,6 +9,7 @@ import './Catalogue.css';
 const CATEGORIES = ['Tous', 'Aqida', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya'];
 
 const CatalogueDashboard = () => {
+  const navigate = useNavigate();
   const { books, loading, error } = useBooks();
   const [searchTerm,   setSearchTerm]   = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
@@ -205,7 +206,13 @@ const CatalogueDashboard = () => {
                 <div
                   className={`dash-book-card ${isSelected ? 'selected' : ''}`}
                   key={book._id}
-                  onClick={() => setSelectedBook(book)}
+                  onClick={() => {
+                    setSelectedBook(book);
+                    // Si on est sur un petit écran (panel caché), naviguer directement
+                    if (window.innerWidth <= 900) {
+                      navigate(`/livre/${book._id}`);
+                    }
+                  }}
                 >
                   <BookCover
                     title={book.title}
