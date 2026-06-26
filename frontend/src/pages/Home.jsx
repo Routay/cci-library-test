@@ -44,7 +44,7 @@ export default function Home() {
         </div>
         <div className="hero-content container">
           <h1 className="hero-title animate-fadeUp">
-            Bibliothèque <span className="hero-title-cci">cci</span>
+            Bibliothèque <span className="hero-title-cci">CCI</span>
           </h1>
           <p className="hero-subtitle animate-fadeUp" style={{ animationDelay: '0.15s' }}>
             <span className="hero-script">Islamique</span>

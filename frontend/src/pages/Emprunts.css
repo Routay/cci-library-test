@@ -14,7 +14,7 @@
 }
 .emprunts-header h1 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.6rem, 5vw, 3rem);
   font-weight: 300;
   margin-bottom: 10px;
   position: relative;
