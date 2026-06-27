@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useBooks } from '../../hooks/useBooks';
-import { XCircle, Pencil, Trash2, Plus, Search, BookOpen } from 'lucide-react';
+import { XCircle, Pencil, Trash2, Plus, Search, BookOpen, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { aiAPI } from '../../services/api';
 import './AdminLivres.css';
 
 const CATS  = ['Aqida', 'Tawhid', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Autre'];
-const EMPTY = { title: '', author: '', category: 'Aqida', stock: 1, description: '' };
+const EMPTY = { title: '', author: '', category: 'Aqida', stock: 1, description: '', frontCoverImage: '', backCoverImage: '', aiExtractedText: '' };
 
 function Spinner() {
   return (
@@ -21,16 +22,46 @@ export default function AdminLivres() {
   const [current, setCurrent]   = useState(EMPTY);
   const [deleteId, setDeleteId] = useState(null);
   const [saving, setSaving]     = useState(false);
+  const [extracting, setExtracting] = useState(false);
   const [apiError, setApiError] = useState('');
+  const [frontFile, setFrontFile] = useState(null);
+  const [backFile, setBackFile] = useState(null);
 
   const filtered = books.filter((b) =>
     b.title.toLowerCase().includes(search.toLowerCase()) ||
     b.author.toLowerCase().includes(search.toLowerCase())
   );
 
-  const openAdd  = ()  => { setCurrent(EMPTY); setApiError(''); setModal('add'); };
-  const openEdit = (b) => { setCurrent({ ...b }); setApiError(''); setModal('edit'); };
+  const openAdd  = ()  => { setCurrent(EMPTY); setFrontFile(null); setBackFile(null); setApiError(''); setModal('add'); };
+  const openEdit = (b) => { setCurrent({ ...b }); setFrontFile(null); setBackFile(null); setApiError(''); setModal('edit'); };
   const openDel  = (id) => { setDeleteId(id); setModal('delete'); };
+
+  const handleAI = async () => {
+    if (!frontFile && !backFile) return alert("Veuillez sélectionner au moins une image (page de garde ou arrière).");
+    setExtracting(true);
+    setApiError('');
+    try {
+      const formData = new FormData();
+      if (frontFile) formData.append('frontCover', frontFile);
+      if (backFile) formData.append('backCover', backFile);
+      
+      const res = await aiAPI.extractCovers(formData);
+      setCurrent(prev => ({
+        ...prev,
+        title: res.data.title || prev.title,
+        author: res.data.author || prev.author,
+        frontCoverImage: res.data.frontCoverUrl || prev.frontCoverImage,
+        backCoverImage: res.data.backCoverUrl || prev.backCoverImage,
+        aiExtractedText: res.data.extractedText || prev.aiExtractedText
+      }));
+      setFrontFile(null); // Clear files so we don't re-upload
+      setBackFile(null);
+    } catch (err) {
+      setApiError(err.response?.data?.message || "Erreur lors de l'extraction IA");
+    } finally {
+      setExtracting(false);
+    }
+  };
 
   const saveBook = async () => {
     if (!current.title || !current.author) return;
@@ -160,6 +191,28 @@ export default function AdminLivres() {
                   {apiError}
                 </div>
               )}
+              
+              {/* IA Extraction Section */}
+              <div className="ai-extraction-section" style={{ background: 'var(--bg2)', padding: '15px', borderRadius: '8px', marginBottom: '15px', border: '1px solid var(--border)' }}>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', marginBottom: '10px' }}>
+                  <Sparkles size={16} color="var(--gold)" />
+                  Générer le contenu via IA (Photos)
+                </h3>
+                <div className="form-row">
+                  <div className="form-field">
+                    <label style={{ fontSize: '0.8rem' }}><ImageIcon size={14} style={{display:'inline', verticalAlign:'middle'}}/> Page de garde (Avant)</label>
+                    <input type="file" accept="image/*" onChange={(e) => setFrontFile(e.target.files[0])} style={{ fontSize: '0.8rem' }} />
+                  </div>
+                  <div className="form-field">
+                    <label style={{ fontSize: '0.8rem' }}><ImageIcon size={14} style={{display:'inline', verticalAlign:'middle'}}/> Quatrième de couverture (Arrière)</label>
+                    <input type="file" accept="image/*" onChange={(e) => setBackFile(e.target.files[0])} style={{ fontSize: '0.8rem' }} />
+                  </div>
+                </div>
+                <button type="button" className="btn btn-gold" onClick={handleAI} disabled={extracting || (!frontFile && !backFile)} style={{ width: '100%', marginTop: '5px' }}>
+                  {extracting ? 'Analyse de l\'image en cours...' : 'Extraire le texte & Auto-remplir'}
+                </button>
+              </div>
+
               <div className="form-field">
                 <label>Titre <span className="required">*</span></label>
                 <input type="text" value={current.title} onChange={(e) => setCurrent({ ...current, title: e.target.value })} placeholder="Titre du livre" />
@@ -181,8 +234,12 @@ export default function AdminLivres() {
                 </div>
               </div>
               <div className="form-field">
-                <label>Description</label>
-                <textarea rows={3} value={current.description || ''} onChange={(e) => setCurrent({ ...current, description: e.target.value })} placeholder="Brève description..." />
+                <label>Description (Optionnelle)</label>
+                <textarea rows={2} value={current.description || ''} onChange={(e) => setCurrent({ ...current, description: e.target.value })} placeholder="Brève description..." />
+              </div>
+              <div className="form-field">
+                <label>Texte intégral extrait par l'IA (Affiché en mode Lecture)</label>
+                <textarea rows={5} value={current.aiExtractedText || ''} onChange={(e) => setCurrent({ ...current, aiExtractedText: e.target.value })} placeholder="Texte enrichi généré par l'IA..." />
               </div>
             </div>
             <div className="modal-footer">

@@ -89,22 +89,28 @@ export default function LivreDetail() {
               <p className="ai-intro">
                 Ce résumé a été automatiquement généré par notre intelligence artificielle pour vous donner un aperçu rapide et structuré de l'œuvre.
               </p>
-              <div className="ai-text">
-                <p>
-                  <strong>{book.title}</strong> est un ouvrage majeur qui explore en profondeur les thèmes liés à la catégorie <em>{book.category}</em>. 
-                  L'auteur, {book.author}, y développe une analyse rigoureuse et accessible.
-                </p>
-                <p>
-                  Le livre se divise en plusieurs parties clés, abordant les fondements théoriques avant de passer aux applications pratiques et spirituelles. 
-                  Il est particulièrement recommandé pour les étudiants et les chercheurs en quête de références solides sur ce sujet.
-                </p>
-                {book.description && (
-                  <div className="original-desc">
-                    <strong>Note de l'éditeur :</strong>
-                    <p>{book.description}</p>
-                  </div>
-                )}
-              </div>
+                <div className="ai-text">
+                  {book.aiExtractedText ? (
+                    <div dangerouslySetInnerHTML={{ __html: book.aiExtractedText }} />
+                  ) : (
+                    <>
+                      <p>
+                        <strong>{book.title}</strong> est un ouvrage majeur qui explore en profondeur les thèmes liés à la catégorie <em>{book.category}</em>. 
+                        L'auteur, {book.author}, y développe une analyse rigoureuse et accessible.
+                      </p>
+                      <p>
+                        Le livre se divise en plusieurs parties clés, abordant les fondements théoriques avant de passer aux applications pratiques et spirituelles. 
+                        Il est particulièrement recommandé pour les étudiants et les chercheurs en quête de références solides sur ce sujet.
+                      </p>
+                    </>
+                  )}
+                  {book.description && (
+                    <div className="original-desc" style={{ marginTop: '20px' }}>
+                      <strong>Note supplémentaire :</strong>
+                      <p>{book.description}</p>
+                    </div>
+                  )}
+                </div>
             </div>
           </div>
 
@@ -114,18 +120,35 @@ export default function LivreDetail() {
               <BookOpen className="icon-gold" size={24} />
               <h2>Lecture en ligne</h2>
             </div>
-            <div className="reader-content">
-              <div className="reader-placeholder">
-                <BookOpen size={48} className="reader-icon" />
-                <h3>L'intégralité du livre sera disponible ici</h3>
-                <p>
-                  Cette section est réservée à la consultation numérique de l'ouvrage. 
-                  Bientôt, vous pourrez lire le contenu complet directement sur cette plateforme.
-                </p>
-                <button className="btn btn-glass mt-4" disabled>
-                  <Clock size={16} /> Bientôt disponible
-                </button>
-              </div>
+            <div className="reader-content" style={{ padding: '20px' }}>
+              {(book.frontCoverImage || book.backCoverImage) ? (
+                <div className="book-images-preview" style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+                  {book.frontCoverImage && (
+                    <div className="cover-wrap">
+                      <h4 style={{ textAlign: 'center', marginBottom: '10px', color: 'var(--txt2)' }}>Page de garde</h4>
+                      <img src={book.frontCoverImage} alt="Page de garde" style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    </div>
+                  )}
+                  {book.backCoverImage && (
+                    <div className="cover-wrap">
+                      <h4 style={{ textAlign: 'center', marginBottom: '10px', color: 'var(--txt2)' }}>Quatrième de couverture</h4>
+                      <img src={book.backCoverImage} alt="Quatrième de couverture" style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="reader-placeholder">
+                  <BookOpen size={48} className="reader-icon" />
+                  <h3>L'intégralité du livre sera disponible ici</h3>
+                  <p>
+                    Cette section est réservée à la consultation numérique de l'ouvrage. 
+                    Bientôt, vous pourrez lire le contenu complet directement sur cette plateforme.
+                  </p>
+                  <button className="btn btn-glass mt-4" disabled>
+                    <Clock size={16} /> Bientôt disponible
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

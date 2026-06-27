@@ -31,6 +31,18 @@ const bookSchema = new mongoose.Schema(
       type:    String,
       default: '',
     },
+    frontCoverImage: {
+      type:    String,
+      default: '',
+    },
+    backCoverImage: {
+      type:    String,
+      default: '',
+    },
+    aiExtractedText: {
+      type:    String,
+      default: '',
+    },
     isWeekly: {
       type:    Boolean,
       default: false,

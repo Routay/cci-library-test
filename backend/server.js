@@ -13,6 +13,7 @@ import statsRoutes from './routes/stats.js';
 import logRoutes from './routes/logs.js';
 import adminRoutes from './routes/admin.js';
 import grandsHommesRoutes from './routes/grandsHommes.js';
+import aiRoutes from './routes/ai.js';
 import { startCronJobs } from './services/cron.js';
 
 dotenv.config();
@@ -52,6 +53,7 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/grands-hommes', grandsHommesRoutes);
+app.use('/api/ai', aiRoutes);
 
 // ── Health check ──────────────────────────────────────────
 app.get('/api/health', (_req, res) =>

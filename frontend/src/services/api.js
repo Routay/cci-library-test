@@ -85,4 +85,10 @@ export const grandsHommesAPI = {
   delete:       id        => api.delete(`/api/grands-hommes/${id}`),
 };
 
+export const aiAPI = {
+  extractCovers: (formData) => api.post('/api/ai/extract-covers', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+};
+
 export default api;
