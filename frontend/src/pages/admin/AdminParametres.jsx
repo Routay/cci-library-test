@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import {
   Building2, BookOpenCheck, Bell, ShieldCheck,
   Save, CheckCircle, RefreshCw, XCircle,
-  Clock, Hash, RotateCcw, Mail,
+  Clock, Hash, RotateCcw, Mail, MapPin, Phone,
 } from 'lucide-react';
 import './AdminParametres.css';
 
@@ -298,6 +298,49 @@ export default function AdminParametres() {
                 />
                 <span className="toggle-slider" />
               </label>
+            </div>
+          </div>
+        </div>
+
+        {/* ═══ Contact & Informations publiques ═══ */}
+        <div className="settings-section">
+          <div className="settings-section-header">
+            <div className="settings-section-icon" style={{ background: 'rgba(14,165,233,0.12)', color: '#0EA5E9' }}>
+              <MapPin size={20} />
+            </div>
+            <div>
+              <h3 className="settings-section-title">Contact & Informations publiques</h3>
+              <p className="settings-section-sub">Ces informations sont visibles sur les pages publiques (Footer, À propos)</p>
+            </div>
+          </div>
+          <div className="settings-section-body">
+            <div className="settings-field-row">
+              <div className="settings-field">
+                <label><Mail size={11} style={{ display: 'inline', verticalAlign: -1 }} /> Email de contact</label>
+                <input
+                  type="email"
+                  value={settings.contactEmail || ''}
+                  onChange={e => update('contactEmail', e.target.value)}
+                  placeholder="contact@example.com"
+                />
+              </div>
+              <div className="settings-field">
+                <label><Phone size={11} style={{ display: 'inline', verticalAlign: -1 }} /> Téléphone</label>
+                <input
+                  type="text"
+                  value={settings.contactPhone || ''}
+                  onChange={e => update('contactPhone', e.target.value)}
+                  placeholder="+221 XX XXX XX XX"
+                />
+              </div>
+            </div>
+            <div className="settings-field">
+              <label>Description du footer (page publique)</label>
+              <textarea
+                value={settings.footerDescription || ''}
+                onChange={e => update('footerDescription', e.target.value)}
+                placeholder="Description courte affichée dans le pied de page..."
+              />
             </div>
           </div>
         </div>

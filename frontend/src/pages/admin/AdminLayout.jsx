@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard, BookOpen, ClipboardList, Users, Star,
-  LogOut, FileText, Shield, Sun, Moon, Settings, UserCog, Landmark,
+  LogOut, FileText, Shield, Sun, Moon, Settings, UserCog, Landmark, HeartHandshake,
 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import CCI_LOGO from '../../assets/logo.png';
@@ -26,6 +26,7 @@ export default function AdminLayout() {
 
   const SUPER_NAV = [
     { to: '/admin/gestion-admins', icon: <UserCog size={18} />,  label: 'Gestion Admins'     },
+    { to: '/admin/donations',      icon: <HeartHandshake size={18} />, label: 'Dons (Bénévoles)' },
     { to: '/admin/logs',           icon: <FileText size={18} />, label: "Journal d'Activité" },
     { to: '/admin/parametres',     icon: <Settings size={18} />, label: 'Paramètres'         },
   ];

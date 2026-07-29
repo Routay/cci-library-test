@@ -23,7 +23,9 @@ import AdminLogs     from './pages/admin/AdminLogs.jsx';
 import AdminGestion  from './pages/admin/AdminGestion.jsx';
 import AdminParametres from './pages/admin/AdminParametres.jsx';
 import AdminGrandsHommes from './pages/admin/AdminGrandsHommes.jsx';
+import AdminDonations from './pages/admin/AdminDonations.jsx';
 import LivreDetail from './pages/LivreDetail.jsx';
+import Benevoles from './pages/Benevoles.jsx';
 
 function ProtectedAdmin() {
   const { isAuth, loading } = useAuth();
@@ -45,6 +47,7 @@ function PublicLayout() {
           <Route path="/apropos"        element={<Apropos />} />
           <Route path="/emprunts"       element={<Emprunts />} />
           <Route path="/grands-hommes"  element={<GrandsHommes />} />
+          <Route path="/benevoles"      element={<Benevoles />} />
         </Routes>
       </main>
       <Footer />
@@ -83,6 +86,7 @@ export default function App() {
               <Route path="gestion-admins" element={<AdminGestion />} />
               <Route path="parametres"     element={<AdminParametres />} />
               <Route path="grands-hommes"  element={<AdminGrandsHommes />} />
+              <Route path="donations"      element={<AdminDonations />} />
             </Route>
 
             {/* Pages publiques */}

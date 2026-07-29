@@ -123,12 +123,46 @@
   background: var(--bg3);
 }
 
+/* ─── Report Button ────────────────────────────────── */
+.btn-report {
+  font-size: 0.82rem;
+  padding: 9px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid #6366F1;
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--trans);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+.btn-report:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4F46E5, #4338CA);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  transform: translateY(-1px);
+}
+.btn-report:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
 /* ─── KPI Cards ────────────────────────────────────── */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   padding: 0 32px 24px;
+}
+.kpi-grid-7 {
+  grid-template-columns: repeat(12, 1fr);
+}
+.kpi-grid-7 .kpi-card {
+  grid-column: span 3;
+}
+.kpi-grid-7 .kpi-card:nth-child(n+5) {
+  grid-column: span 4;
 }
 .kpi-card {
   background: var(--bg2);
@@ -286,6 +320,116 @@
   align-items: start;
 }
 
+/* ─── Top Books List ───────────────────────────────── */
+.top-books-list {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.top-book-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.top-book-item:last-child {
+  border-bottom: none;
+}
+.top-book-item:hover {
+  background: rgba(184, 146, 42, 0.04);
+}
+
+.top-book-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg3);
+  color: var(--txt2);
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.top-book-rank.rank-1 {
+  background: linear-gradient(135deg, #FACC15, #CA8A04);
+  color: #fff;
+  border-color: #CA8A04;
+  box-shadow: 0 4px 10px rgba(202,138,4,0.3);
+}
+.top-book-rank.rank-2 {
+  background: linear-gradient(135deg, #E2E8F0, #94A3B8);
+  color: #fff;
+  border-color: #94A3B8;
+  box-shadow: 0 4px 10px rgba(148,163,184,0.3);
+}
+.top-book-rank.rank-3 {
+  background: linear-gradient(135deg, #FDBA74, #C2410C);
+  color: #fff;
+  border-color: #C2410C;
+  box-shadow: 0 4px 10px rgba(194,65,12,0.3);
+}
+
+.top-book-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+  gap: 2px;
+}
+.top-book-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--txt1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.top-book-author {
+  font-size: 0.82rem;
+  color: var(--txt3);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-book-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg3);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.top-book-count-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold-l);
+  line-height: 1;
+}
+.top-book-count-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--txt3);
+  margin-top: 3px;
+}
+[data-theme="dark"] .top-book-count-val {
+  color: #F0D98A;
+}
+
 /* ─── Table ────────────────────────────────────────── */
 .table-wrap { overflow-x: auto; }
 .admin-table {
@@ -398,6 +542,76 @@
 
 /* ─── Actions Rapides ── */
 .dash-side { display: flex; flex-direction: column; gap: 20px; }
+
+/* ─── Critical Overdue List ────────────────────────── */
+.critical-list {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  list-style: none;
+  margin: 0;
+}
+
+.critical-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.critical-item:last-child {
+  border-bottom: none;
+}
+.critical-item:hover {
+  background: rgba(248, 113, 113, 0.04);
+}
+
+.critical-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+  gap: 2px;
+}
+.critical-member {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--txt1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.critical-book {
+  font-size: 0.82rem;
+  color: var(--txt3);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.critical-days {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(248, 113, 113, 0.1);
+  color: #F87171;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  flex-shrink: 0;
+}
+[data-theme="light"] .critical-days {
+  background: #FCEBEB;
+  color: #791F1F;
+  border-color: rgba(121, 31, 31, 0.15);
+}
+
 .quick-actions {
   display: flex;
   flex-direction: column;
@@ -515,6 +729,7 @@
 @media (max-width: 1200px) {
   .charts-grid { grid-template-columns: 1fr; }
   .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .kpi-grid-7 .kpi-card { grid-column: auto; }
 }
 @media (max-width: 900px) {
   .dashboard-grid { grid-template-columns: 1fr; }
@@ -525,7 +740,9 @@
   .kpi-grid { grid-template-columns: 1fr 1fr; }
   .kpi-value { font-size: 1.6rem; }
   .kpi-icon-wrap { width: 36px; height: 36px; }
+  .kpi-grid-7 .kpi-card { grid-column: auto; }
 }
 @media (max-width: 480px) {
   .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-grid-7 .kpi-card { grid-column: auto; }
 }

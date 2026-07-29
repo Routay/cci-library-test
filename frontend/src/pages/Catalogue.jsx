@@ -1,19 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useBooks } from '../hooks/useBooks';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import CCI_LOGO from '../assets/logo.png';
 import BookCover from '../components/BookCover';
 import { Compass, LayoutGrid, Bookmark, PenLine, Heart, BookMarked, Home, Bell, Search, Eye, Star } from 'lucide-react';
 import './Catalogue.css';
 
-const CATEGORIES = ['Tous', 'Aqida', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya'];
+const CATEGORIES = ['Tous', 'Aqida', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Autres'];
+const MAIN_CATEGORIES = ['Aqida', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Tawhid', 'Aqîda', 'Sîra', 'Tawhîd'];
 
 const CatalogueDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { books, loading, error } = useBooks();
-  const [searchTerm,   setSearchTerm]   = useState('');
+  const { t } = useTranslation();
+  const [searchTerm,   setSearchTerm]   = useState(location.state?.searchAuthor || '');
   const [selectedBook, setSelectedBook] = useState(null);
-  const [activeTab,    setActiveTab]    = useState('Tous');
+  const [activeTab,    setActiveTab]    = useState(location.state?.category || 'Tous');
+
+  useEffect(() => {
+    if (location.state?.category) {
+      setActiveTab(location.state.category);
+    }
+    if (location.state?.searchAuthor) {
+      setSearchTerm(location.state.searchAuthor);
+    }
+  }, [location.state?.category, location.state?.searchAuthor]);
 
   // Données de démo si la base est vide
   const mockBooks = [
@@ -57,7 +70,16 @@ const CatalogueDashboard = () => {
   const filteredBooks = displayBooks.filter(book => {
     const matchSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         book.author?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchTab = activeTab === 'Tous' || book.category === activeTab;
+    
+    let matchTab = false;
+    if (activeTab === 'Tous') {
+      matchTab = true;
+    } else if (activeTab === 'Autres') {
+      matchTab = !MAIN_CATEGORIES.includes(book.category);
+    } else {
+      matchTab = book.category === activeTab;
+    }
+    
     return matchSearch && matchTab;
   });
 
@@ -67,7 +89,7 @@ const CatalogueDashboard = () => {
         <div className="loader-luxury">
           <div className="spinner" />
           <p style={{ marginTop: 16, color: 'var(--txt2)', fontSize: '0.9rem' }}>
-            Chargement de la bibliothèque…
+            {t('catalogue.loading')}
           </p>
         </div>
       </div>
@@ -80,38 +102,38 @@ const CatalogueDashboard = () => {
       {/* ─── SIDEBAR ───────────────────────────────────── */}
       <aside className="dash-sidebar">
         {/* Logo CCI */}
-        <Link to="/" className="dash-logo-container" title="Accueil">
+        <Link to="/" className="dash-logo-container" title={t('catalogue.home')}>
           <img src={CCI_LOGO} alt="Logo CCI" className="dash-logo-img" />
         </Link>
 
         <nav className="dash-nav">
           <a href="#" className="dash-nav-item active">
             <span className="dash-nav-icon"><Compass size={18} strokeWidth={1.8} /></span>
-            <span>Découvrir</span>
+            <span>{t('catalogue.discover')}</span>
           </a>
           <a href="#" className="dash-nav-item">
             <span className="dash-nav-icon"><LayoutGrid size={18} strokeWidth={1.8} /></span>
-            <span>Catégories</span>
+            <span>{t('catalogue.categories')}</span>
           </a>
           <a href="#" className="dash-nav-item">
             <span className="dash-nav-icon"><Bookmark size={18} strokeWidth={1.8} /></span>
-            <span>Ma liste</span>
+            <span>{t('catalogue.myList')}</span>
           </a>
           
           <Link to="/grands-hommes" className="dash-nav-item" style={{ marginTop: 10 }}>
             <span className="dash-nav-icon"><Star size={18} strokeWidth={1.8} /></span>
-            <span>Grands Hommes</span>
+            <span>{t('catalogue.greatMen')}</span>
           </Link>
 
-          <div className="dash-nav-section">Collection</div>
+          <div className="dash-nav-section">{t('catalogue.collection')}</div>
 
           <a href="#" className="dash-nav-item">
             <span className="dash-nav-icon"><PenLine size={18} strokeWidth={1.8} /></span>
-            <span>Auteurs</span>
+            <span>{t('catalogue.authors')}</span>
           </a>
           <a href="#" className="dash-nav-item">
             <span className="dash-nav-icon"><Heart size={18} strokeWidth={1.8} /></span>
-            <span>Favoris</span>
+            <span>{t('catalogue.favorites')}</span>
           </a>
         </nav>
 
@@ -119,11 +141,11 @@ const CatalogueDashboard = () => {
         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
           <Link to="/emprunts" className="dash-nav-item">
             <span className="dash-nav-icon"><BookMarked size={18} strokeWidth={1.8} /></span>
-            <span>Emprunter</span>
+            <span>{t('catalogue.borrow')}</span>
           </Link>
           <Link to="/" className="dash-nav-item">
             <span className="dash-nav-icon"><Home size={18} strokeWidth={1.8} /></span>
-            <span>Accueil</span>
+            <span>{t('catalogue.home')}</span>
           </Link>
         </div>
       </aside>
@@ -136,7 +158,7 @@ const CatalogueDashboard = () => {
             <Search size={17} strokeWidth={2} color="var(--txt3)" />
             <input
               type="text"
-              placeholder="Rechercher livres, auteurs…"
+              placeholder={t('catalogue.searchPlaceholder')}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -154,7 +176,7 @@ const CatalogueDashboard = () => {
 
         {/* Section recommandés */}
         <section className="dash-recommended">
-          <h2 className="dash-section-title">Recommandés pour vous</h2>
+          <h2 className="dash-section-title">{t('catalogue.recommended')}</h2>
           <div className="dash-carousel">
             {displayBooks.slice(0, 6).map((book, idx) => (
               <Link
@@ -172,7 +194,7 @@ const CatalogueDashboard = () => {
                 />
                 <div className="dash-carousel-info">
                   <h3 className="dash-carousel-title">{book.title}</h3>
-                  <p className="dash-carousel-author">{book.author || 'Inconnu'}</p>
+                  <p className="dash-carousel-author">{book.author || t('common.unknown')}</p>
                   <div style={{ marginTop: 6, color: 'var(--gold-l)', fontSize: '0.85rem' }}>
                     {'★'.repeat(Math.round(book.rating || 4))}
                     <span style={{ opacity: 0.3 }}>{'★'.repeat(5 - Math.round(book.rating || 4))}</span>
@@ -193,7 +215,7 @@ const CatalogueDashboard = () => {
                   className={`dash-tab ${activeTab === tab ? 'active' : ''}`}
                   onClick={() => setActiveTab(tab)}
                 >
-                  {tab}
+                  {tab === 'Tous' ? t('catalogue.all') : tab}
                 </div>
               ))}
             </div>
@@ -224,11 +246,11 @@ const CatalogueDashboard = () => {
                   />
                   <div className="dash-book-info">
                     <div className="dash-book-info-title">{book.title}</div>
-                    <div className="dash-book-info-author">{book.author || 'Inconnu'}</div>
+                    <div className="dash-book-info-author">{book.author || t('common.unknown')}</div>
                   </div>
                   <Link to={`/livre/${book._id}`} className="dash-book-overlay">
                     <Eye size={20} />
-                    <span>Voir plus</span>
+                    <span>{t('common.seeMore')}</span>
                   </Link>
                 </div>
               );
@@ -238,7 +260,7 @@ const CatalogueDashboard = () => {
           {filteredBooks.length === 0 && (
             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--txt3)' }}>
               <p style={{ fontSize: '2rem', marginBottom: 10, display: 'flex', justifyContent: 'center' }}><Search size={36} strokeWidth={1.5} color="var(--gold)" /></p>
-              <p>Aucun ouvrage trouvé pour « {searchTerm} »</p>
+              <p>{t('catalogue.noResults', { term: searchTerm })}</p>
             </div>
           )}
         </section>
@@ -259,21 +281,21 @@ const CatalogueDashboard = () => {
             </div>
 
             <h2 className="dash-right-title">{selectedBook.title}</h2>
-            <p className="dash-right-author">{selectedBook.author || 'Inconnu'}</p>
+            <p className="dash-right-author">{selectedBook.author || t('common.unknown')}</p>
 
             <div className="dash-right-stats">
               <div className="dash-stat-item">
                 <span className="dash-stat-value">{selectedBook.rating || '4.8'}</span>
-                <span className="dash-stat-label">Note</span>
+                <span className="dash-stat-label">{t('catalogue.rating')}</span>
               </div>
               <div className="dash-stat-item">
                 <span className="dash-stat-value" style={{ fontSize: '0.85rem' }}>{selectedBook.category || 'Islam'}</span>
-                <span className="dash-stat-label">Catégorie</span>
+                <span className="dash-stat-label">{t('catalogue.category')}</span>
               </div>
             </div>
 
             <p className="dash-right-desc">
-              {selectedBook.description || "Aucun résumé disponible pour cet ouvrage. Explorez ce livre pour en découvrir la sagesse."}
+              {selectedBook.description || t('catalogue.noSummary')}
             </p>
 
             <div className="dash-right-actions">
@@ -281,13 +303,13 @@ const CatalogueDashboard = () => {
                 to={`/livre/${selectedBook._id}`}
                 className="dash-btn-details"
               >
-                <Eye size={16} /> Voir plus
+                <Eye size={16} /> {t('common.seeMore')}
               </Link>
               <Link
                 to={`/emprunts?bookId=${selectedBook._id}`}
                 style={{ width: '100%', textDecoration: 'none' }}
               >
-                <button className="dash-btn-read">Emprunter ce livre</button>
+                <button className="dash-btn-read">{t('catalogue.borrowBook')}</button>
               </Link>
             </div>
           </>
@@ -297,7 +319,7 @@ const CatalogueDashboard = () => {
               <BookMarked size={40} strokeWidth={1.2} color="var(--gold)" />
             </div>
             <p style={{ color: 'var(--txt3)', fontSize: '0.88rem' }}>
-              Sélectionnez un livre pour voir les détails
+              {t('catalogue.selectBook')}
             </p>
           </div>
         )}

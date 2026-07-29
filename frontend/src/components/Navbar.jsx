@@ -1,22 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext.jsx';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import CCI_LOGO from '../assets/logo.png';
 import './Navbar.css';
 
 const LINKS = [
-  { path: '/',              label: 'La bibliothèque'    },
-  { path: '/catalogue',    label: 'Catalogue'           },
-  { path: '/livre-semaine',label: 'Livre de la semaine' },
-  { path: '/apropos',      label: 'À propos'            },
+  { path: '/',              labelKey: 'nav.library'    },
+  { path: '/catalogue',    labelKey: 'nav.catalog'           },
+  { path: '/livre-semaine',labelKey: 'nav.bookOfWeek' },
+  { path: '/apropos',      labelKey: 'nav.about'            },
+  { path: '/benevoles',    labelKey: 'nav.volunteers'           },
 ];
 
 export default function Navbar() {
   const [scrolled,  setScrolled]  = useState(false);
   const [menuOpen,  setMenuOpen]  = useState(false);
+  const [langOpen,  setLangOpen]  = useState(false);
   const { theme, toggle }         = useTheme();
   const location                  = useLocation();
+  const { t, i18n }               = useTranslation();
+
+  const langs = [
+    { code: 'fr', label: 'FR' },
+    { code: 'en', label: 'EN' },
+    { code: 'ar', label: 'AR' },
+  ];
 
   /* Scroll detect */
   useEffect(() => {
@@ -60,7 +70,7 @@ export default function Navbar() {
               to={l.path}
               className={`nav-link clickable ${location.pathname === l.path ? 'active' : ''}`}
             >
-              {l.label}
+              {t(l.labelKey)}
               {location.pathname === l.path && <span className="nav-active-dot" />}
             </Link>
           ))}
@@ -68,6 +78,34 @@ export default function Navbar() {
 
         {/* ── Droite ── */}
         <div className="nav-right">
+          
+          {/* Sélecteur de langue */}
+          <div 
+            className="lang-selector-wrap clickable"
+            onMouseEnter={() => setLangOpen(true)}
+            onMouseLeave={() => setLangOpen(false)}
+          >
+            <div className="lang-toggle">
+              <Globe size={16} className="lang-icon" />
+              <span className="lang-current">{i18n.language.toUpperCase()}</span>
+            </div>
+            
+            <div className={`lang-dropdown ${langOpen ? 'open' : ''}`}>
+              {langs.map(l => (
+                <button 
+                  key={l.code} 
+                  className={`lang-option clickable ${i18n.language === l.code ? 'active' : ''}`}
+                  onClick={() => {
+                    i18n.changeLanguage(l.code);
+                    setLangOpen(false);
+                  }}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <button
             className="theme-btn clickable"
             onClick={toggle}
@@ -75,7 +113,6 @@ export default function Navbar() {
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-
 
           {/* Bouton hamburger mobile */}
           <button
@@ -100,10 +137,9 @@ export default function Navbar() {
               to={l.path}
               className={`mobile-link clickable ${location.pathname === l.path ? 'active' : ''}`}
             >
-              {l.label}
+              {t(l.labelKey)}
             </Link>
           ))}
-
         </nav>
       </div>
 

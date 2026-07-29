@@ -21,6 +21,7 @@ export default function AdminGrandsHommes() {
   const [editing, setEditing] = useState(null);   // null = liste, 'new' = créer, id = modifier
   const [form,    setForm]    = useState(EMPTY_FORM);
   const [saving,  setSaving]  = useState(false);
+  const [deleting, setDeleting] = useState(null);
 
   const fetchAll = () => {
     setLoading(true);
@@ -98,12 +99,16 @@ export default function AdminGrandsHommes() {
   };
 
   // ── Supprimer ──
-  const handleDelete = async (id, name) => {
-    if (!confirm(`Supprimer "${name}" définitivement ?`)) return;
+  const handleDelete = (id, name) => {
+    setDeleting({ id, name });
+  };
+
+  const confirmDelete = async () => {
     try {
-      await grandsHommesAPI.delete(id);
+      await grandsHommesAPI.delete(deleting.id);
       toast.success('Personnalité supprimée');
       fetchAll();
+      setDeleting(null);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Erreur lors de la suppression');
     }
@@ -371,6 +376,29 @@ export default function AdminGrandsHommes() {
           </table>
         </div>
       </div>
+
+      {/* Modal Suppression */}
+      {deleting && (
+        <div className="modal-overlay" onClick={() => setDeleting(null)}>
+          <div className="modal-box modal-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Confirmer la suppression</h2>
+              <button className="modal-close" onClick={() => setDeleting(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ color: 'var(--txt2)', lineHeight: 1.6 }}>
+                Êtes-vous sûr de vouloir supprimer <strong>"{deleting.name}"</strong> ? Cette action est irréversible.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={() => setDeleting(null)}>Annuler</button>
+              <button className="btn btn-danger" onClick={confirmDelete}>
+                <Trash2 size={14} /> Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

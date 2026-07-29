@@ -28,7 +28,7 @@
 }
 .livre-header-sub {
   color: rgba(255,255,255,0.6);
-  font-size: 0.9rem;
+  font-size: 1rem;
   letter-spacing: 0.3px;
 }
 
@@ -64,7 +64,7 @@
   margin: 0 auto;
 }
 .livre-empty-icon { font-size: 3.5rem; }
-.livre-empty p { color: var(--txt2); font-size: 1rem; line-height: 1.6; }
+.livre-empty p { color: var(--txt2); font-size: 1.05rem; line-height: 1.6; }
 
 /* ─── DETAIL CARD ──────────────────────────────────────── */
 .livre-detail {
@@ -108,10 +108,10 @@
   right: -12px;
   background: linear-gradient(135deg, var(--gold), #8A6A18);
   color: #fff;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 50px;
   display: flex;
   align-items: center;
@@ -136,7 +136,7 @@
   margin-bottom: 8px;
 }
 .livre-author {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--gold-l);
   font-style: italic;
   margin-bottom: 0;
@@ -146,7 +146,7 @@
 .livre-desc-block { margin-bottom: 24px; }
 .livre-desc-label {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -156,7 +156,7 @@
 .livre-desc {
   color: var(--txt2);
   line-height: 1.8;
-  font-size: 0.97rem;
+  font-size: 1.05rem;
 }
 
 /* Méta */
@@ -170,11 +170,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--txt2);
   background: var(--bg3);
   border: 1px solid var(--border);
-  padding: 6px 14px;
+  padding: 7px 16px;
   border-radius: 50px;
 }
 .livre-meta-icon { font-size: 0.95rem; }
@@ -198,7 +198,7 @@
 }
 .livre-citation-arabic {
   font-family: 'Noto Naskh Arabic', serif;
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   color: var(--txt1);
   direction: rtl;
   text-align: right;
@@ -206,7 +206,7 @@
   margin-bottom: 6px;
 }
 .livre-citation-src {
-  font-size: 0.74rem;
+  font-size: 0.85rem;
   color: var(--gold-l);
   text-align: right;
   font-weight: 600;

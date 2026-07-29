@@ -79,6 +79,23 @@ const settingSchema = new mongoose.Schema(
       type:    Boolean,
       default: true,
     },
+
+    // ── Contact & Public Info ──
+    contactEmail: {
+      type:    String,
+      default: 'routaydev@gmail.com',
+      trim:    true,
+    },
+    contactPhone: {
+      type:    String,
+      default: '+221 78 429 00 65',
+      trim:    true,
+    },
+    footerDescription: {
+      type:    String,
+      default: 'Accès au savoir islamique pour tous les membres de la communauté ESP de Dakar.',
+      trim:    true,
+    },
   },
   { timestamps: true }
 );

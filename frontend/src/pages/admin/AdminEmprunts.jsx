@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useLoans } from '../../hooks/useLoans';
 import { useBooks } from '../../hooks/useBooks';
 import { useUsers } from '../../hooks/useUsers';
@@ -26,8 +27,9 @@ export default function AdminEmprunts() {
   const { loans, loading, error, createLoan, markReturned, updateLoan, extendLoan, deleteLoan } = useLoans();
   const { books } = useBooks();
   const { users } = useUsers();
+  const location = useLocation();
 
-  const [filter, setFilter] = useState('tous');
+  const [filter, setFilter] = useState(location.state?.filter || 'tous');
   const [search, setSearch] = useState('');
   const [modal, setModal] = useState(null);
   const [current, setCurrent] = useState(EMPTY_EMP);
@@ -35,6 +37,7 @@ export default function AdminEmprunts() {
   const [apiError, setApiError] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [extendTarget, setExtendTarget] = useState(null);
+  const [validateTarget, setValidateTarget] = useState(null);
   const [extendDays, setExtendDays] = useState(7);
 
   const filtered = loans
@@ -64,11 +67,16 @@ export default function AdminEmprunts() {
   const openDelete = l => { setDeleteTarget(l); setApiError(''); setModal('delete'); };
   const openExtend = l => { setExtendTarget(l); setExtendDays(7); setApiError(''); setModal('extend'); };
 
+  const openValidate = l => { setValidateTarget(l); setApiError(''); setModal('validate'); };
+
   const handleReturn = async id => {
     try { await markReturned(id); } catch(e) { alert(e.response?.data?.message||'Erreur'); }
   };
-  const handleValidate = async id => {
-    try { await updateLoan(id,{status:'actif'}); } catch(e) { alert(e.response?.data?.message||'Erreur validation'); }
+  const handleValidate = async () => {
+    if (!validateTarget) return; setSaving(true); setApiError('');
+    try { await updateLoan(validateTarget._id, {status:'actif'}); setModal(null); setValidateTarget(null); }
+    catch(err) { setApiError(err.response?.data?.message||'Erreur validation'); }
+    finally { setSaving(false); }
   };
   const handleDelete = async () => {
     if (!deleteTarget) return; setSaving(true); setApiError('');
@@ -118,7 +126,7 @@ export default function AdminEmprunts() {
       </div>
 
       {/* Tableau */}
-      <div className="dash-card"><div className="table-wrap"><table className="admin-table">
+      <div className="dash-card"><div className="admin-table-wrap"><table className="admin-table">
         <thead><tr><th>Membre</th><th>Livre</th><th>Emprunté le</th><th>Retour prévu</th><th>Délai</th><th>Statut</th><th>Actions</th></tr></thead>
         <tbody>
           {filtered.map((loan,i)=>{
@@ -132,15 +140,19 @@ export default function AdminEmprunts() {
                 <td>{days?<span className={`days-badge ${days.cls}`}>{days.text}</span>:'—'}</td>
                 <td><span className={`badge ${STATUS_CLASS[loan.status]}`}>{STATUS_LABELS[loan.status]}</span></td>
                 <td><div className="row-actions">
-                  {loan.status==='en_attente'&&<button className="row-btn rb-gold" onClick={()=>handleValidate(loan._id)}><CheckCircle size={13}/> Valider</button>}
+                  {loan.status==='en_attente'&&<button className="row-btn rb-gold" onClick={()=>openValidate(loan)}><CheckCircle size={13}/> Valider</button>}
                   {loan.status!=='rendu'&&loan.status!=='en_attente'&&(
                     <>
                       <button className="row-btn rb-green" onClick={()=>handleReturn(loan._id)}><CheckCircle size={13}/> Rendu</button>
                       <button className="row-btn rb-extend" onClick={()=>openExtend(loan)} title="Prolonger"><CalendarPlus size={13}/></button>
                     </>
                   )}
-                  <button className="row-btn row-btn-edit" onClick={()=>openEdit(loan)}><Pencil size={13}/></button>
-                  <button className="row-btn rb-danger" onClick={()=>openDelete(loan)} title="Supprimer"><Trash2 size={13}/></button>
+                  {loan.status!=='rendu'&&(
+                    <>
+                      <button className="row-btn row-btn-edit" onClick={()=>openEdit(loan)}><Pencil size={13}/></button>
+                      <button className="row-btn rb-danger" onClick={()=>openDelete(loan)} title="Supprimer"><Trash2 size={13}/></button>
+                    </>
+                  )}
                 </div></td>
               </tr>
             );
@@ -175,6 +187,24 @@ export default function AdminEmprunts() {
           </div>
           <div className="modal-footer"><button className="btn btn-outline" onClick={()=>setModal(null)}>Annuler</button>
             <button className="btn btn-primary" onClick={handleExtend} disabled={saving}>{saving?'Prolongation...':'Prolonger'}</button>
+          </div>
+        </div></div>
+      )}
+
+      {/* Modal Valider */}
+      {modal==='validate'&&validateTarget&&(
+        <div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal-box modal-small" onClick={e=>e.stopPropagation()}>
+          <div className="modal-header"><h2>Valider l'emprunt</h2><button className="modal-close" onClick={()=>setModal(null)}>✕</button></div>
+          <div className="modal-body">
+            {apiError&&<div className="form-error-banner"><XCircle size={14}/>{apiError}</div>}
+            <div className="delete-confirm-content">
+              <div className="delete-icon-wrap" style={{background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b'}}><CheckCircle size={28}/></div>
+              <p>Valider l'emprunt de <strong>{validateTarget.book?.title}</strong> par <strong>{validateTarget.member?.prenom} {validateTarget.member?.nom}</strong> ?</p>
+              <p className="delete-warning" style={{color: 'var(--txt2)'}}>Cet emprunt passera au statut "Actif".</p>
+            </div>
+          </div>
+          <div className="modal-footer"><button className="btn btn-outline" onClick={()=>setModal(null)}>Annuler</button>
+            <button className="btn btn-primary" onClick={handleValidate} disabled={saving}>{saving?'Validation...':'Confirmer'}</button>
           </div>
         </div></div>
       )}

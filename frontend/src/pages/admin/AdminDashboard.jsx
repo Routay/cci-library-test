@@ -1,17 +1,18 @@
 import { Link } from 'react-router-dom';
 import { useDashStats } from '../../hooks/useUsers';
-import { loansAPI } from '../../services/api';
+import { loansAPI, reportAPI } from '../../services/api';
 import {
   Book, ClipboardList, Clock, AlertTriangle, BookOpen,
   Star, UserPlus, CheckCircle, Users, TrendingUp,
   ArrowUpRight, ArrowDownRight, RefreshCw, BarChart3,
-  Activity, Eye, Percent, CalendarCheck, Crown, Flame
+  Activity, Eye, Percent, CalendarCheck, Crown, Flame, FileText
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import GrowthChart from '../../components/GrowthChart';
 import VisitorChart from '../../components/VisitorChart';
 import CategoryChart from '../../components/CategoryChart';
 import './AdminDashboard.css';
+import { useState } from 'react';
 
 const STATUS_LABELS = { en_attente: 'En attente', actif: 'Actif', retard: 'En retard', rendu: 'Rendu' };
 const STATUS_CLASS  = { en_attente: 'badge-warn', actif: 'badge-actif', retard: 'badge-retard', rendu: 'badge-rendu' };
@@ -26,6 +27,7 @@ function Spinner() {
 
 export default function AdminDashboard() {
   const { stats, loading, error, refetch } = useDashStats();
+  const [generatingReport, setGeneratingReport] = useState(false);
   const today = new Date().toLocaleDateString('fr-FR', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
@@ -56,12 +58,12 @@ export default function AdminDashboard() {
 
   const KPIS = [
     { label: 'Total livres',    value: kpis.totalBooks   ?? 0, icon: <Book size={22} strokeWidth={1.5} />,          color: 'teal',   link: '/admin/livres'   },
-    { label: 'Emprunts actifs', value: kpis.activeLoans  ?? 0, icon: <ClipboardList size={22} strokeWidth={1.5} />, color: 'blue',   link: '/admin/emprunts' },
-    { label: 'En attente',      value: kpis.pendingLoans ?? 0, icon: <Clock size={22} strokeWidth={1.5} />,         color: 'orange', link: '/admin/emprunts' },
-    { label: 'En retard',       value: kpis.overdueLoans ?? 0, icon: <AlertTriangle size={22} strokeWidth={1.5} />, color: 'red',    link: '/admin/emprunts' },
+    { label: 'Emprunts actifs', value: kpis.activeLoans  ?? 0, icon: <ClipboardList size={22} strokeWidth={1.5} />, color: 'blue',   link: '/admin/emprunts', state: { filter: 'actif' } },
+    { label: 'En attente',      value: kpis.pendingLoans ?? 0, icon: <Clock size={22} strokeWidth={1.5} />,         color: 'orange', link: '/admin/emprunts', state: { filter: 'en_attente' } },
+    { label: 'En retard',       value: kpis.overdueLoans ?? 0, icon: <AlertTriangle size={22} strokeWidth={1.5} />, color: 'red',    link: '/admin/emprunts', state: { filter: 'retard' } },
     { label: 'Membres actifs',  value: kpis.totalMembers ?? 0, icon: <Users size={22} strokeWidth={1.5} />,         color: 'green',  link: '/admin/membres'  },
     { label: 'Taux retour',     value: `${kpis.returnRate ?? 100}%`, icon: <Percent size={22} strokeWidth={1.5} />, color: 'purple', link: '/admin/emprunts' },
-    { label: 'Rendus ce mois',  value: kpis.returnedThisMonth ?? 0, icon: <CalendarCheck size={22} strokeWidth={1.5} />, color: 'indigo', link: '/admin/emprunts' },
+    { label: 'Rendus ce mois',  value: kpis.returnedThisMonth ?? 0, icon: <CalendarCheck size={22} strokeWidth={1.5} />, color: 'indigo', link: '/admin/emprunts', state: { filter: 'rendu' } },
   ];
 
   const handleReturn = async (id) => {
@@ -80,6 +82,32 @@ export default function AdminDashboard() {
       refetch(); 
     } catch (e) { 
       toast.error('Erreur lors de la validation'); 
+    }
+  };
+
+  const handleDownloadReport = async () => {
+    setGeneratingReport(true);
+    try {
+      const res = await reportAPI.downloadWeekly();
+      const blob = new Blob([res.data], {
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      // Extract filename from content-disposition or use default
+      const disposition = res.headers['content-disposition'];
+      const filenameMatch = disposition && disposition.match(/filename="?([^"]+)"?/);
+      a.download = filenameMatch ? filenameMatch[1] : 'Rapport_CCI.docx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success('Rapport téléchargé avec succès');
+    } catch (e) {
+      toast.error('Erreur lors de la génération du rapport');
+    } finally {
+      setGeneratingReport(false);
     }
   };
 
@@ -104,13 +132,21 @@ export default function AdminDashboard() {
           <Link to="/admin/emprunts" className="btn btn-outline">
             <ClipboardList size={16} /> Nouvel emprunt
           </Link>
+          <button
+            className="btn btn-report"
+            onClick={handleDownloadReport}
+            disabled={generatingReport}
+          >
+            <FileText size={16} />
+            {generatingReport ? 'Génération...' : 'Rapport'}
+          </button>
         </div>
       </div>
 
       {/* ─── KPI Cards ─────────────────────────────────── */}
       <div className="kpi-grid kpi-grid-7">
         {KPIS.map((k) => (
-          <Link to={k.link} key={k.label} className={`kpi-card kpi-${k.color}`}>
+          <Link to={k.link} state={k.state} key={k.label} className={`kpi-card kpi-${k.color}`}>
             <div className="kpi-icon-wrap">{k.icon}</div>
             <div className="kpi-info">
               <span className="kpi-value">{k.value}</span>

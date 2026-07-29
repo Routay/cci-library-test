@@ -1,6 +1,7 @@
 import express from 'express';
 import Book    from '../models/Book.js';
 import { protect, adminOnly } from '../middleware/auth.js';
+import { upload } from '../utils/cloudinary.js';
 
 const router = express.Router();
 
@@ -66,6 +67,14 @@ router.post('/', protect, adminOnly, async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
+});
+
+// ── POST /api/books/upload-pdf ── uploader PDF (admin) ────
+router.post('/upload-pdf', protect, adminOnly, upload.single('pdfFile'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'Aucun fichier PDF fourni' });
+  }
+  res.json({ pdfUrl: req.file.path });
 });
 
 // ── PUT /api/books/:id ── modifier (admin) ────────────────

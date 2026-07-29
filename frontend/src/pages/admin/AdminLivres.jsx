@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useBooks } from '../../hooks/useBooks';
 import { XCircle, Pencil, Trash2, Plus, Search, BookOpen, Sparkles, Image as ImageIcon } from 'lucide-react';
-import { aiAPI } from '../../services/api';
+import api, { aiAPI } from '../../services/api';
 import './AdminLivres.css';
 
 const CATS  = ['Aqida', 'Tawhid', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Autre'];
@@ -37,13 +37,14 @@ export default function AdminLivres() {
   const openDel  = (id) => { setDeleteId(id); setModal('delete'); };
 
   const handleAI = async () => {
-    if (!frontFile && !backFile) return alert("Veuillez sélectionner au moins une image (page de garde ou arrière).");
+    if (!frontFile && !backFile && !current.pdfUrl) return alert("Veuillez sélectionner au moins une image ou uploader un PDF.");
     setExtracting(true);
     setApiError('');
     try {
       const formData = new FormData();
       if (frontFile) formData.append('frontCover', frontFile);
       if (backFile) formData.append('backCover', backFile);
+      if (current.pdfUrl) formData.append('pdfUrl', current.pdfUrl);
       
       const res = await aiAPI.extractCovers(formData);
       setCurrent(prev => ({
@@ -60,6 +61,21 @@ export default function AdminLivres() {
       setApiError(err.response?.data?.message || "Erreur lors de l'extraction IA");
     } finally {
       setExtracting(false);
+    }
+  };
+
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const formData = new FormData();
+      formData.append('pdfFile', file);
+      
+      const res = await api.post('/api/books/upload-pdf', formData);
+      setCurrent({ ...current, pdfUrl: res.data.pdfUrl });
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'upload du PDF: " + (err.response?.data?.message || err.message) + " | " + (err.response?.data?.error_details || ""));
     }
   };
 
@@ -208,9 +224,21 @@ export default function AdminLivres() {
                     <input type="file" accept="image/*" onChange={(e) => setBackFile(e.target.files[0])} style={{ fontSize: '0.8rem' }} />
                   </div>
                 </div>
-                <button type="button" className="btn btn-gold" onClick={handleAI} disabled={extracting || (!frontFile && !backFile)} style={{ width: '100%', marginTop: '5px' }}>
-                  {extracting ? 'Analyse de l\'image en cours...' : 'Extraire le texte & Auto-remplir'}
+                {current.pdfUrl && <div style={{ fontSize: '0.8rem', color: 'var(--txt2)', marginBottom: '5px' }}>✓ Un fichier PDF est attaché et sera utilisé par l'IA.</div>}
+                <button type="button" className="btn btn-gold" onClick={handleAI} disabled={extracting || (!frontFile && !backFile && !current.pdfUrl)} style={{ width: '100%', marginTop: '5px' }}>
+                  {extracting ? 'Analyse en cours...' : 'Extraire le texte & Résumer via IA'}
                 </button>
+              </div>
+
+              <div className="form-field">
+                <label>Fichier PDF (Lecture en ligne)</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input type="text" value={current.pdfUrl || ''} onChange={(e) => setCurrent({ ...current, pdfUrl: e.target.value })} placeholder="URL du fichier PDF (ou uploadez un fichier)" style={{ flex: 1 }} />
+                  <label className="btn btn-outline" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                    Uploader
+                    <input type="file" accept="application/pdf" onChange={handlePdfUpload} style={{ display: 'none' }} />
+                  </label>
+                </div>
               </div>
 
               <div className="form-field">

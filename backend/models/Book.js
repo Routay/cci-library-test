@@ -43,6 +43,10 @@ const bookSchema = new mongoose.Schema(
       type:    String,
       default: '',
     },
+    pdfUrl: {
+      type:    String,
+      default: '',
+    },
     isWeekly: {
       type:    Boolean,
       default: false,

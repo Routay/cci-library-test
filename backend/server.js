@@ -14,6 +14,8 @@ import logRoutes from './routes/logs.js';
 import adminRoutes from './routes/admin.js';
 import grandsHommesRoutes from './routes/grandsHommes.js';
 import aiRoutes from './routes/ai.js';
+import donationsRoutes from './routes/donations.js';
+import reportRoutes from './routes/report.js';
 import { startCronJobs } from './services/cron.js';
 
 dotenv.config();
@@ -54,6 +56,8 @@ app.use('/api/logs', logRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/grands-hommes', grandsHommesRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/donations', donationsRoutes);
+app.use('/api/report', reportRoutes);
 
 // ── Health check ──────────────────────────────────────────
 app.get('/api/health', (_req, res) =>
@@ -65,6 +69,7 @@ app.use((err, _req, res, _next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
     message: err.message || 'Erreur serveur interne',
+    error_details: typeof err === 'object' ? JSON.stringify(err) : String(err)
   });
 });
 

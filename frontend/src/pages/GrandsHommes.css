@@ -46,7 +46,7 @@
   gap: 8px;
   color: rgba(255,255,255,0.85);
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   margin-bottom: 24px;
   transition: color 0.3s ease, transform 0.3s ease;
   font-weight: 500;
@@ -66,7 +66,7 @@
   background-clip: text;
 }
 .gh-hero-text p {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   max-width: 600px;
   line-height: 1.7;
   color: rgba(255,255,255,0.9);
@@ -76,7 +76,7 @@
 .gh-content-section { padding-top: 60px; }
 .gh-header { text-align: center; margin-bottom: 36px; }
 .gh-header h2 { font-size: 2.2rem; color: var(--txt1); margin-bottom: 10px; }
-.gh-subtitle { color: var(--txt2); font-size: 1rem; }
+.gh-subtitle { color: var(--txt2); font-size: 1.1rem; }
 
 /* ── Filters ── */
 .gh-filters {
@@ -105,7 +105,7 @@
   outline: none;
   background: transparent;
   font-family: 'Outfit', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.98rem;
   color: var(--txt1);
 }
 .gh-search-bar input::placeholder { color: var(--txt3); }
@@ -124,7 +124,7 @@
 .gh-tag-btn {
   padding: 5px 14px;
   border-radius: 20px;
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 500;
   border: 1px solid var(--border);
   background: transparent;
@@ -211,7 +211,7 @@
   color: #fff;
   padding: 4px 11px;
   border-radius: 20px;
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 500;
   backdrop-filter: blur(6px);
   border: 1px solid rgba(255,255,255,0.15);
@@ -234,7 +234,7 @@
   font-weight: 600;
 }
 .gh-card-subtitle {
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   color: var(--gold-l);
   font-weight: 500;
   margin-bottom: 14px;
@@ -247,7 +247,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   background: rgba(184,146,42,0.1);
   color: var(--gold-l);
   padding: 3px 10px;
@@ -269,7 +269,7 @@
 
 /* ── Description ── */
 .gh-card-desc {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--txt2);
   line-height: 1.7;
   margin-bottom: 20px;
@@ -289,7 +289,7 @@
   color: var(--gold-l);
   border: 1px solid rgba(184,146,42,0.35);
   border-radius: 10px;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -367,8 +367,8 @@
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(184,146,42,0.3);
 }
-.gh-info-banner h3 { color: var(--txt1); margin-bottom: 8px; font-size: 1.2rem; }
-.gh-info-banner p  { color: var(--txt2); line-height: 1.7; font-size: 0.95rem; }
+.gh-info-banner h3 { color: var(--txt1); margin-bottom: 8px; font-size: 1.35rem; }
+.gh-info-banner p  { color: var(--txt2); line-height: 1.7; font-size: 1.05rem; }
 
 /* ══════════════════════════════════════════════════════
    MODAL DÉTAIL
@@ -378,7 +378,7 @@
   inset: 0;
   background: rgba(0,0,0,0.65);
   backdrop-filter: blur(6px);
-  z-index: 1000;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -453,7 +453,7 @@
   line-height: 1.1;
 }
 .gh-modal-title {
-  font-size: 0.92rem;
+  font-size: 1rem;
   color: rgba(255,255,255,0.75);
   margin: 0;
   font-style: italic;
@@ -462,7 +462,7 @@
 .gh-modal-body { padding: 28px; }
 .gh-modal-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
 .gh-modal-desc {
-  font-size: 0.97rem;
+  font-size: 1.05rem;
   color: var(--txt2);
   line-height: 1.8;
   margin-bottom: 28px;

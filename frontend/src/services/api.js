@@ -3,7 +3,6 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
   timeout: 60000,
-  headers: { 'Content-Type': 'application/json' },
 });
 
 api.interceptors.request.use(cfg => {
@@ -71,8 +70,9 @@ export const adminAPI = {
 };
 
 export const settingsAPI = {
-  get:    () => api.get('/api/admin/settings'),
-  update: data => api.put('/api/admin/settings', data),
+  get:       () => api.get('/api/admin/settings'),
+  getPublic: () => api.get('/api/admin/settings/public'),
+  update:    data => api.put('/api/admin/settings', data),
 };
 
 export const grandsHommesAPI = {
@@ -86,9 +86,11 @@ export const grandsHommesAPI = {
 };
 
 export const aiAPI = {
-  extractCovers: (formData) => api.post('/api/ai/extract-covers', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
+  extractCovers: (formData) => api.post('/api/ai/extract-covers', formData),
+};
+
+export const reportAPI = {
+  downloadWeekly: () => api.get('/api/report/weekly-report', { responseType: 'blob' }),
 };
 
 export default api;

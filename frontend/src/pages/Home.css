@@ -64,7 +64,7 @@
   align-items: center;
   gap: 6px;
   color: rgba(255,255,255,0.55);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -84,7 +84,7 @@
 
 .arabic-greeting {
   font-family: 'Noto Naskh Arabic', serif;
-  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
   font-weight: 500;
   color: var(--gold-l);
   text-align: center;
@@ -96,7 +96,7 @@
 
 .welcome-label {
   text-align: center;
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 3.5px;
   text-transform: uppercase;
@@ -107,7 +107,7 @@
 .welcome-title {
   font-family: 'Cormorant Garamond', serif;
   text-align: center;
-  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   font-weight: 400;
   color: var(--txt1);
   max-width: 780px;
@@ -117,7 +117,7 @@
 
 .welcome-desc {
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: var(--txt2);
   max-width: 580px;
   margin: 0 auto;
@@ -154,21 +154,21 @@
 
 .action-card h3 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 400;
   margin-bottom: 10px;
   color: var(--txt1);
 }
 
 .action-card p {
-  font-size: 0.88rem;
+  font-size: 1rem;
   color: var(--txt2);
   margin-bottom: 20px;
   line-height: 1.6;
 }
 
 .action-link {
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--gold);
   text-decoration: underline;
@@ -222,7 +222,7 @@
   line-height: 1;
 }
 .stat-label {
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   color: rgba(255,255,255,0.6);
   text-align: center;
   letter-spacing: 0.5px;
@@ -247,7 +247,7 @@
 }
 .weekly-text p {
   color: var(--txt2);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   line-height: 1.7;
   max-width: 420px;
 }
@@ -277,6 +277,9 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
+.cat-card:last-child:nth-child(3n + 1) {
+  grid-column: 2; /* Centre le 7ème élément si la grille a 3 colonnes */
+}
 .cat-card {
   padding: 28px 24px;
   display: flex;
@@ -298,11 +301,11 @@
 }
 .cat-card h4 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 400;
   color: var(--txt1);
 }
-.cat-card p { font-size: 0.8rem; color: var(--txt2); }
+.cat-card p { font-size: 0.95rem; color: var(--txt2); }
 .discover-cta { text-align: center; margin-top: 44px; }
 
 /* ─── Responsive ─────────────────────────────────────────── */

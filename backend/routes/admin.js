@@ -144,6 +144,25 @@ router.patch('/admins/:id/toggle', protect, superAdminOnly, async (req, res) => 
 //  PARAMÈTRES SYSTÈME (super_admin only)
 // ══════════════════════════════════════════════════════
 
+// ── GET /api/admin/settings/public ── Paramètres publics (no auth) ──
+router.get('/settings/public', async (req, res) => {
+  try {
+    const settings = await Setting.getSettings();
+    res.json({
+      libraryName: settings.libraryName,
+      libraryDescription: settings.libraryDescription,
+      openingHours: settings.openingHours,
+      address: settings.address,
+      contactEmail: settings.contactEmail,
+      contactPhone: settings.contactPhone,
+      footerDescription: settings.footerDescription,
+      loanDurationDays: settings.loanDurationDays,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // ── GET /api/admin/settings ── Lire les paramètres ──
 router.get('/settings', protect, superAdminOnly, async (req, res) => {
   try {

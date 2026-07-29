@@ -8,7 +8,7 @@
 }
 .footer-arabic {
   font-family: 'Noto Naskh Arabic', serif;
-  font-size: 1rem; color: rgba(184,146,42,0.4);
+  font-size: 1.15rem; color: rgba(184,146,42,0.4);
   direction: rtl; margin-bottom: 14px;
 }
 .footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
@@ -22,17 +22,17 @@
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.05rem; color: var(--gold-l); font-weight: 600; letter-spacing: 2px;
 }
-.footer-brand-sub { font-size: 0.7rem; color: var(--txt3); margin-top: 2px; }
-.footer-desc { font-size: 0.8rem; color: var(--txt3); line-height: 1.7; font-weight: 300; max-width: 280px; }
+.footer-brand-sub { font-size: 0.8rem; color: var(--txt3); margin-top: 2px; }
+.footer-desc { font-size: 0.9rem; color: var(--txt3); line-height: 1.7; font-weight: 300; max-width: 280px; }
 .footer-col-title {
-  font-size: 0.62rem; font-weight: 700; letter-spacing: 2.5px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 2.5px;
   text-transform: uppercase; color: var(--gold-l); margin-bottom: 16px;
 }
 .footer-links { display: flex; flex-direction: column; gap: 10px; }
-.footer-link { font-size: 0.82rem; color: var(--txt2); transition: color 0.3s; }
+.footer-link { font-size: 0.92rem; color: var(--txt2); transition: color 0.3s; }
 .footer-link:hover { color: var(--gold-l); }
-.footer-contact-item { font-size: 0.82rem; color: var(--txt2); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.footer-bottom { text-align: center; font-size: 0.74rem; color: var(--txt3); }
+.footer-contact-item { font-size: 0.92rem; color: var(--txt2); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.footer-bottom { text-align: center; font-size: 0.85rem; color: var(--txt3); }
 
 @media (max-width: 860px) {
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }

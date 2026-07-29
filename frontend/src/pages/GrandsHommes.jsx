@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Info, Search, X, Tag, Calendar, ExternalLink } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft, BookOpen, Info, Search, X, Tag, Calendar, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { grandsHommesAPI } from '../services/api';
 import './GrandsHommes.css';
 
@@ -38,6 +39,9 @@ function SkeletonCard() {
 
 /* ── Modal détail ────────────────────────────────────────── */
 function DetailModal({ homme, onClose }) {
+  const { t } = useTranslation();
+  const [isExpanded, setIsExpanded] = useState(false);
+
   useEffect(() => {
     const onKey = e => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
@@ -50,6 +54,8 @@ function DetailModal({ homme, onClose }) {
 
   if (!homme) return null;
   const [bg1, bg2, accent] = getPalette(homme.name);
+  const DESC_LIMIT = 280;
+  const isLong = homme.description && homme.description.length > DESC_LIMIT;
 
   return (
     <div className="gh-modal-backdrop" onClick={e => e.target === e.currentTarget && onClose()}>
@@ -88,11 +94,28 @@ function DetailModal({ homme, onClose }) {
               ))}
             </div>
           )}
-          <p className="gh-modal-desc">{homme.description}</p>
+          <p className="gh-modal-desc">
+            {isExpanded || !isLong 
+              ? homme.description 
+              : homme.description.slice(0, DESC_LIMIT) + '...'}
+          </p>
+
+          {isLong && (
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--gold)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', marginTop: 12, fontWeight: 600, padding: 0 }}
+            >
+              {isExpanded ? (
+                <><ChevronUp size={18} /> {t('grandsHommes.modal_read_less')}</>
+              ) : (
+                <><ChevronDown size={18} /> {t('grandsHommes.modal_read_more')}</>
+              )}
+            </button>
+          )}
 
           <div className="gh-modal-footer">
-            <Link to="/catalogue" className="btn btn-outline" onClick={onClose}>
-              <BookOpen size={15} /> Voir les ouvrages liés
+            <Link to="/catalogue" state={{ searchAuthor: homme.name }} className="btn btn-outline" onClick={onClose}>
+              <BookOpen size={15} /> {t('grandsHommes.modal_related_books')}
             </Link>
           </div>
         </div>
@@ -105,6 +128,7 @@ function DetailModal({ homme, onClose }) {
    PAGE PRINCIPALE
 ══════════════════════════════════════════════════════════ */
 export default function GrandsHommes() {
+  const { t } = useTranslation();
   const [hommes,  setHommes]  = useState([]);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState(null);
@@ -116,9 +140,9 @@ export default function GrandsHommes() {
     window.scrollTo(0, 0);
     grandsHommesAPI.getAll()
       .then(({ data }) => setHommes(data.hommes || []))
-      .catch(() => setError('Impossible de charger les données. Veuillez réessayer.'))
+      .catch(() => setError(t('grandsHommes.load_error')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   /* Tous les tags uniques */
   const allTags = useMemo(() => {
@@ -136,7 +160,7 @@ export default function GrandsHommes() {
         h.name.toLowerCase().includes(q) ||
         h.title.toLowerCase().includes(q) ||
         h.description.toLowerCase().includes(q) ||
-        h.tags?.some(t => t.toLowerCase().includes(q))
+        h.tags?.some(tag => tag.toLowerCase().includes(q))
       );
     }
     if (activeTag) {
@@ -153,15 +177,11 @@ export default function GrandsHommes() {
         <div className="gh-hero-overlay" />
         <div className="container gh-hero-content">
           <Link to="/" className="gh-back-btn">
-            <ArrowLeft size={20} /> Retour à l'accueil
+            <ArrowLeft size={20} /> {t('grandsHommes.backHome')}
           </Link>
           <div className="gh-hero-text">
-            <h1>Les Grands Hommes de l'Islam</h1>
-            <p>
-              Découvrez la vie, les œuvres et l'héritage impérissable des figures
-              qui ont illuminé l'histoire de la civilisation islamique par leur savoir,
-              leur sagesse et leur courage.
-            </p>
+            <h1>{t('grandsHommes.hero_title')}</h1>
+            <p>{t('grandsHommes.hero_desc')}</p>
           </div>
         </div>
       </section>
@@ -169,9 +189,9 @@ export default function GrandsHommes() {
       {/* ── Contenu ──────────────────────────────────────── */}
       <section className="gh-content-section container">
         <div className="gh-header">
-          <h2>Biographies &amp; Héritage</h2>
+          <h2>{t('grandsHommes.content_title')}</h2>
           <p className="gh-subtitle">
-            {loading ? 'Chargement…' : `${hommes.length} personnalité${hommes.length > 1 ? 's' : ''} — une sélection de savants et leaders inspirants`}
+            {loading ? t('common.loading') : t('grandsHommes.content_sub', { count: hommes.length })}
           </p>
         </div>
 
@@ -182,7 +202,7 @@ export default function GrandsHommes() {
               <Search size={16} />
               <input
                 type="text"
-                placeholder="Rechercher un nom, un thème…"
+                placeholder={t('grandsHommes.search_placeholder')}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
@@ -196,7 +216,7 @@ export default function GrandsHommes() {
               <button
                 className={`gh-tag-btn ${!activeTag ? 'active' : ''}`}
                 onClick={() => setActiveTag('')}
-              >Tous</button>
+              >{t('common.all')}</button>
               {allTags.map(tag => (
                 <button
                   key={tag}
@@ -214,7 +234,7 @@ export default function GrandsHommes() {
             <span>⚠️</span>
             <p>{error}</p>
             <button className="btn btn-outline" onClick={() => window.location.reload()}>
-              Réessayer
+              {t('common.retry')}
             </button>
           </div>
         )}
@@ -285,7 +305,7 @@ export default function GrandsHommes() {
                           className="gh-read-more"
                           onClick={() => setSelected(homme)}
                         >
-                          <ExternalLink size={15} /> En savoir plus
+                          <ExternalLink size={15} /> {t('grandsHommes.read_more')}
                         </button>
                       </div>
                     </div>
@@ -299,9 +319,9 @@ export default function GrandsHommes() {
         {!loading && !error && filtered.length === 0 && hommes.length > 0 && (
           <div className="gh-empty-results">
             <Search size={32} />
-            <p>Aucune personnalité ne correspond à votre recherche.</p>
+            <p>{t('grandsHommes.no_results')}</p>
             <button className="btn btn-outline" onClick={() => { setSearch(''); setActiveTag(''); }}>
-              Réinitialiser les filtres
+              {t('grandsHommes.reset_filters')}
             </button>
           </div>
         )}
@@ -309,7 +329,7 @@ export default function GrandsHommes() {
         {!loading && !error && hommes.length === 0 && (
           <div className="gh-empty-results">
             <BookOpen size={32} />
-            <p>Aucune biographie disponible pour le moment.</p>
+            <p>{t('grandsHommes.no_bios')}</p>
           </div>
         )}
 
@@ -318,13 +338,10 @@ export default function GrandsHommes() {
           <div className="gh-info-banner">
             <div className="gh-info-icon"><Info size={24} /></div>
             <div>
-              <h3>Envie d'aller plus loin ?</h3>
-              <p>
-                Consultez notre catalogue pour retrouver les ouvrages originaux
-                et les études consacrées à ces grands hommes.
-              </p>
+              <h3>{t('grandsHommes.banner_title')}</h3>
+              <p>{t('grandsHommes.banner_desc')}</p>
               <Link to="/catalogue" className="btn btn-outline" style={{ marginTop: 15, display: 'inline-block' }}>
-                Explorer le catalogue
+                {t('grandsHommes.banner_btn')}
               </Link>
             </div>
           </div>

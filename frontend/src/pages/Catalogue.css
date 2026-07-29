@@ -60,7 +60,7 @@
 
 /* Section label */
 .dash-nav-section {
-  font-size: 0.63rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2.5px;
   text-transform: uppercase;
@@ -78,7 +78,7 @@
   transition: var(--trans);
   color: var(--txt2);
   font-weight: 500;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   text-decoration: none;
 }
 .dash-nav-item:hover {
@@ -154,7 +154,7 @@
   color: var(--txt1);
   outline: none;
   width: 100%;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-family: 'Outfit', sans-serif;
 }
 .dash-search input::placeholder { color: var(--txt3); }
@@ -183,7 +183,7 @@
 /* ── Recommended Section ── */
 .dash-section-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 400;
   color: var(--txt1);
   margin-bottom: 1rem;
@@ -229,7 +229,7 @@
 
 .dash-carousel-info { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
 .dash-carousel-title {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--txt1);
   margin-bottom: 0.3rem;
@@ -238,7 +238,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.dash-carousel-author { font-size: 0.75rem; color: var(--txt2); }
+.dash-carousel-author { font-size: 0.85rem; color: var(--txt2); }
 
 /* ── Categories / Grid Section ── */
 .dash-grid-controls {
@@ -251,7 +251,7 @@
 .dash-tab {
   cursor: pointer;
   color: var(--txt2);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: var(--trans);
   padding: 5px 14px;
@@ -302,7 +302,7 @@
   pointer-events: none;
 }
 .dash-book-info-title {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #fff;
   margin-bottom: 0.2rem;
@@ -313,7 +313,7 @@
   overflow: hidden;
 }
 .dash-book-info-author {
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   color: rgba(255,255,255,0.75);
   text-shadow: 0 1px 2px rgba(0,0,0,0.8);
 }
@@ -346,7 +346,7 @@
 
 .dash-right-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 400;
   text-align: center;
   color: var(--txt1);
@@ -358,7 +358,7 @@
   margin-bottom: 1.5rem;
   text-align: center;
   font-style: italic;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .dash-right-stats {
@@ -373,11 +373,11 @@
   justify-content: center;
 }
 .dash-stat-item { display: flex; flex-direction: column; align-items: center; }
-.dash-stat-value { font-weight: 700; font-size: 1.05rem; color: var(--txt1); margin-bottom: 0.2rem; }
-.dash-stat-label { font-size: 0.68rem; color: var(--txt3); text-transform: uppercase; letter-spacing: 1.5px; }
+.dash-stat-value { font-weight: 700; font-size: 1.15rem; color: var(--txt1); margin-bottom: 0.2rem; }
+.dash-stat-label { font-size: 0.78rem; color: var(--txt3); text-transform: uppercase; letter-spacing: 1.5px; }
 
 .dash-right-desc {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   line-height: 1.7;
   color: var(--txt2);
   margin-bottom: 1.5rem;
@@ -401,7 +401,7 @@
   text-align: center;
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   border: none;
   font-family: 'Outfit', sans-serif;
   cursor: pointer;
@@ -472,7 +472,7 @@
   border: 1px solid var(--border2);
   color: var(--gold-l);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-family: 'Outfit', sans-serif;
   text-decoration: none;
   text-align: center;

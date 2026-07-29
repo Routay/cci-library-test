@@ -2,9 +2,10 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import {
   BookOpen, ClipboardList, Users, BookMarked,
-  Moon, Star, BookText, Heart, Globe
+  Moon, Star, BookText, Heart, Globe, MoreHorizontal
 } from 'lucide-react';
-import api from '../services/api';
+import { useTranslation } from 'react-i18next';
+import api, { settingsAPI } from '../services/api';
 import BookCover from '../components/BookCover';
 import HERO_IMG from '../assets/hero.png';
 import './Home.css';
@@ -17,9 +18,13 @@ const CAT_ICONS = {
   'Sira':     <Moon size={28} strokeWidth={1.5} />,
   'Hadith':   <BookOpen size={28} strokeWidth={1.5} />,
   'Tazkiyya': <Heart size={28} strokeWidth={1.5} />,
+  'Autres':   <MoreHorizontal size={28} strokeWidth={1.5} />,
 };
 
+const MAIN_CATEGORIES = ['Aqida', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Tawhid', 'Aqîda', 'Sîra', 'Tawhîd'];
+
 export default function Home() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState({
     totalBooks: 0,
     activeMembers: 0,
@@ -28,12 +33,31 @@ export default function Home() {
     categoriesCount: [],
     recentBooks: [],
   });
+  const [pubSettings, setPubSettings] = useState(null);
 
   useEffect(() => {
     api.get('/api/stats/public')
       .then(res => setStats(res.data))
       .catch(err => console.error('Erreur chargement stats:', err));
+      
+    settingsAPI.getPublic()
+      .then(res => setPubSettings(res.data))
+      .catch(() => {});
   }, []);
+
+  const mainCats = [];
+  let othersCount = 0;
+  
+  if (stats.categoriesCount && stats.categoriesCount.length > 0) {
+    stats.categoriesCount.forEach(cat => {
+      if (MAIN_CATEGORIES.includes(cat._id)) {
+        mainCats.push(cat);
+      } else {
+        othersCount += cat.count;
+      }
+    });
+    mainCats.push({ _id: 'Autres', count: othersCount });
+  }
 
   return (
     <div className="home">
@@ -44,10 +68,10 @@ export default function Home() {
         </div>
         <div className="hero-content container">
           <h1 className="hero-title animate-fadeUp">
-            Bibliothèque <span className="hero-title-cci">CCI</span>
+            {t('home.hero_title')} <span className="hero-title-cci">CCI</span>
           </h1>
           <p className="hero-subtitle animate-fadeUp" style={{ animationDelay: '0.15s' }}>
-            <span className="hero-script">Islamique</span>
+            <span className="hero-script">{t('home.hero_script')}</span>
           </p>
         </div>
       </section>
@@ -58,20 +82,20 @@ export default function Home() {
           <div className="arabic-greeting animate-fadeUp">
             ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّهِ وَبَرَكَاتُهُ
           </div>
-          <p className="animate-fadeUp" style={{ animationDelay: '0.05s', textAlign: 'center', fontSize: '0.9rem', color: 'var(--txt3)', marginTop: '-15px', marginBottom: '30px', fontStyle: 'italic' }}>
-            « Que la paix, la miséricorde d'Allah et Ses bénédictions soient sur vous. »
-          </p>
+          {t('home.salam_trans') && (
+            <p className="animate-fadeUp" style={{ animationDelay: '0.05s', textAlign: 'center', fontSize: '1rem', color: 'var(--txt3)', marginTop: '-15px', marginBottom: '30px', fontStyle: 'italic' }}>
+              {t('home.salam_trans')}
+            </p>
+          )}
 
-          <p className="welcome-label">Welcome</p>
+          <p className="welcome-label">{t('home.welcome_label')}</p>
 
           <h2 className="welcome-title animate-fadeUp" style={{ animationDelay: '0.1s' }}>
-            La bibliothèque du Comité Culturel Islamique (CCI)
-            vous souhaite la bienvenue !
+            {t('home.welcome_title')}
           </h2>
 
           <p className="welcome-desc animate-fadeUp" style={{ animationDelay: '0.2s' }}>
-            Retrouvez ici la liste des ouvrages disponibles, comment les emprunter
-            et toutes les infos utiles.
+            {t('home.welcome_desc')}
           </p>
 
           <hr className="welcome-divider" />
@@ -82,18 +106,18 @@ export default function Home() {
               <div className="action-icon">
                 <BookOpen size={36} strokeWidth={1.5} style={{ color: 'var(--gold)' }} />
               </div>
-              <h3>Liste des ouvrages</h3>
-              <p>Parcourez nos livres disponibles.</p>
-              <Link to="/catalogue" className="action-link">Cliquez ici.</Link>
+              <h3>{t('home.action_books_title')}</h3>
+              <p>{t('home.action_books_desc')}</p>
+              <Link to="/catalogue" className="action-link">{t('home.action_books_link')}</Link>
             </div>
 
             <div className="action-card card">
               <div className="action-icon">
                 <ClipboardList size={36} strokeWidth={1.5} style={{ color: 'var(--gold)' }} />
               </div>
-              <h3>Formulaire d'emprunt de livres</h3>
-              <p>Veuillez remplir le formulaire si vous souhaitez emprunter un livre.</p>
-              <Link to="/emprunts" className="action-link">Cliquez ici.</Link>
+              <h3>{t('home.action_loan_title')}</h3>
+              <p>{t('home.action_loan_desc')}</p>
+              <Link to="/emprunts" className="action-link">{t('home.action_loan_link')}</Link>
             </div>
           </div>
         </div>
@@ -104,10 +128,10 @@ export default function Home() {
         <div className="container">
           <div className="stats-grid animate-fadeUp">
             {[
-              { value: `${stats.totalBooks}+`,    label: 'Ouvrages disponibles', icon: <BookMarked size={20} /> },
-              { value: '3',                       label: 'Langues',              icon: <Globe size={20} /> },
-              { value: '1 mois', label: 'Durée d\'emprunt max',    icon: <ClipboardList size={20} /> },
-              { value: stats.weeklyBook ? '1' : '0', label: 'Livre de la semaine', icon: <Star size={20} /> },
+              { value: `${stats.totalBooks}+`,    label: t('home.stats_books'), icon: <BookMarked size={20} /> },
+              { value: '3',                       label: t('home.stats_langs'),              icon: <Globe size={20} /> },
+              { value: `${pubSettings?.loanDurationDays || 30}`, label: t('home.stats_duration'),    icon: <ClipboardList size={20} /> },
+              { value: stats.weeklyBook ? '1' : '0', label: t('home.stats_weekly'), icon: <Star size={20} /> },
             ].map((s, i) => (
               <div className="stat-item" key={i}>
                 <span className="stat-icon-wrap">{s.icon}</span>
@@ -126,12 +150,12 @@ export default function Home() {
             <div className="weekly-text">
               <span className="tag tag-gold">
                 <BookOpen size={13} style={{ display:'inline', verticalAlign:'middle', marginRight:5 }} />
-                Cette semaine
+                {t('home.weekly_tag')}
               </span>
-              <h2 className="mt-4">Le livre de la semaine</h2>
-              <p>Chaque semaine, notre comité vous recommande un ouvrage de notre collection. Découvrez la sélection du moment.</p>
+              <h2 className="mt-4">{t('home.weekly_title')}</h2>
+              <p>{t('home.weekly_desc')}</p>
               <Link to="/livre-semaine" className="btn btn-primary mt-4">
-                Voir le livre ›
+                {t('home.weekly_btn')}
               </Link>
             </div>
             <div className="weekly-cover">
@@ -158,8 +182,8 @@ export default function Home() {
         <section className="discover section" style={{ paddingTop: 0 }}>
           <div className="container">
             <div className="section-header">
-              <h2 className="section-title">Nouveautés & Mises à jour</h2>
-              <p className="section-sub">Les derniers ouvrages ajoutés ou mis à jour par nos administrateurs</p>
+              <h2 className="section-title">{t('home.recent_title')}</h2>
+              <p className="section-sub">{t('home.recent_sub')}</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24 }}>
               {stats.recentBooks.map((book, i) => (
@@ -182,7 +206,7 @@ export default function Home() {
               ))}
             </div>
             <div className="discover-cta" style={{ marginTop: 28 }}>
-              <Link to="/catalogue" className="btn btn-outline">Voir tout le catalogue →</Link>
+              <Link to="/catalogue" className="btn btn-outline">{t('home.recent_btn')}</Link>
             </div>
           </div>
         </section>
@@ -192,25 +216,26 @@ export default function Home() {
       <section className="discover section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Découvrez notre collection</h2>
-            <p className="section-sub">Des ouvrages soigneusement sélectionnés pour vous</p>
+            <h2 className="section-title">{t('home.discover_title')}</h2>
+            <p className="section-sub">{t('home.discover_sub')}</p>
           </div>
           <div className="categories-grid">
-            {stats.categoriesCount.length > 0 ? stats.categoriesCount.map((cat, i) => (
-              <Link to="/catalogue" className="cat-card card" key={cat._id} style={{ animationDelay: `${i * 0.07}s` }}>
+            {mainCats.length > 0 ? mainCats.map((cat, i) => (
+              <Link to="/catalogue" state={{ category: cat._id }} className="cat-card card" key={cat._id} style={{ animationDelay: `${i * 0.07}s` }}>
                 <span className="cat-icon">{CAT_ICONS[cat._id] || <BookOpen size={28} strokeWidth={1.5} />}</span>
                 <h4>{cat._id}</h4>
-                <p>{cat.count} livres</p>
+                <p>{cat.count} {t('common.books')}</p>
               </Link>
             )) : [
-              { icon: CAT_ICONS['Aqida'],    title: 'Aqîda',     desc: 'Croyance islamique' },
-              { icon: CAT_ICONS['Tawhid'],   title: 'Tawhîd',    desc: 'Unicité divine' },
-              { icon: CAT_ICONS['Fiqh'],     title: 'Fiqh',      desc: 'Jurisprudence' },
-              { icon: CAT_ICONS['Sira'],     title: 'Sîra',      desc: 'Biographie du Prophète ﷺ' },
-              { icon: CAT_ICONS['Hadith'],   title: 'Hadith',    desc: 'Traditions prophétiques' },
-              { icon: CAT_ICONS['Tazkiyya'],title: 'Tazkiyya',  desc: "Purification de l'âme" },
+              { icon: CAT_ICONS['Aqida'],    title: 'Aqîda',     desc: 'Croyance islamique', id: 'Aqida' },
+              { icon: CAT_ICONS['Tawhid'],   title: 'Tawhîd',    desc: 'Unicité divine', id: 'Tawhid' },
+              { icon: CAT_ICONS['Fiqh'],     title: 'Fiqh',      desc: 'Jurisprudence', id: 'Fiqh' },
+              { icon: CAT_ICONS['Sira'],     title: 'Sîra',      desc: 'Biographie du Prophète ﷺ', id: 'Sira' },
+              { icon: CAT_ICONS['Hadith'],   title: 'Hadith',    desc: 'Traditions prophétiques', id: 'Hadith' },
+              { icon: CAT_ICONS['Tazkiyya'],title: 'Tazkiyya',  desc: "Purification de l'âme", id: 'Tazkiyya' },
+              { icon: CAT_ICONS['Autres'],   title: 'Autres',    desc: 'Autres thématiques', id: 'Autres' },
             ].map((cat, i) => (
-              <Link to="/catalogue" className="cat-card card" key={i} style={{ animationDelay: `${i * 0.07}s` }}>
+              <Link to="/catalogue" state={{ category: cat.id }} className="cat-card card" key={i} style={{ animationDelay: `${i * 0.07}s` }}>
                 <span className="cat-icon">{cat.icon}</span>
                 <h4>{cat.title}</h4>
                 <p>{cat.desc}</p>
@@ -218,7 +243,7 @@ export default function Home() {
             ))}
           </div>
           <div className="discover-cta">
-            <Link to="/catalogue" className="btn btn-outline">Voir tout le catalogue →</Link>
+            <Link to="/catalogue" className="btn btn-outline">{t('home.discover_btn')}</Link>
           </div>
         </div>
       </section>

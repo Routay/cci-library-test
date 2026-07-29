@@ -57,7 +57,7 @@
   color: var(--gold); letter-spacing: 2.5px; line-height: 1.1;
 }
 .nav-brand-sub {
-  font-size: 0.56rem; color: var(--txt3);
+  font-size: 0.65rem; color: var(--txt3);
   letter-spacing: 1.5px; text-transform: uppercase; margin-top: 1px;
 }
 
@@ -65,7 +65,7 @@
 .nav-links { display: flex; align-items: center; gap: 2px; margin-left: auto; }
 .nav-link {
   position: relative; padding: 7px 15px; border-radius: 50px;
-  font-size: 0.8rem; font-weight: 400; color: var(--txt2);
+  font-size: 0.9rem; font-weight: 400; color: var(--txt2);
   transition: var(--trans); letter-spacing: 0.3px;
 }
 .nav-link:hover { color: var(--txt1); background: var(--gold-glow); }
@@ -88,7 +88,84 @@
   transition: var(--trans);
 }
 .theme-btn:hover { border-color: var(--border2); transform: rotate(20deg); }
-.nav-admin-btn { padding: 8px 20px !important; font-size: 0.75rem !important; }
+.nav-admin-btn { padding: 8px 20px !important; font-size: 0.85rem !important; }
+
+/* ── Lang Selector ── */
+.lang-selector-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 0 10px;
+  height: 38px;
+  transition: var(--trans);
+}
+.lang-selector-wrap:hover {
+  border-color: var(--border2);
+}
+.lang-icon {
+  color: var(--gold);
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--txt1);
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  padding: 4px 6px;
+  outline: none;
+}
+.lang-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  min-width: 60px;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--trans);
+  padding: 4px 0;
+  z-index: 5001;
+}
+.lang-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(4px);
+}
+.lang-option {
+  background: transparent;
+  border: none;
+  color: var(--txt2);
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: var(--trans);
+}
+.lang-option:hover {
+  background: var(--gold-glow);
+  color: var(--txt1);
+}
+.lang-option.active {
+  color: var(--gold);
+  font-weight: 600;
+  background: rgba(184,146,42,0.05);
+}
 
 /* ══════════════════════════════════════════════════════
    HAMBURGER BUTTON (visible < 860px)
@@ -153,7 +230,7 @@
   display: block;
   padding: 12px 16px;
   border-radius: var(--r-sm);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 400;
   color: var(--txt2);
   transition: var(--trans);
@@ -171,7 +248,7 @@
   justify-content: center;
   border-radius: var(--r-sm) !important;
   padding: 12px !important;
-  font-size: 0.85rem !important;
+  font-size: 0.95rem !important;
 }
 
 /* Overlay derrière le drawer */
