@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useLoans } from '../../hooks/useLoans';
 import { useBooks } from '../../hooks/useBooks';
 import { useUsers } from '../../hooks/useUsers';
-import { XCircle, CheckCircle, Pencil, Search, Plus, BookOpen, Trash2, CalendarPlus, Clock } from 'lucide-react';
+import { XCircle, CheckCircle, Pencil, Search, Plus, BookOpen, Trash2, CalendarPlus, Clock, MessageCircle } from 'lucide-react';
 import './AdminEmprunts.css';
 
 const STATUS_LABELS = { en_attente:'En attente', actif:'Actif', retard:'En retard', rendu:'Rendu' };
@@ -101,6 +101,30 @@ export default function AdminEmprunts() {
     finally { setSaving(false); }
   };
 
+  const formatPhoneForWA = (phone) => {
+    if (!phone) return null;
+    let cleaned = String(phone).replace(/\D/g, '');
+    if (cleaned.length === 9 && cleaned.startsWith('7')) cleaned = '221' + cleaned;
+    return cleaned;
+  };
+
+  const sendWhatsApp = (loan, type) => {
+    const phone = formatPhoneForWA(loan.member?.tel);
+    if (!phone) {
+      alert("Ce membre n'a pas renseigné de numéro de téléphone valide.");
+      return;
+    }
+    let text = '';
+    if (type === 'validate') {
+      text = `Bonjour ${loan.member?.prenom},\n\nVotre demande d'emprunt pour le livre *"${loan.book?.title}"* a été validée ! 🎉\n\nVous pouvez passer à la bibliothèque pour le récupérer.\n\nMerci,\nL'équipe de la Bibliothèque.`;
+    } else if (type === 'retard') {
+      text = `Bonjour ${loan.member?.prenom},\n\nSauf erreur de notre part, l'emprunt du livre *"${loan.book?.title}"* est arrivé à échéance le ${new Date(loan.dueDate).toLocaleDateString('fr-FR')}.\n\nMerci de bien vouloir le retourner ou demander une prolongation.\n\nCordialement,\nL'équipe de la Bibliothèque.`;
+    } else {
+      text = `Bonjour ${loan.member?.prenom},\n\nCeci est un message de la bibliothèque concernant votre emprunt du livre *"${loan.book?.title}"*.\n\nMerci de nous contacter.`;
+    }
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
   if (loading) return <div className="admin-emprunts"><Spinner/></div>;
   if (error) return <div className="admin-emprunts"><div className="dash-error-state"><div className="dash-error-card"><XCircle size={32} color="#ef4444"/><p>{error}</p></div></div></div>;
 
@@ -140,11 +164,21 @@ export default function AdminEmprunts() {
                 <td>{days?<span className={`days-badge ${days.cls}`}>{days.text}</span>:'—'}</td>
                 <td><span className={`badge ${STATUS_CLASS[loan.status]}`}>{STATUS_LABELS[loan.status]}</span></td>
                 <td><div className="row-actions">
-                  {loan.status==='en_attente'&&<button className="row-btn rb-gold" onClick={()=>openValidate(loan)}><CheckCircle size={13}/> Valider</button>}
+                  {loan.status==='en_attente'&&(
+                    <>
+                      <button className="row-btn rb-gold" onClick={()=>openValidate(loan)}><CheckCircle size={13}/> Valider</button>
+                      <button className="row-btn rb-whatsapp" onClick={()=>sendWhatsApp(loan, 'validate')} title="Informer validation via WhatsApp"><MessageCircle size={13}/></button>
+                    </>
+                  )}
                   {loan.status!=='rendu'&&loan.status!=='en_attente'&&(
                     <>
                       <button className="row-btn rb-green" onClick={()=>handleReturn(loan._id)}><CheckCircle size={13}/> Rendu</button>
                       <button className="row-btn rb-extend" onClick={()=>openExtend(loan)} title="Prolonger"><CalendarPlus size={13}/></button>
+                      {loan.status === 'retard' ? (
+                        <button className="row-btn rb-whatsapp" onClick={()=>sendWhatsApp(loan, 'retard')} title="Relancer via WhatsApp"><MessageCircle size={13}/></button>
+                      ) : (
+                        <button className="row-btn rb-whatsapp" onClick={()=>sendWhatsApp(loan, 'contact')} title="Contacter via WhatsApp"><MessageCircle size={13}/></button>
+                      )}
                     </>
                   )}
                   {loan.status!=='rendu'&&(

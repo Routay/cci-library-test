@@ -32,7 +32,7 @@ export const getLoans = async (req, res) => {
     const skip = (Number(page) - 1) * Number(limit);
     const total = await Loan.countDocuments(query);
     const loans = await Loan.find(query)
-      .populate('member', 'nom prenom email')
+      .populate('member', 'nom prenom email tel')
       .populate('book', 'title author')
       .skip(skip)
       .limit(Number(limit))
@@ -56,7 +56,7 @@ export const createLoanAdmin = async (req, res) => {
     await Book.findByIdAndUpdate(book, { $inc: { stock: -1 } });
 
     await loan.populate([
-      { path: 'member', select: 'nom prenom email' },
+      { path: 'member', select: 'nom prenom email tel' },
       { path: 'book', select: 'title author' },
     ]);
 
@@ -119,18 +119,18 @@ export const requestPublicLoan = async (req, res) => {
     });
 
     await loan.populate([
-      { path: 'member', select: 'nom prenom email' },
+      { path: 'member', select: 'nom prenom email tel' },
       { path: 'book', select: 'title author' },
     ]);
 
-    // Notifier les super-admins de la nouvelle demande
+    // Notifier les super-admins de la nouvelle demande (en arrière-plan)
     try {
       const superAdmins = await User.find({ role: { $in: ['super_admin', 'admin'] }, actif: true });
       if (superAdmins.length > 0) {
-        await sendAdminNewLoanNotification(superAdmins, loan, member);
+        sendAdminNewLoanNotification(superAdmins, loan, member).catch(err => console.error('[EMAIL] Erreur asynchrone:', err));
       }
     } catch (emailErr) {
-      console.error('[EMAIL] Erreur notification admin:', emailErr);
+      console.error('[EMAIL] Erreur recherche admins:', emailErr);
     }
 
     res.status(201).json(loan);
@@ -181,11 +181,11 @@ export const updateLoan = async (req, res) => {
     if (validated) updates.borrowDate = new Date();
 
     const loan = await Loan.findByIdAndUpdate(req.params.id, updates, { new: true })
-      .populate('member', 'nom prenom email')
+      .populate('member', 'nom prenom email tel')
       .populate('book', 'title author');
 
     if (validated) {
-      await sendValidationEmail(loan.member, loan.book);
+      sendValidationEmail(loan.member, loan.book).catch(err => console.error('[EMAIL]', err));
       await ActivityLog.create({
         adminId: req.user._id,
         action: 'VALIDATE',
@@ -228,7 +228,7 @@ export const extendLoan = async (req, res) => {
     await loan.save();
 
     await loan.populate([
-      { path: 'member', select: 'nom prenom email' },
+      { path: 'member', select: 'nom prenom email tel' },
       { path: 'book', select: 'title author' },
     ]);
 

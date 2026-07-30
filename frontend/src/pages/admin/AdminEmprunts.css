@@ -64,6 +64,12 @@
 }
 .rb-extend:hover { background: rgba(59,130,246,0.16); }
 
+/* ─── Row WhatsApp Button ──────────────────────────── */
+.rb-whatsapp {
+  background: rgba(37,211,102,0.08); color: #25D366; border-color: rgba(37,211,102,0.2);
+}
+.rb-whatsapp:hover { background: rgba(37,211,102,0.16); }
+
 /* ─── Row Alert ────────────────────────────────────── */
 .row-alert td { background: rgba(248,113,113,0.04) !important; }
 .td-overdue { color: #F87171 !important; font-weight: 600; }
