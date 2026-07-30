@@ -90,7 +90,11 @@ export const requestPublicLoan = async (req, res) => {
         chambre: chambre || '',
       });
     } else {
-      // Mettre à jour les infos du membre existant
+      // Mettre à jour les infos du membre existant (uniquement s'il n'est pas admin/super_admin)
+      if (member.role === 'membre') {
+        if (nom) member.nom = nom;
+        if (prenom) member.prenom = prenom;
+      }
       if (etablissement) member.etablissement = etablissement;
       if (sexe) member.sexe = sexe;
       if (departement) member.departement = departement;
