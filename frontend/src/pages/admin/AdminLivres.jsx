@@ -5,7 +5,7 @@ import api, { aiAPI } from '../../services/api';
 import './AdminLivres.css';
 
 const CATS  = ['Aqida', 'Tawhid', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Autre'];
-const EMPTY = { title: '', author: '', category: 'Aqida', stock: 1, description: '', frontCoverImage: '', backCoverImage: '', aiExtractedText: '' };
+const EMPTY = { title: '', author: '', category: 'Aqida', stock: 1, description: '', cover: '', frontCoverImage: '', backCoverImage: '', aiExtractedText: '', pdfUrl: '' };
 
 function Spinner() {
   return (
@@ -26,6 +26,9 @@ export default function AdminLivres() {
   const [apiError, setApiError] = useState('');
   const [frontFile, setFrontFile] = useState(null);
   const [backFile, setBackFile] = useState(null);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingBackCover, setUploadingBackCover] = useState(false);
 
   const filtered = books.filter((b) =>
     b.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -67,6 +70,8 @@ export default function AdminLivres() {
   const handlePdfUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setUploadingPdf(true);
+    setApiError('');
     try {
       const formData = new FormData();
       formData.append('pdfFile', file);
@@ -75,7 +80,50 @@ export default function AdminLivres() {
       setCurrent({ ...current, pdfUrl: res.data.pdfUrl });
     } catch (err) {
       console.error(err);
-      alert("Erreur lors de l'upload du PDF: " + (err.response?.data?.message || err.message) + " | " + (err.response?.data?.error_details || ""));
+      const serverMsg = err.response?.data?.message;
+      setApiError(serverMsg || `Erreur inattendue lors de l'import du PDF (${err.message}).`);
+    } finally {
+      setUploadingPdf(false);
+    }
+  };
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingCover(true);
+    setApiError('');
+    try {
+      const formData = new FormData();
+      formData.append('cover', file);
+      
+      const res = await api.post('/api/books/upload-cover', formData);
+      setCurrent({ ...current, cover: res.data.coverUrl });
+    } catch (err) {
+      console.error(err);
+      const serverMsg = err.response?.data?.message;
+      setApiError(serverMsg || `Erreur lors de l'import de la couverture (${err.message}).`);
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
+  const handleBackCoverUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingBackCover(true);
+    setApiError('');
+    try {
+      const formData = new FormData();
+      formData.append('backCover', file);
+      
+      const res = await api.post('/api/books/upload-back-cover', formData);
+      setCurrent({ ...current, backCoverImage: res.data.backCoverUrl });
+    } catch (err) {
+      console.error(err);
+      const serverMsg = err.response?.data?.message;
+      setApiError(serverMsg || `Erreur lors de l'import de l'image arrière (${err.message}).`);
+    } finally {
+      setUploadingBackCover(false);
     }
   };
 
@@ -159,7 +207,7 @@ export default function AdminLivres() {
               {filtered.map((book, i) => (
                 <tr key={book._id} style={{ animationDelay: `${i * 0.05}s` }}>
                   <td style={{ color: 'var(--txt3)', fontSize: '0.8rem' }}>{i + 1}</td>
-                  <td className="td-name">{book.title}</td>
+                  <td className="td-name td-title" title={book.title}>{book.title}</td>
                   <td className="td-book">{book.author}</td>
                   <td><span className="badge badge-actif">{book.category}</span></td>
                   <td>
@@ -231,14 +279,39 @@ export default function AdminLivres() {
               </div>
 
               <div className="form-field">
-                <label>Fichier PDF (Lecture en ligne)</label>
+                <label>Image de couverture (Page de garde)</label>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  <input type="text" value={current.pdfUrl || ''} onChange={(e) => setCurrent({ ...current, pdfUrl: e.target.value })} placeholder="URL du fichier PDF (ou uploadez un fichier)" style={{ flex: 1 }} />
-                  <label className="btn btn-outline" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                    Uploader
-                    <input type="file" accept="application/pdf" onChange={handlePdfUpload} style={{ display: 'none' }} />
+                  <input type="text" value={current.cover || ''} onChange={(e) => setCurrent({ ...current, cover: e.target.value })} placeholder="URL de l'image (ou uploadez un fichier)" style={{ flex: 1 }} />
+                  <label className={`btn btn-outline upload-btn ${uploadingCover ? 'uploading' : ''}`} style={{ cursor: uploadingCover ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {uploadingCover ? '⏳ Upload...' : 'Uploader'}
+                    <input type="file" accept="image/*" onChange={handleCoverUpload} disabled={uploadingCover} style={{ display: 'none' }} />
                   </label>
                 </div>
+                {current.cover && <img src={current.cover} alt="Couverture" className="cover-preview" />}
+              </div>
+
+              <div className="form-field">
+                <label>Image page arrière (Quatrième de couverture)</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input type="text" value={current.backCoverImage || ''} onChange={(e) => setCurrent({ ...current, backCoverImage: e.target.value })} placeholder="URL de l'image arrière (ou uploadez un fichier)" style={{ flex: 1 }} />
+                  <label className={`btn btn-outline upload-btn ${uploadingBackCover ? 'uploading' : ''}`} style={{ cursor: uploadingBackCover ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {uploadingBackCover ? '⏳ Upload...' : 'Uploader'}
+                    <input type="file" accept="image/*" onChange={handleBackCoverUpload} disabled={uploadingBackCover} style={{ display: 'none' }} />
+                  </label>
+                </div>
+                {current.backCoverImage && <img src={current.backCoverImage} alt="Page arrière" className="cover-preview" />}
+              </div>
+
+              <div className="form-field">
+                <label>Fichier PDF (Lecture en ligne – Optionnel)</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input type="text" value={current.pdfUrl || ''} onChange={(e) => setCurrent({ ...current, pdfUrl: e.target.value })} placeholder="URL du fichier PDF (ou uploadez un fichier)" style={{ flex: 1 }} />
+                  <label className={`btn btn-outline upload-btn ${uploadingPdf ? 'uploading' : ''}`} style={{ cursor: uploadingPdf ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {uploadingPdf ? '⏳ Upload...' : 'Uploader'}
+                    <input type="file" accept="application/pdf" onChange={handlePdfUpload} disabled={uploadingPdf} style={{ display: 'none' }} />
+                  </label>
+                </div>
+                {current.pdfUrl && <div style={{ fontSize: '0.8rem', color: 'var(--gold)', marginTop: '4px' }}>✓ PDF attaché</div>}
               </div>
 
               <div className="form-field">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useBooks } from '../hooks/useBooks';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,8 @@ const CatalogueDashboard = () => {
   const [searchTerm,   setSearchTerm]   = useState(location.state?.searchAuthor || '');
   const [selectedBook, setSelectedBook] = useState(null);
   const [activeTab,    setActiveTab]    = useState(location.state?.category || 'Tous');
+  const carouselRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (location.state?.category) {
@@ -60,6 +62,35 @@ const CatalogueDashboard = () => {
   ];
 
   const displayBooks = books && books.length > 0 ? books : mockBooks;
+
+  // Garantir suffisamment de livres pour un défilement infini sans coupure
+  let baseBooks = [...displayBooks];
+  if (baseBooks.length > 0) {
+    while (baseBooks.length < 10) {
+      baseBooks = [...baseBooks, ...displayBooks];
+    }
+  }
+  const marqueeBooks = [...baseBooks, ...baseBooks];
+
+  useEffect(() => {
+    let animationId;
+    const scrollStep = 0.5; // Vitesse de défilement
+
+    const scroll = () => {
+      if (carouselRef.current && !isHovered) {
+        carouselRef.current.scrollLeft += scrollStep;
+        
+        // Rembobiner de façon invisible lorsque la première moitié a défilé
+        if (carouselRef.current.scrollLeft >= carouselRef.current.scrollWidth / 2) {
+          carouselRef.current.scrollLeft = 0;
+        }
+      }
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isHovered, marqueeBooks.length]);
 
   useEffect(() => {
     if (displayBooks.length > 0 && !selectedBook) {
@@ -177,18 +208,26 @@ const CatalogueDashboard = () => {
         {/* Section recommandés */}
         <section className="dash-recommended">
           <h2 className="dash-section-title">{t('catalogue.recommended')}</h2>
-          <div className="dash-carousel">
-            {displayBooks.slice(0, 6).map((book, idx) => (
-              <Link
-                className="dash-carousel-item"
-                key={`rec-${book._id || idx}`}
+          <div 
+            className="dash-carousel-wrapper"
+            ref={carouselRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={() => setIsHovered(true)}
+            onTouchEnd={() => setIsHovered(false)}
+          >
+            <div className="dash-carousel-track">
+              {marqueeBooks.map((book, idx) => (
+                <Link
+                  className="dash-carousel-item"
+                  key={`rec-${book._id || idx}-${idx}`}
                 to={`/livre/${book._id}`}
                 onClick={() => setSelectedBook(book)}
               >
                 <BookCover
                   title={book.title}
                   author={book.author}
-                  coverUrl={book.coverUrl || book.cover}
+                  coverUrl={book.frontCoverImage || book.cover || book.coverUrl || book.image}
                   className="dash-carousel-img"
                   size="sm"
                 />
@@ -202,6 +241,7 @@ const CatalogueDashboard = () => {
                 </div>
               </Link>
             ))}
+            </div>
           </div>
         </section>
 
@@ -239,7 +279,7 @@ const CatalogueDashboard = () => {
                   <BookCover
                     title={book.title}
                     author={book.author}
-                    coverUrl={book.coverUrl || book.cover}
+                    coverUrl={book.frontCoverImage || book.cover || book.coverUrl || book.image}
                     className="dash-book-cover"
                     size="md"
                     style={{ aspectRatio: '2/3', width: '100%' }}
@@ -274,7 +314,7 @@ const CatalogueDashboard = () => {
               <BookCover
                 title={selectedBook.title}
                 author={selectedBook.author}
-                coverUrl={selectedBook.coverUrl || selectedBook.cover}
+                coverUrl={selectedBook.frontCoverImage || selectedBook.cover || selectedBook.coverUrl || selectedBook.image}
                 className="dash-right-cover"
                 size="lg"
               />

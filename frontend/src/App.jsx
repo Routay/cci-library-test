@@ -4,6 +4,7 @@ import { ThemeProvider } from './context/ThemeContext.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { statsAPI } from './services/api.js';
 import Cursor from './components/Cursor.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Home from './pages/Home.jsx';
@@ -24,8 +25,19 @@ import AdminGestion  from './pages/admin/AdminGestion.jsx';
 import AdminParametres from './pages/admin/AdminParametres.jsx';
 import AdminGrandsHommes from './pages/admin/AdminGrandsHommes.jsx';
 import AdminDonations from './pages/admin/AdminDonations.jsx';
+import AdminMessages from './pages/admin/AdminMessages.jsx';
+import AdminPartenariats from './pages/admin/AdminPartenariats.jsx';
+import AdminPdfConverter from './pages/admin/AdminPdfConverter.jsx';
 import LivreDetail from './pages/LivreDetail.jsx';
 import Benevoles from './pages/Benevoles.jsx';
+import Login from './pages/Login.jsx';
+import MemberDashboard from './pages/member/MemberDashboard.jsx';
+
+function ProtectedMember() {
+  const { isAuth, loading } = useAuth();
+  if (loading) return null;
+  return isAuth ? <MemberDashboard /> : <Navigate to="/login" replace />;
+}
 
 function ProtectedAdmin() {
   const { isAuth, loading } = useAuth();
@@ -48,6 +60,8 @@ function PublicLayout() {
           <Route path="/emprunts"       element={<Emprunts />} />
           <Route path="/grands-hommes"  element={<GrandsHommes />} />
           <Route path="/benevoles"      element={<Benevoles />} />
+          <Route path="/login"          element={<Login />} />
+          <Route path="/dashboard/*"    element={<ProtectedMember />} />
         </Routes>
       </main>
       <Footer />
@@ -67,7 +81,8 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <ScrollToTop />
           <Cursor />
           <Routes>
             {/* Page de connexion admin */}
@@ -79,6 +94,7 @@ export default function App() {
               <Route index                 element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard"      element={<AdminDashboard />} />
               <Route path="livres"         element={<AdminLivres />} />
+              <Route path="convertisseur-pdf" element={<AdminPdfConverter />} />
               <Route path="emprunts"       element={<AdminEmprunts />} />
               <Route path="membres"        element={<AdminMembres />} />
               <Route path="semaine"        element={<AdminSemaine />} />
@@ -87,6 +103,8 @@ export default function App() {
               <Route path="parametres"     element={<AdminParametres />} />
               <Route path="grands-hommes"  element={<AdminGrandsHommes />} />
               <Route path="donations"      element={<AdminDonations />} />
+              <Route path="messages"       element={<AdminMessages />} />
+              <Route path="partenariats"   element={<AdminPartenariats />} />
             </Route>
 
             {/* Pages publiques */}

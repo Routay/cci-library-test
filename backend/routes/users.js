@@ -5,6 +5,17 @@ import { protect, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// ── GET /api/users/me ── récupérer le profil courant ───────────
+router.get('/me', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // ── GET /api/users/stats ── KPI des membres (admin) ───────────
 router.get('/stats', protect, adminOnly, async (req, res) => {
   try {
@@ -180,6 +191,46 @@ router.delete('/:id', protect, adminOnly, async (req, res) => {
 
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'Membre supprimé avec succès' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── POST /api/users/partner-request ── Bénévole demande à devenir partenaire ──
+router.post('/partner-request', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+    
+    // Si déjà partenaire ou en attente, on ne fait rien
+    if (user.partnerStatus === 'approved' || user.partnerStatus === 'pending') {
+      return res.status(400).json({ message: 'Demande déjà en cours ou vous êtes déjà partenaire' });
+    }
+    
+    user.partnerStatus = 'pending';
+    await user.save();
+    
+    res.json({ message: 'Demande envoyée avec succès', user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── PATCH /api/users/:id/partner-status ── (admin) Approuve/Rejette partenariat ──
+router.patch('/:id/partner-status', protect, adminOnly, async (req, res) => {
+  try {
+    const { partnerStatus } = req.body;
+    if (!['none', 'pending', 'approved', 'rejected'].includes(partnerStatus)) {
+      return res.status(400).json({ message: 'Statut invalide' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+    
+    user.partnerStatus = partnerStatus;
+    await user.save();
+    
+    res.json({ message: 'Statut mis à jour', user });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

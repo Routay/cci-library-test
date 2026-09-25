@@ -48,6 +48,11 @@ export const createLoanAdmin = async (req, res) => {
   try {
     const { member, book, dueDate, notes } = req.body;
 
+    // Vérifier que le membre est actif
+    const memberDoc = await User.findById(member);
+    if (!memberDoc) return res.status(404).json({ message: 'Membre introuvable' });
+    if (!memberDoc.actif) return res.status(403).json({ message: 'Ce membre est désactivé. Il ne peut pas effectuer d\'emprunt.' });
+
     const bookDoc = await Book.findById(book);
     if (!bookDoc) return res.status(404).json({ message: 'Livre introuvable' });
     if (bookDoc.stock <= 0) return res.status(400).json({ message: 'Livre non disponible (stock épuisé)' });
@@ -75,8 +80,13 @@ export const createLoanAdmin = async (req, res) => {
 
 export const requestPublicLoan = async (req, res) => {
   try {
-    const { nom, prenom, email, tel, bookId, livre, date, note,
+    const { nom, prenom, email, tel, bookId, livre, note,
             etablissement, sexe, departement, logeCampus, chambre } = req.body;
+
+    // Vérifier que le numéro de téléphone (WhatsApp) est fourni
+    if (!tel || !tel.trim()) {
+      return res.status(400).json({ message: 'Le numéro de téléphone (WhatsApp) est obligatoire.' });
+    }
 
     let member = await User.findOne({ email });
     if (!member) {
@@ -104,6 +114,11 @@ export const requestPublicLoan = async (req, res) => {
       await member.save();
     }
 
+    // Vérifier que le membre est actif
+    if (!member.actif) {
+      return res.status(403).json({ message: 'Votre compte a été désactivé par l\'administration. Vous ne pouvez pas effectuer d\'emprunt.' });
+    }
+
     let bookDoc;
     if (bookId) {
       bookDoc = await Book.findById(bookId);
@@ -117,7 +132,6 @@ export const requestPublicLoan = async (req, res) => {
     const loan = await Loan.create({
       member: member._id,
       book: bookDoc._id,
-      dueDate: new Date(date),
       notes: note,
       status: 'en_attente',
     });

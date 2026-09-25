@@ -61,3 +61,48 @@ export const login = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur lors de la connexion" });
     }
 };
+
+export const register = async (req, res) => {
+    const { nom, prenom, email, password, tel, etablissement, sexe } = req.body;
+
+    try {
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({ message: "Un compte avec cet email existe déjà" });
+        }
+
+        const user = await User.create({
+            nom,
+            prenom,
+            email,
+            password,
+            tel,
+            etablissement,
+            sexe,
+            role: 'membre' // Par défaut
+        });
+
+        // Auto login after register
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
+
+        res.status(201).json({
+            token,
+            user: {
+                id: user._id,
+                nom: user.nom,
+                prenom: user.prenom,
+                email: user.email,
+                role: user.role,
+                partnerStatus: user.partnerStatus
+            }
+        });
+
+    } catch (error) {
+        console.error("Erreur Inscription:", error);
+        res.status(500).json({ message: "Erreur serveur lors de l'inscription" });
+    }
+};

@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard, BookOpen, ClipboardList, Users, Star,
-  LogOut, FileText, Shield, Sun, Moon, Settings, UserCog, Landmark, HeartHandshake,
+  LogOut, FileText, Shield, Sun, Moon, Settings, UserCog, Landmark, HeartHandshake, MessageSquare,
 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import CCI_LOGO from '../../assets/logo.png';
@@ -18,6 +18,7 @@ export default function AdminLayout() {
   const NAV = [
     { to: '/admin/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard'            },
     { to: '/admin/livres',    icon: <BookOpen size={18} />,         label: 'Livres'               },
+    { to: '/admin/convertisseur-pdf', icon: <FileText size={18} />, label: 'Convertisseur PDF'    },
     { to: '/admin/emprunts',  icon: <ClipboardList size={18} />,    label: 'Emprunts'             },
     { to: '/admin/membres',   icon: <Users size={18} />,            label: 'Membres'              },
     { to: '/admin/semaine',   icon: <Star size={18} />,             label: 'Livre de la semaine'  },
@@ -26,7 +27,9 @@ export default function AdminLayout() {
 
   const SUPER_NAV = [
     { to: '/admin/gestion-admins', icon: <UserCog size={18} />,  label: 'Gestion Admins'     },
+    { to: '/admin/partenariats',   icon: <HeartHandshake size={18} />, label: 'Partenariats'       },
     { to: '/admin/donations',      icon: <HeartHandshake size={18} />, label: 'Dons (Bénévoles)' },
+    { to: '/admin/messages',       icon: <MessageSquare size={18} />, label: 'Boîte de réception' },
     { to: '/admin/logs',           icon: <FileText size={18} />, label: "Journal d'Activité" },
     { to: '/admin/parametres',     icon: <Settings size={18} />, label: 'Paramètres'         },
   ];

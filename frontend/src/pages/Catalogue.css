@@ -190,15 +190,32 @@
 }
 .dash-recommended { margin-bottom: 2.5rem; }
 
-.dash-carousel {
+.dash-carousel-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  padding-bottom: 0.8rem;
+  /* Effet de fondu sur les bords pour plus de professionnalisme */
+  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.dash-carousel-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.dash-carousel-track {
   display: flex;
   gap: 1.2rem;
-  overflow-x: auto;
-  padding-bottom: 0.8rem;
-  scroll-behavior: smooth;
+  width: max-content;
 }
-.dash-carousel::-webkit-scrollbar { height: 3px; }
-.dash-carousel::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+@keyframes scrollMarquee {
+  0% { transform: translateX(0); }
+  /* Translate de la moitié de la largeur du track (qui contient les items dupliqués) + la moitié du gap (0.6rem) */
+  100% { transform: translateX(calc(-50% - 0.6rem)); }
+}
 
 .dash-carousel-item {
   min-width: 280px;

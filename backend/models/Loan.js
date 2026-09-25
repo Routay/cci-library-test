@@ -17,8 +17,8 @@ const loanSchema = new mongoose.Schema(
       default: Date.now,
     },
     dueDate: {
-      type:     Date,
-      required: [true, 'La date de retour est obligatoire'],
+      type:    Date,
+      default: null,
     },
     returnDate: {
       type:    Date,
@@ -39,7 +39,7 @@ const loanSchema = new mongoose.Schema(
 
 // Passe automatiquement en "retard" si la date est dépassée
 loanSchema.pre('save', function (next) {
-  if (this.status !== 'rendu' && this.dueDate < new Date()) {
+  if (this.status !== 'rendu' && this.dueDate && this.dueDate < new Date()) {
     this.status = 'retard';
   }
   next();

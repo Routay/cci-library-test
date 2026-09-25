@@ -270,7 +270,7 @@ export default function AdminEmprunts() {
             <div className="form-field"><label>Membre <span className="required">*</span></label>
               <select value={current.member} onChange={e=>setCurrent({...current,member:e.target.value})}>
                 <option value="">— Sélectionner un membre —</option>
-                {users.map(u=><option key={u._id} value={u._id}>{u.prenom} {u.nom}</option>)}
+                {users.filter(u => modal==='edit' || u.actif).map(u=><option key={u._id} value={u._id}>{u.prenom} {u.nom}{!u.actif ? ' (Inactif)' : ''}</option>)}
               </select></div>
             <div className="form-field"><label>Livre <span className="required">*</span></label>
               <select value={current.book} onChange={e=>setCurrent({...current,book:e.target.value})}>

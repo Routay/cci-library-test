@@ -32,18 +32,18 @@ export default function Apropos() {
   const MISSION_ITEMS = [
     {
       icon: <BookOpen size={32} strokeWidth={1.5} />,
-      title: 'Accès au savoir',
-      desc: 'Mettre à la disposition de tous les étudiants ESP une bibliothèque islamique riche et diversifiée.',
+      title: t('apropos.mission1_title'),
+      desc: t('apropos.mission1_desc'),
     },
     {
       icon: <Moon size={32} strokeWidth={1.5} />,
-      title: 'Culture islamique',
-      desc: 'Promouvoir les valeurs et la culture islamiques au sein de la communauté universitaire.',
+      title: t('apropos.mission2_title'),
+      desc: t('apropos.mission2_desc'),
     },
     {
       icon: <Users size={32} strokeWidth={1.5} />,
-      title: 'Fraternité',
-      desc: 'Renforcer les liens fraternels entre les membres de la communauté musulmane de l\'ESP.',
+      title: t('apropos.mission3_title'),
+      desc: t('apropos.mission3_desc'),
     },
   ];
 

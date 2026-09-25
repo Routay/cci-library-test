@@ -1,10 +1,12 @@
 import express from 'express';
-import { upload } from '../utils/cloudinary.js';
+import { upload, cloudinary } from '../utils/cloudinary.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { protect, adminOnly } from '../middleware/auth.js';
 import fetch from 'node-fetch'; // Pour télécharger l'image depuis Cloudinary si besoin
+import multer from 'multer';
 
 const router = express.Router();
+const memoryUpload = multer({ storage: multer.memoryStorage() });
 
 async function fetchMediaAsBase64(url) {
   const response = await fetch(url);
@@ -25,7 +27,7 @@ async function fetchMediaAsBase64(url) {
   };
 }
 
-router.post('/extract-covers', protect, adminOnly, upload.fields([
+router.post('/extract-covers', protect, adminOnly, memoryUpload.fields([
   { name: 'frontCover', maxCount: 1 },
   { name: 'backCover', maxCount: 1 }
 ]), async (req, res) => {
@@ -43,18 +45,41 @@ router.post('/extract-covers', protect, adminOnly, upload.fields([
       return res.status(400).json({ message: "Aucun média (image ou PDF) fourni." });
     }
 
-    const frontCoverUrl = frontCoverFile ? frontCoverFile.path : null;
-    const backCoverUrl = backCoverFile ? backCoverFile.path : null;
-
-    // Préparer les médias pour Gemini
+    // Préparer les médias pour Gemini directement depuis la mémoire
     const mediaParts = [];
     if (pdfUrl) mediaParts.push(await fetchMediaAsBase64(pdfUrl));
-    if (frontCoverUrl) mediaParts.push(await fetchMediaAsBase64(frontCoverUrl));
-    if (backCoverUrl) mediaParts.push(await fetchMediaAsBase64(backCoverUrl));
+    if (frontCoverFile) {
+      mediaParts.push({
+        inlineData: {
+          data: frontCoverFile.buffer.toString('base64'),
+          mimeType: frontCoverFile.mimetype
+        }
+      });
+    }
+    if (backCoverFile) {
+      mediaParts.push({
+        inlineData: {
+          data: backCoverFile.buffer.toString('base64'),
+          mimeType: backCoverFile.mimetype
+        }
+      });
+    }
+
+    // Upload des images vers Cloudinary en parallèle (pour stocker les URLs)
+    const uploadToCloudinary = (file) => new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'cci-library', resource_type: 'image' },
+        (error, result) => error ? reject(error) : resolve(result.secure_url)
+      );
+      stream.end(file.buffer);
+    });
+
+    const frontCoverUpload = frontCoverFile ? uploadToCloudinary(frontCoverFile) : Promise.resolve(null);
+    const backCoverUpload = backCoverFile ? uploadToCloudinary(backCoverFile) : Promise.resolve(null);
 
     // Initialiser Gemini
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
 
     let prompt = "";
     if (pdfUrl) {
@@ -98,6 +123,9 @@ S'il te plaît, fournis une réponse structurée en JSON contenant :
       jsonResult = { title: "", author: "", extractedText: text };
     }
 
+    // Attendre les uploads Cloudinary
+    const [frontCoverUrl, backCoverUrl] = await Promise.all([frontCoverUpload, backCoverUpload]);
+
     res.json({
       frontCoverUrl,
       backCoverUrl,
@@ -109,6 +137,60 @@ S'il te plaît, fournis une réponse structurée en JSON contenant :
   } catch (error) {
     console.error("Erreur d'extraction IA:", error);
     res.status(500).json({ message: "Erreur lors de l'extraction par l'IA : " + error.message });
+  }
+});
+
+router.post('/scan-pages', protect, adminOnly, memoryUpload.array('pages', 30), async (req, res) => {
+  try {
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ message: "La clé API Gemini n'est pas configurée." });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "Aucune image fournie." });
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+    
+    const prompt = `Tu es un assistant chargé d'extraire le texte depuis une photo de page de livre pour recréer le document au propre.
+S'il te plaît, extrais tout le texte lisible de cette image, en corrigeant les erreurs évidentes d'OCR (lettres mal reconnues) mais sans inventer de phrases. 
+Structure ta réponse UNIQUEMENT avec des balises HTML propres (par exemple <h2>, <h3>, <p>, <ul>, <li>, <strong>, <br>) pour refléter fidèlement la mise en page d'origine (titres, paragraphes, listes). 
+Ne retourne QUE le code HTML (pas de blocs markdown \`\`\`html autour, juste le texte formaté en HTML).`;
+
+    const pagesHtml = [];
+
+    for (let i = 0; i < req.files.length; i++) {
+      const file = req.files[i];
+      console.log(`Processing file ${i+1}/${req.files.length} (Size: ${file.size} bytes)`);
+      
+      try {
+        const mediaPart = {
+          inlineData: {
+            data: file.buffer.toString("base64"),
+            mimeType: file.mimetype
+          }
+        };
+        
+        console.log("Calling Gemini API...");
+        const result = await model.generateContent([prompt, mediaPart]);
+        const response = await result.response;
+        let text = response.text();
+        
+        // Nettoyage des backticks si l'IA en renvoie quand même
+        text = text.replace(/^```html\s*/i, '').replace(/\s*```$/i, '').trim();
+        pagesHtml.push(text);
+        console.log(`Successfully processed file ${i+1}`);
+      } catch (err) {
+        console.error(`Error processing file ${i+1}:`, err);
+        throw err; // Re-throw to be caught by outer catch
+      }
+    }
+
+    res.json({ pages: pagesHtml });
+  } catch (error) {
+    console.error("Erreur de scan des pages par IA:", error);
+    res.status(500).json({ message: "Erreur lors du scan : " + error.message });
   }
 });
 

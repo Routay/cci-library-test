@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { booksAPI, loansAPI, settingsAPI } from '../services/api';
-import { MapPin, Phone, BookOpen, CheckCircle } from 'lucide-react';
+import { MapPin, Phone, BookOpen, CheckCircle, AlertCircle, X } from 'lucide-react';
 import './Emprunts.css';
 
 export default function Emprunts() {
@@ -12,7 +12,7 @@ export default function Emprunts() {
   const initialBookId = location.state?.bookId || searchParams.get('bookId') || '';
 
   const [form, setForm]        = useState({ 
-    nom: '', prenom: '', email: '', tel: '', bookId: initialBookId, date: '', note: '',
+    nom: '', prenom: '', email: '', tel: '', bookId: initialBookId, note: '',
     etablissement: '', sexe: '', departement: '', logeCampus: false, chambre: ''
   });
   const [submitted, setSubmit] = useState(false);
@@ -20,6 +20,7 @@ export default function Emprunts() {
   const [books, setBooks]      = useState([]);
   const [booksLoading, setBooksLoading] = useState(true);
   const [pubSettings, setPubSettings] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Charger les livres disponibles depuis l'API
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function Emprunts() {
       await loansAPI.requestPublic(form);
       setSubmit(true);
     } catch (err) {
-      alert(err.response?.data?.message || err.message || 'Erreur lors de la demande');
+      setErrorMsg(err.response?.data?.message || err.message || 'Erreur lors de la demande');
     } finally {
       setLoading(false);
     }
@@ -68,7 +69,7 @@ export default function Emprunts() {
                 .replace('{{email}}', form.email)
               }
             </p>
-            <button className="btn btn-primary" onClick={() => { setSubmit(false); setForm({ nom:'',prenom:'',email:'',tel:'',bookId:'',date:'',note:'',etablissement:'',sexe:'',departement:'',logeCampus:false,chambre:'' }); }}>
+            <button className="btn btn-primary" onClick={() => { setSubmit(false); setForm({ nom:'',prenom:'',email:'',tel:'',bookId:'',note:'',etablissement:'',sexe:'',departement:'',logeCampus:false,chambre:'' }); }}>
               {t('emprunts.success_btn')}
             </button>
           </div>
@@ -113,8 +114,9 @@ export default function Emprunts() {
                 <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="moussa@esp.sn" required />
               </div>
               <div className="form-field">
-                <label>{t('emprunts.label_tel')}</label>
-                <input type="tel" name="tel" value={form.tel} onChange={handleChange} placeholder="+221 78 429 00 65" />
+                <label>{t('emprunts.label_tel')} <span className="required">*</span></label>
+                <input type="tel" name="tel" value={form.tel} onChange={handleChange} placeholder="+221 78 429 00 65" required />
+                <span style={{ fontSize: '0.78rem', color: 'var(--txt3)', marginTop: 4, display: 'block' }}>{t('emprunts.tel_whatsapp_hint')}</span>
               </div>
             </div>
 
@@ -179,10 +181,7 @@ export default function Emprunts() {
               )}
             </div>
 
-            <div className="form-field">
-              <label>{t('emprunts.label_date')} <span className="required">*</span></label>
-              <input type="date" name="date" value={form.date} onChange={handleChange} required min={new Date().toISOString().split('T')[0]} />
-            </div>
+
 
             <div className="form-field">
               <label>{t('emprunts.label_note')}</label>
@@ -196,6 +195,16 @@ export default function Emprunts() {
 
           {/* Info sidebar */}
           <aside className="emprunt-info">
+            <div className="info-card card">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}><AlertCircle size={16} style={{ color: 'var(--gold)' }} /> {t('emprunts.sidebar_conditions')}</h3>
+              <p style={{ marginBottom: '10px' }}>
+                {t('emprunts.sidebar_conditions_loss')}
+              </p>
+              <p>
+                {t('emprunts.sidebar_conditions_delay')}
+              </p>
+            </div>
+
             <div className="info-card card">
               <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MapPin size={16} style={{ color: 'var(--gold)' }} /> {t('emprunts.sidebar_info')}</h3>
               <ul>
@@ -223,6 +232,36 @@ export default function Emprunts() {
           </aside>
         </div>
       </div>
+
+      {/* Modal d'Erreur (Professional Error Modal) */}
+      {errorMsg && (
+        <div className="modal-overlay" onClick={() => setErrorMsg('')} style={{ zIndex: 9999 }}>
+          <div className="modal-box modal-small" onClick={e => e.stopPropagation()} style={{ padding: 0, overflow: 'hidden', border: 'none', borderRadius: '12px' }}>
+            <div style={{ background: '#fef2f2', borderBottom: '1px solid #fee2e2', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#dc2626' }}>
+                <AlertCircle size={24} />
+                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>Action refusée</h3>
+              </div>
+              <button onClick={() => setErrorMsg('')} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                <X size={20} />
+              </button>
+            </div>
+            <div style={{ padding: '24px 20px', color: '#4b5563', fontSize: '1.05rem', lineHeight: '1.5' }}>
+              {errorMsg}
+            </div>
+            <div style={{ padding: '16px 20px', background: '#f9fafb', borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setErrorMsg('')}
+                style={{ background: '#dc2626', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '6px', fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s' }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#b91c1c'}
+                onMouseOut={(e) => e.currentTarget.style.background = '#dc2626'}
+              >
+                Compris
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -65,6 +65,11 @@ const userSchema = new mongoose.Schema(
       type:    Date,
       default: null,
     },
+    partnerStatus: {
+      type: String,
+      enum: ['none', 'pending', 'approved', 'rejected'],
+      default: 'none',
+    },
   },
   { timestamps: true }
 );

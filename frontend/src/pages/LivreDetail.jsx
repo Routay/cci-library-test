@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useBooks } from '../hooks/useBooks';
 import { ArrowLeft, Sparkles, BookOpen, Clock, AlertTriangle, X, CheckCircle } from 'lucide-react';
 import BookCover from '../components/BookCover';
+import PdfReader from '../components/PdfReader';
 import './LivreDetail.css';
 
 export default function LivreDetail() {
@@ -14,6 +15,7 @@ export default function LivreDetail() {
   const [activeImage, setActiveImage] = useState('front'); // 'front' or 'back'
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showReaderModal, setShowReaderModal] = useState(false);
+  const [pdfZoom, setPdfZoom] = useState(100);
 
   if (loading) {
     return (
@@ -97,7 +99,9 @@ export default function LivreDetail() {
               </span>
             </div>
             
-            <h1 className="book-title-lg">{book.title}</h1>
+            <h1 className={`book-title-lg ${book.title.length > 80 ? 'title-xl-long' : book.title.length > 40 ? 'title-long' : ''}`}>
+              {book.title}
+            </h1>
             <p className="book-author-lg">{t('livreDetail.by')} <span>{book.author || t('livreDetail.unknownAuthor')}</span></p>
             
             <div className="book-actions-group">
@@ -151,15 +155,14 @@ export default function LivreDetail() {
                 ) : (
                   <>
                     <h3>{t('livreDetail.p1_title')}</h3>
-                    <p>
-                      {t('livreDetail.p1_desc')
+                    <p dangerouslySetInnerHTML={{
+                      __html: t('livreDetail.p1_desc')
                         .replace('<1>', '<strong>').replace('</1>', '</strong>')
                         .replace('<2>', '<em>').replace('</2>', '</em>')
                         .replace('{{title}}', book.title)
-                        .replace('{{author}}', book.author)
-                        .replace('{{category}}', book.category)
-                      }
-                    </p>
+                        .replace('{{author}}', book.author || t('livreDetail.unknownAuthor'))
+                        .replace('{{category}}', book.category || 'Islam')
+                    }} />
                     
                     <h3>{t('livreDetail.p2_title')}</h3>
                     <ul>
@@ -191,21 +194,37 @@ export default function LivreDetail() {
         <div className="ld-modal-overlay" onClick={() => setShowReaderModal(false)}>
           <div className="ld-modal-content ld-reader-modal" onClick={e => e.stopPropagation()}>
             <button className="ld-modal-close" onClick={() => setShowReaderModal(false)}>
-              <X size={24} />
+              <X size={18} />
             </button>
-            <div className="ld-modal-header">
-              <BookOpen className="icon-gold" size={32} />
-              <h2>{t('livreDetail.reader_title')}</h2>
+            <div className="ld-modal-header" style={{ justifyContent: 'space-between', paddingRight: '56px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <BookOpen className="icon-gold" size={22} />
+                <h2>{t('livreDetail.reader_title')}</h2>
+              </div>
+              
+              {book.pdfUrl && (
+                <div className="pdf-zoom-controls">
+                  <button 
+                    className="zoom-btn" 
+                    onClick={() => setPdfZoom(z => Math.max(z - 25, 50))}
+                    disabled={pdfZoom <= 50}
+                  >
+                    -
+                  </button>
+                  <span className="zoom-level">{pdfZoom}%</span>
+                  <button 
+                    className="zoom-btn" 
+                    onClick={() => setPdfZoom(z => Math.min(z + 25, 300))}
+                    disabled={pdfZoom >= 300}
+                  >
+                    +
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="ld-modal-body" style={{ padding: book.pdfUrl ? '0' : '20px', height: book.pdfUrl ? '100%' : 'auto' }}>
+            <div className="ld-modal-body" style={{ padding: book.pdfUrl ? '0' : '20px', height: book.pdfUrl ? '100%' : 'auto', display: 'flex', flexDirection: 'column' }}>
               {book.pdfUrl ? (
-                <iframe 
-                  src={`${book.pdfUrl}#toolbar=0`} 
-                  title="Lecteur PDF"
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 'none', display: 'block' }}
-                ></iframe>
+                <PdfReader url={book.pdfUrl} zoom={pdfZoom} />
               ) : (
                 <div className="reader-placeholder" style={{ padding: '20px' }}>
                   <BookOpen size={48} className="reader-icon" />

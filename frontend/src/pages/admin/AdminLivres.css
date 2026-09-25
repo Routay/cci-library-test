@@ -50,6 +50,14 @@
   white-space: nowrap;
 }
 
+/* ─── Table Adjustments ────────────────────────────── */
+.td-title {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ─── Row Actions ──────────────────────────────────── */
 .row-actions {
   display: flex;
@@ -240,6 +248,33 @@
   background: #FEF2F2;
   border-color: #FECACA;
   color: #B91C1C;
+}
+
+/* ─── Upload Button States ─────────────────────────── */
+.upload-btn {
+  min-width: 100px;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.upload-btn.uploading {
+  opacity: 0.7;
+  pointer-events: none;
+  animation: uploadPulse 1.5s ease-in-out infinite;
+}
+@keyframes uploadPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+/* ─── Cover Image Preview ──────────────────────────── */
+.cover-preview {
+  margin-top: 8px;
+  max-width: 120px;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* ─── Responsive ───────────────────────────────────── */

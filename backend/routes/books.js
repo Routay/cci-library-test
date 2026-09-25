@@ -1,9 +1,39 @@
 import express from 'express';
 import Book    from '../models/Book.js';
 import { protect, adminOnly } from '../middleware/auth.js';
-import { upload } from '../utils/cloudinary.js';
+import { upload, uploadPdf } from '../utils/cloudinary.js';
 
 const router = express.Router();
+
+// Helper for automatic cover fetching
+async function fetchCoverUrl(title, author) {
+  try {
+    const query = encodeURIComponent(`${title} ${author || ''}`);
+    const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1&fields=items(volumeInfo/imageLinks)`);
+    if (res.ok) {
+      const data = await res.json();
+      const img = data.items?.[0]?.volumeInfo?.imageLinks;
+      const url = img?.thumbnail || img?.smallThumbnail || null;
+      if (url) {
+        return url.replace('zoom=1', 'zoom=2').replace('http://', 'https://');
+      }
+    }
+  } catch (_) {}
+
+  try {
+    const query = encodeURIComponent(title);
+    const res = await fetch(`https://openlibrary.org/search.json?title=${query}&limit=1&fields=cover_i`);
+    if (res.ok) {
+      const data = await res.json();
+      const coverId = data.docs?.[0]?.cover_i;
+      if (coverId) {
+        return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
+      }
+    }
+  } catch (_) {}
+
+  return '';
+}
 
 // ── GET /api/books ── liste publique avec filtres ─────────
 router.get('/', async (req, res) => {
@@ -62,6 +92,13 @@ router.get('/:id', async (req, res) => {
 // ── POST /api/books ── créer (admin) ──────────────────────
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
+    // Si l'administrateur n'a pas fourni d'image, on la cherche automatiquement
+    if (!req.body.cover && req.body.title) {
+      const fetchedCover = await fetchCoverUrl(req.body.title, req.body.author);
+      if (fetchedCover) {
+        req.body.cover = fetchedCover;
+      }
+    }
     const book = await Book.create(req.body);
     res.status(201).json(book);
   } catch (err) {
@@ -70,11 +107,54 @@ router.post('/', protect, adminOnly, async (req, res) => {
 });
 
 // ── POST /api/books/upload-pdf ── uploader PDF (admin) ────
-router.post('/upload-pdf', protect, adminOnly, upload.single('pdfFile'), (req, res) => {
+router.post('/upload-pdf', protect, adminOnly, (req, res) => {
+  uploadPdf.single('pdfFile')(req, res, (err) => {
+    if (err) {
+      // Multer file size limit error
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        const maxMB = Math.round(100);
+        return res.status(400).json({
+          message: `Le fichier PDF dépasse la limite de taille autorisée (${maxMB} Mo). Veuillez le compresser avant de réessayer.`,
+          error_code: 'FILE_TOO_LARGE'
+        });
+      }
+      
+      // Cloudinary specific file size error (e.g., 10MB limit on free plan)
+      if (err.message && err.message.includes('File size too large')) {
+        return res.status(400).json({
+          message: "Le fichier PDF dépasse la limite de taille maximale (10 Mo) du serveur. Veuillez le compresser avant de l'importer.",
+          error_code: 'FILE_TOO_LARGE'
+        });
+      }
+
+      // Other upload error
+      return res.status(400).json({
+        message: "Une erreur inattendue est survenue lors de l'import du document. Veuillez vérifier votre connexion et réessayer.",
+        error_details: err.message,
+        error_code: 'UPLOAD_ERROR'
+      });
+    }
+    if (!req.file) {
+      return res.status(400).json({ message: 'Aucun fichier PDF fourni' });
+    }
+    res.json({ pdfUrl: req.file.path });
+  });
+});
+
+// ── POST /api/books/upload-cover ── uploader image (admin) ────
+router.post('/upload-cover', protect, adminOnly, upload.single('cover'), (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ message: 'Aucun fichier PDF fourni' });
+    return res.status(400).json({ message: 'Aucune image fournie' });
   }
-  res.json({ pdfUrl: req.file.path });
+  res.json({ coverUrl: req.file.path });
+});
+
+// ── POST /api/books/upload-back-cover ── uploader page arrière (admin) ────
+router.post('/upload-back-cover', protect, adminOnly, upload.single('backCover'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'Aucune image fournie' });
+  }
+  res.json({ backCoverUrl: req.file.path });
 });
 
 // ── PUT /api/books/:id ── modifier (admin) ────────────────

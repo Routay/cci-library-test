@@ -143,6 +143,7 @@ export default function LivreSemaine() {
                   : <button className="btn btn-glass" disabled>{t('livreSemaine.outOfStockBtn')}</button>
                 }
                 <Link to="/catalogue" className="btn btn-glass">{t('common.viewCatalog')}</Link>
+                <Link to={`/livre/${book._id}`} className="btn btn-glass">Voir les détails</Link>
               </div>
 
               {/* Citation islamique */}

@@ -16,6 +16,7 @@ import grandsHommesRoutes from './routes/grandsHommes.js';
 import aiRoutes from './routes/ai.js';
 import donationsRoutes from './routes/donations.js';
 import reportRoutes from './routes/report.js';
+import messagesRoutes from './routes/messages.js';
 import { startCronJobs } from './services/cron.js';
 
 dotenv.config();
@@ -58,6 +59,7 @@ app.use('/api/grands-hommes', grandsHommesRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/donations', donationsRoutes);
 app.use('/api/report', reportRoutes);
+app.use('/api/messages', messagesRoutes);
 
 // ── Health check ──────────────────────────────────────────
 app.get('/api/health', (_req, res) =>

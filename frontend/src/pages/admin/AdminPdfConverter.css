@@ -1,0 +1,202 @@
+.admin-pdf-converter {
+  padding: 20px;
+}
+
+.pdf-converter-content {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  background-color: var(--bg2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.drop-zone:hover, .drop-zone.dragging {
+  border-color: var(--gold);
+  background-color: rgba(181, 153, 91, 0.05);
+}
+
+.drop-icon {
+  color: var(--txt2);
+}
+
+.drop-zone:hover .drop-icon, .drop-zone.dragging .drop-icon {
+  color: var(--gold);
+}
+
+.drop-zone h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--txt);
+}
+
+.drop-zone p {
+  margin: 0;
+  color: var(--txt2);
+  font-size: 0.9rem;
+}
+
+.images-preview-section {
+  background-color: var(--bg2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.preview-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.generate-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.image-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.image-number {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: var(--gold);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.image-thumb {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border);
+}
+
+.image-name {
+  padding: 8px;
+  font-size: 0.8rem;
+  color: var(--txt2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.image-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  background-color: var(--bg2);
+  border-top: 1px solid var(--border);
+}
+
+.img-action-btn {
+  background: none;
+  border: none;
+  color: var(--txt2);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.img-action-btn:hover:not(:disabled) {
+  background-color: var(--bg);
+  color: var(--txt);
+}
+
+.img-action-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.img-action-del:hover:not(:disabled) {
+  color: #ef4444;
+}
+
+/* Styles for HTML to PDF generation */
+.scanned-document {
+  width: 210mm; /* A4 width */
+  padding: 20mm;
+  background-color: white;
+  color: black;
+  font-family: 'Times New Roman', Times, serif;
+  line-height: 1.6;
+}
+
+.scanned-page-content {
+  font-size: 12pt;
+}
+
+.scanned-page-content h1, 
+.scanned-page-content h2, 
+.scanned-page-content h3 {
+  color: #1a1a1a;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.scanned-page-content h1 { font-size: 24pt; text-align: center; }
+.scanned-page-content h2 { font-size: 18pt; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+.scanned-page-content h3 { font-size: 14pt; }
+
+.scanned-page-content p {
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+.scanned-page-content ul, 
+.scanned-page-content ol {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.scanned-page-content li {
+  margin-bottom: 0.5em;
+}

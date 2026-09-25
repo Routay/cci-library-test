@@ -2,14 +2,17 @@ import mongoose from 'mongoose';
 
 const donationSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     donorName: {
       type: String,
-      required: [true, 'Le nom du donateur est obligatoire'],
       trim: true,
     },
     donorEmail: {
       type: String,
-      required: [true, "L'email du donateur est obligatoire"],
       trim: true,
       match: [
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
@@ -44,6 +47,11 @@ const donationSchema = new mongoose.Schema(
       type: String,
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
+    },
+    rejectionReason: {
+      type: String,
+      trim: true,
+      default: '',
     },
   },
   { timestamps: true }

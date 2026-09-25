@@ -1,55 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { BookOpen } from 'lucide-react';
 
-/**
- * Fetches a real book cover from Google Books API then Open Library as fallback.
- * Falls back to a styled SVG placeholder if nothing is found.
- */
-
-const COVER_CACHE = {};
-
-async function fetchCoverUrl(title, author) {
-  const key = `${title}|${author}`;
-  if (COVER_CACHE[key] !== undefined) return COVER_CACHE[key];
-
-  try {
-    const query = encodeURIComponent(`${title} ${author || ''}`);
-    const res = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1&fields=items(volumeInfo/imageLinks)`
-    );
-    if (res.ok) {
-      const data = await res.json();
-      const img = data.items?.[0]?.volumeInfo?.imageLinks;
-      const url = img?.thumbnail || img?.smallThumbnail || null;
-      if (url) {
-        // Upgrade to higher quality
-        const hq = url.replace('zoom=1', 'zoom=2').replace('http://', 'https://');
-        COVER_CACHE[key] = hq;
-        return hq;
-      }
-    }
-  } catch (_) { /* ignore */ }
-
-  // Fallback: Open Library
-  try {
-    const query = encodeURIComponent(title);
-    const res = await fetch(
-      `https://openlibrary.org/search.json?title=${query}&limit=1&fields=cover_i`
-    );
-    if (res.ok) {
-      const data = await res.json();
-      const coverId = data.docs?.[0]?.cover_i;
-      if (coverId) {
-        const url = `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
-        COVER_CACHE[key] = url;
-        return url;
-      }
-    }
-  } catch (_) { /* ignore */ }
-
-  COVER_CACHE[key] = null;
-  return null;
-}
+// The backend now handles fetching covers automatically upon creation.
+// COVER_CACHE and fetchCoverUrl have been removed to prevent client-side rate limiting (HTTP 429).
 
 // Palette de couleurs de fond basée sur la première lettre du titre
 const BG_PALETTES = [
@@ -80,23 +33,12 @@ export default function BookCover({
 }) {
   const [imgSrc, setImgSrc]     = useState(coverUrl || cover || null);
   const [imgError, setImgError] = useState(false);
-  const [loading, setLoading]   = useState(!imgSrc);
-  const mounted = useRef(true);
-
-  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
 
   useEffect(() => {
-    const direct = coverUrl || cover;
-    if (direct) { setImgSrc(direct); setLoading(false); return; }
-    if (!title) { setLoading(false); return; }
-
-    setLoading(true);
-    fetchCoverUrl(title, author).then(url => {
-      if (!mounted.current) return;
-      setImgSrc(url);
-      setLoading(false);
-    });
-  }, [title, author, coverUrl, cover]);
+    // If the cover URL is provided from the DB, use it
+    setImgSrc(coverUrl || cover || null);
+    setImgError(false); // Reset error state on new cover
+  }, [coverUrl, cover]);
 
   const [bg1, bg2, accent] = getColorPalette(title);
 
@@ -132,14 +74,6 @@ export default function BookCover({
         ...style,
       }}
     >
-      {/* Shimmer while loading */}
-      {loading && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.06) 50%,transparent 100%)',
-          animation: 'shimmer 1.4s infinite',
-        }} />
-      )}
       {/* Decorative border */}
       <div style={{
         position: 'absolute', inset: 8,
