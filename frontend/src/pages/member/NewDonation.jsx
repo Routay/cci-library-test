@@ -23,6 +23,7 @@ export default function NewDonation() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -78,7 +79,11 @@ export default function NewDonation() {
       data.append('pdfFile', pdfFile);
 
       await axios.post(`${API}/api/donations`, data, {
-        headers: { Authorization: `Bearer ${user.token}` }
+        headers: { Authorization: `Bearer ${user.token}` },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
       });
 
       setSuccess(true);
@@ -88,6 +93,7 @@ export default function NewDonation() {
       setError(err.response?.data?.message || t('newDonation.submit_error'));
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -228,9 +234,20 @@ export default function NewDonation() {
             </div>
           </div>
 
-          <div className="form-actions">
-            <button type="submit" className="btn-primary submit-donation-btn" disabled={loading}>
-              {loading ? <div className="loader-spinner" /> : t('newDonation.btn_submit')}
+          <div className="form-actions" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+            {loading && (
+              <div style={{ width: '100%', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--txt2)' }}>Envoi du fichier en cours...</span>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--gold)' }}>{uploadProgress}%</span>
+                </div>
+                <div style={{ width: '100%', height: '8px', background: 'var(--bg2)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ width: `${uploadProgress}%`, height: '100%', background: 'var(--gold)', transition: 'width 0.3s ease' }} />
+                </div>
+              </div>
+            )}
+            <button type="submit" className="btn-primary submit-donation-btn" disabled={loading} style={{ width: '100%' }}>
+              {loading ? <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}><div className="loader-spinner" style={{ width: 16, height: 16 }} /> Traitement...</span> : t('newDonation.btn_submit')}
             </button>
           </div>
         </form>
