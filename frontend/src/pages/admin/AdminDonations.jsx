@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, CheckCircle, XCircle, Eye, AlertCircle, Calendar, Mail, Phone, BookOpen, Clock, Gift, Search } from 'lucide-react';
 import api from '../../services/api';
+import PdfReader from '../../components/PdfReader';
 import './AdminDonations.css';
 
 export default function AdminDonations() {
@@ -12,6 +13,7 @@ export default function AdminDonations() {
   
   // Modal states
   const [viewPdfUrl, setViewPdfUrl] = useState(null);
+  const [pdfZoom, setPdfZoom] = useState(100);
   const [confirmStatus, setConfirmStatus] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
 
@@ -231,36 +233,55 @@ export default function AdminDonations() {
 
       {/* Modal View PDF */}
       {viewPdfUrl && (
-        <div className="donation-modal-overlay" onClick={() => setViewPdfUrl(null)}>
-          <div className="donation-modal pdf-modal-content" onClick={e => e.stopPropagation()}>
-            <div className="donation-modal-header">
+        <div className="modal-overlay" onClick={() => setViewPdfUrl(null)}>
+          <div className="modal-box" style={{ maxWidth: '1000px', height: '90vh', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2>Aperçu du PDF</h2>
-              <button className="donation-modal-close" onClick={() => setViewPdfUrl(null)}>✕</button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg2)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                  <button 
+                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: 'none', background: 'var(--bg3)', color: 'var(--txt1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    onClick={() => setPdfZoom(z => Math.max(z - 25, 50))}
+                    disabled={pdfZoom <= 50}
+                  >
+                    -
+                  </button>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt2)', minWidth: '40px', textAlign: 'center' }}>{pdfZoom}%</span>
+                  <button 
+                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: 'none', background: 'var(--bg3)', color: 'var(--txt1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    onClick={() => setPdfZoom(z => Math.min(z + 25, 300))}
+                    disabled={pdfZoom >= 300}
+                  >
+                    +
+                  </button>
+                </div>
+                <button className="modal-close" onClick={() => setViewPdfUrl(null)}>✕</button>
+              </div>
             </div>
-            <iframe src={`${viewPdfUrl}#toolbar=0`} width="100%" title="Aperçu PDF"></iframe>
+            <div className="modal-body" style={{ flex: 1, padding: 0, overflow: 'hidden' }}>
+              <PdfReader url={viewPdfUrl} zoom={pdfZoom} />
+            </div>
           </div>
         </div>
       )}
 
       {/* Modal Confirmation Statut */}
       {confirmStatus && (
-        <div className="donation-modal-overlay" onClick={() => setConfirmStatus(null)}>
-          <div className="donation-modal" style={{ width: '480px', maxWidth: '95vw' }} onClick={e => e.stopPropagation()}>
-            <div className="donation-modal-header">
+        <div className="modal-overlay" onClick={() => setConfirmStatus(null)}>
+          <div className="modal-box modal-sm" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
               <h2>Confirmer l'action</h2>
-              <button className="donation-modal-close" onClick={() => setConfirmStatus(null)}>✕</button>
+              <button className="modal-close" onClick={() => setConfirmStatus(null)}>✕</button>
             </div>
-            <div className="donation-modal-body">
-              <p>
-                Êtes-vous sûr de vouloir <strong>{confirmStatus.status === 'approved' ? 'approuver' : 'rejeter'}</strong> ce don ?
+            <div className="modal-body">
+              <p style={{ color: 'var(--txt2)', lineHeight: 1.6 }}>
+                Êtes-vous sûr de vouloir <strong style={{ color: 'var(--txt1)' }}>{confirmStatus.status === 'approved' ? 'approuver' : 'rejeter'}</strong> ce don ?
                 {confirmStatus.status === 'approved' && " Un nouveau livre sera automatiquement créé dans le catalogue public."}
               </p>
               
               {confirmStatus.status === 'rejected' && (
-                <div>
-                  <label style={{ display: 'block', marginTop: 16, marginBottom: 8, color: 'var(--txt1)', fontWeight: 600, fontSize: '0.9rem' }}>
-                    Motif du rejet (visible par le bénévole) :
-                  </label>
+                <div className="form-field" style={{ marginTop: '10px' }}>
+                  <label>Motif du rejet (visible par le bénévole)</label>
                   <textarea
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
@@ -270,10 +291,10 @@ export default function AdminDonations() {
                 </div>
               )}
             </div>
-            <div className="donation-modal-footer">
-              <button className="don-modal-btn don-modal-btn-cancel" onClick={() => setConfirmStatus(null)}>Annuler</button>
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={() => setConfirmStatus(null)}>Annuler</button>
               <button 
-                className={`don-modal-btn ${confirmStatus.status === 'approved' ? 'don-modal-btn-approve' : 'don-modal-btn-reject'}`} 
+                className={`btn ${confirmStatus.status === 'approved' ? 'btn-primary' : 'btn-danger'}`} 
                 onClick={executeStatusUpdate}
               >
                 {confirmStatus.status === 'approved' ? 'Oui, approuver' : 'Oui, rejeter'}

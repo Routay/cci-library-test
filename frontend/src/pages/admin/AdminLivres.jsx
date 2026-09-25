@@ -54,6 +54,7 @@ export default function AdminLivres() {
         ...prev,
         title: res.data.title || prev.title,
         author: res.data.author || prev.author,
+        cover: res.data.frontCoverUrl || prev.cover,
         frontCoverImage: res.data.frontCoverUrl || prev.frontCoverImage,
         backCoverImage: res.data.backCoverUrl || prev.backCoverImage,
         aiExtractedText: res.data.extractedText || prev.aiExtractedText

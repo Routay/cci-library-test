@@ -187,7 +187,7 @@ export default function Home() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24 }}>
               {stats.recentBooks.map((book, i) => (
-                <Link to="/catalogue" key={book._id} className="card" style={{ overflow: 'hidden', textDecoration: 'none', display: 'flex', flexDirection: 'column', animationDelay: `${i * 0.08}s` }}>
+                <Link to={`/livre/${book._id}`} key={book._id} className="card" style={{ overflow: 'hidden', textDecoration: 'none', display: 'flex', flexDirection: 'column', animationDelay: `${i * 0.08}s` }}>
                   <div style={{ height: 260 }}>
                     <BookCover
                       title={book.title}

@@ -2,14 +2,14 @@ import express from 'express';
 import Donation from '../models/Donation.js';
 import Book from '../models/Book.js';
 import { protect, superAdminOnly } from '../middleware/auth.js';
-import { upload } from '../utils/cloudinary.js';
+import { uploadPdf } from '../utils/cloudinary.js';
 
 const router = express.Router();
 
 // ── POST /api/donations ── Soumettre un don (authentifié) ─────────
 router.post('/', protect, (req, res, next) => {
   // Wrapper multer pour capturer les erreurs d'upload Cloudinary
-  upload.single('pdfFile')(req, res, (err) => {
+  uploadPdf.single('pdfFile')(req, res, (err) => {
     if (err) {
       console.error('❌ Erreur upload Cloudinary/Multer:', err.message);
       console.error('❌ Détails complets:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
