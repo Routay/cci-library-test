@@ -498,3 +498,549 @@
     font-size: 1.2rem;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════
+   MODAL — LECTEUR PDF IMMERSIF
+   ═══════════════════════════════════════════════════════ */
+
+.don-pdf-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: donFadeIn 0.25s ease;
+}
+
+@keyframes donFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.don-pdf-modal {
+  width: 94vw;
+  max-width: 1100px;
+  height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a2e;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  animation: donSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes donSlideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Top bar */
+.don-pdf-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.don-pdf-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.don-pdf-topbar-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold), #c9a227);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.don-pdf-topbar-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: -0.01em;
+}
+
+.don-pdf-topbar-center {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.don-pdf-zoom-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.don-pdf-zoom-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.don-pdf-zoom-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.don-pdf-zoom-display {
+  min-width: 52px;
+  text-align: center;
+  padding: 0 8px;
+}
+
+.don-pdf-zoom-display span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.don-pdf-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.don-pdf-download-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.don-pdf-download-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.don-pdf-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.don-pdf-close-btn:hover {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* PDF content area */
+.don-pdf-content {
+  flex: 1;
+  overflow: auto;
+  background: #16213e;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   MODAL — CONFIRMATION (APPROVE / REJECT)
+   ═══════════════════════════════════════════════════════ */
+
+.don-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: donFadeIn 0.2s ease;
+}
+
+.don-confirm-modal {
+  width: 100%;
+  max-width: 460px;
+  background: var(--bg1);
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  padding: 40px 36px 32px;
+  position: relative;
+  text-align: center;
+  animation: donConfirmIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes donConfirmIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Top accent line */
+.don-confirm-approve::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #34d399, #10b981);
+}
+
+.don-confirm-reject::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ef4444, #f87171, #ef4444);
+}
+
+/* Close button */
+.don-confirm-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--txt3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.don-confirm-close:hover {
+  background: var(--bg3);
+  color: var(--txt1);
+}
+
+/* Visual: icon ring with animation */
+.don-confirm-visual {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 24px;
+}
+
+.don-confirm-icon-ring {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: donRingPulse 2s ease-in-out infinite;
+}
+
+@keyframes donRingPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.don-ring-approve {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.08));
+  border: 2px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.1);
+}
+
+.don-ring-reject {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(248, 113, 113, 0.08));
+  border: 2px solid rgba(239, 68, 68, 0.25);
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.1);
+}
+
+.don-confirm-icon-inner {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.don-ring-approve .don-confirm-icon-inner {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+}
+
+.don-ring-reject .don-confirm-icon-inner {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.35);
+}
+
+/* Sparkle effects (approve only) */
+.don-confirm-sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.don-sparkle-1 {
+  top: 4px;
+  right: 8px;
+  animation: donSpark 2s ease-in-out infinite;
+}
+
+.don-sparkle-2 {
+  bottom: 8px;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  animation: donSpark 2s ease-in-out 0.5s infinite;
+}
+
+.don-sparkle-3 {
+  top: 20px;
+  left: 6px;
+  width: 5px;
+  height: 5px;
+  animation: donSpark 2s ease-in-out 1s infinite;
+}
+
+@keyframes donSpark {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.6); }
+}
+
+/* Title + description */
+.don-confirm-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--txt1);
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.don-confirm-desc {
+  font-size: 0.92rem;
+  color: var(--txt2);
+  line-height: 1.6;
+  margin: 0 0 20px;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.don-confirm-desc strong {
+  color: var(--txt1);
+  font-weight: 700;
+}
+
+/* Info card (approve) */
+.don-confirm-info-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.don-info-approve {
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.don-info-approve svg {
+  flex-shrink: 0;
+}
+
+/* Textarea (reject) */
+.don-confirm-textarea-wrap {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.don-confirm-textarea-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--txt1);
+  margin-bottom: 10px;
+}
+
+.don-confirm-optional {
+  font-weight: 400;
+  color: var(--txt3);
+  font-size: 0.8rem;
+}
+
+.don-confirm-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg2);
+  color: var(--txt1);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  min-height: 90px;
+}
+
+.don-confirm-textarea::placeholder {
+  color: var(--txt3);
+}
+
+.don-confirm-textarea:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
+}
+
+/* Action buttons */
+.don-confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.don-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 140px;
+}
+
+.don-btn-cancel {
+  background: var(--bg2);
+  color: var(--txt2);
+  border: 1px solid var(--border);
+}
+
+.don-btn-cancel:hover {
+  background: var(--bg3);
+  color: var(--txt1);
+}
+
+.don-btn-approve {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.don-btn-approve:hover {
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
+}
+
+.don-btn-approve:active {
+  transform: translateY(0);
+}
+
+.don-btn-reject {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.don-btn-reject:hover {
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+.don-btn-reject:active {
+  transform: translateY(0);
+}
+
+/* ── RESPONSIVE MODALS ──────────────────────────────── */
+@media (max-width: 640px) {
+  .don-pdf-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .don-pdf-topbar {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .don-pdf-topbar-title {
+    display: none;
+  }
+
+  .don-confirm-modal {
+    padding: 32px 24px 24px;
+    border-radius: 20px;
+    max-width: 100%;
+  }
+
+  .don-confirm-actions {
+    flex-direction: column;
+  }
+
+  .don-confirm-btn {
+    width: 100%;
+  }
+}

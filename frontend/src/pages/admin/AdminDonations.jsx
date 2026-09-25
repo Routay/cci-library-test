@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, CheckCircle, XCircle, Eye, AlertCircle, Calendar, Mail, Phone, BookOpen, Clock, Gift, Search } from 'lucide-react';
+import { FileText, CheckCircle, XCircle, Eye, AlertCircle, Calendar, Mail, Phone, BookOpen, Clock, Gift, Search, ZoomIn, ZoomOut, X, ShieldCheck, ShieldX, AlertTriangle, BookPlus, MessageSquare, Download } from 'lucide-react';
 import api from '../../services/api';
 import PdfReader from '../../components/PdfReader';
 import './AdminDonations.css';
@@ -231,73 +231,144 @@ export default function AdminDonations() {
         </div>
       </div>
 
-      {/* Modal View PDF */}
+      {/* ══════════════════════════════════════════════════════
+           MODAL — LECTEUR PDF IMMERSIF
+           ══════════════════════════════════════════════════════ */}
       {viewPdfUrl && (
-        <div className="modal-overlay" onClick={() => setViewPdfUrl(null)}>
-          <div className="modal-box" style={{ maxWidth: '1000px', height: '90vh', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
-            <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h2>Aperçu du PDF</h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg2)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                  <button 
-                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: 'none', background: 'var(--bg3)', color: 'var(--txt1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    onClick={() => setPdfZoom(z => Math.max(z - 25, 50))}
-                    disabled={pdfZoom <= 50}
-                  >
-                    -
-                  </button>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--txt2)', minWidth: '40px', textAlign: 'center' }}>{pdfZoom}%</span>
-                  <button 
-                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: 'none', background: 'var(--bg3)', color: 'var(--txt1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    onClick={() => setPdfZoom(z => Math.min(z + 25, 300))}
-                    disabled={pdfZoom >= 300}
-                  >
-                    +
-                  </button>
+        <div className="don-pdf-overlay" onClick={() => { setViewPdfUrl(null); setPdfZoom(100); }}>
+          <div className="don-pdf-modal" onClick={e => e.stopPropagation()}>
+            {/* Floating top bar */}
+            <div className="don-pdf-topbar">
+              <div className="don-pdf-topbar-left">
+                <div className="don-pdf-topbar-icon">
+                  <FileText size={18} />
                 </div>
-                <button className="modal-close" onClick={() => setViewPdfUrl(null)}>✕</button>
+                <span className="don-pdf-topbar-title">Lecteur de document</span>
+              </div>
+              <div className="don-pdf-topbar-center">
+                <button
+                  className="don-pdf-zoom-btn"
+                  onClick={() => setPdfZoom(z => Math.max(z - 25, 50))}
+                  disabled={pdfZoom <= 50}
+                  title="Zoom arrière"
+                >
+                  <ZoomOut size={16} />
+                </button>
+                <div className="don-pdf-zoom-display">
+                  <span>{pdfZoom}%</span>
+                </div>
+                <button
+                  className="don-pdf-zoom-btn"
+                  onClick={() => setPdfZoom(z => Math.min(z + 25, 300))}
+                  disabled={pdfZoom >= 300}
+                  title="Zoom avant"
+                >
+                  <ZoomIn size={16} />
+                </button>
+              </div>
+              <div className="don-pdf-topbar-right">
+                <a
+                  href={viewPdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="don-pdf-download-btn"
+                  title="Ouvrir dans un nouvel onglet"
+                >
+                  <Download size={16} />
+                </a>
+                <button className="don-pdf-close-btn" onClick={() => { setViewPdfUrl(null); setPdfZoom(100); }} title="Fermer">
+                  <X size={18} />
+                </button>
               </div>
             </div>
-            <div className="modal-body" style={{ flex: 1, padding: 0, overflow: 'hidden' }}>
+            {/* PDF Content */}
+            <div className="don-pdf-content">
               <PdfReader url={viewPdfUrl} zoom={pdfZoom} />
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal Confirmation Statut */}
-      {confirmStatus && (
-        <div className="modal-overlay" onClick={() => setConfirmStatus(null)}>
-          <div className="modal-box modal-sm" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Confirmer l'action</h2>
-              <button className="modal-close" onClick={() => setConfirmStatus(null)}>✕</button>
-            </div>
-            <div className="modal-body">
-              <p style={{ color: 'var(--txt2)', lineHeight: 1.6 }}>
-                Êtes-vous sûr de vouloir <strong style={{ color: 'var(--txt1)' }}>{confirmStatus.status === 'approved' ? 'approuver' : 'rejeter'}</strong> ce don ?
-                {confirmStatus.status === 'approved' && " Un nouveau livre sera automatiquement créé dans le catalogue public."}
-              </p>
-              
-              {confirmStatus.status === 'rejected' && (
-                <div className="form-field" style={{ marginTop: '10px' }}>
-                  <label>Motif du rejet (visible par le bénévole)</label>
-                  <textarea
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                    rows={3}
-                    placeholder="Ex: Le livre est trop abîmé, ou hors sujet..."
-                  />
+      {/* ══════════════════════════════════════════════════════
+           MODAL — CONFIRMATION APPROBATION
+           ══════════════════════════════════════════════════════ */}
+      {confirmStatus && confirmStatus.status === 'approved' && (
+        <div className="don-confirm-overlay" onClick={() => setConfirmStatus(null)}>
+          <div className="don-confirm-modal don-confirm-approve" onClick={e => e.stopPropagation()}>
+            <button className="don-confirm-close" onClick={() => setConfirmStatus(null)}>
+              <X size={18} />
+            </button>
+            <div className="don-confirm-visual">
+              <div className="don-confirm-icon-ring don-ring-approve">
+                <div className="don-confirm-icon-inner">
+                  <ShieldCheck size={32} />
                 </div>
-              )}
+              </div>
+              <div className="don-confirm-sparkle don-sparkle-1" />
+              <div className="don-confirm-sparkle don-sparkle-2" />
+              <div className="don-confirm-sparkle don-sparkle-3" />
             </div>
-            <div className="modal-footer">
-              <button className="btn btn-outline" onClick={() => setConfirmStatus(null)}>Annuler</button>
-              <button 
-                className={`btn ${confirmStatus.status === 'approved' ? 'btn-primary' : 'btn-danger'}`} 
-                onClick={executeStatusUpdate}
-              >
-                {confirmStatus.status === 'approved' ? 'Oui, approuver' : 'Oui, rejeter'}
+            <h3 className="don-confirm-title">Approuver ce don ?</h3>
+            <p className="don-confirm-desc">
+              En approuvant, un <strong>nouveau livre</strong> sera automatiquement créé dans le catalogue public et sera accessible à tous les membres.
+            </p>
+            <div className="don-confirm-info-card don-info-approve">
+              <BookPlus size={18} />
+              <span>Le livre apparaîtra dans le catalogue après validation.</span>
+            </div>
+            <div className="don-confirm-actions">
+              <button className="don-confirm-btn don-btn-cancel" onClick={() => setConfirmStatus(null)}>
+                Annuler
+              </button>
+              <button className="don-confirm-btn don-btn-approve" onClick={executeStatusUpdate}>
+                <CheckCircle size={16} />
+                Approuver le don
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+           MODAL — CONFIRMATION REJET
+           ══════════════════════════════════════════════════════ */}
+      {confirmStatus && confirmStatus.status === 'rejected' && (
+        <div className="don-confirm-overlay" onClick={() => setConfirmStatus(null)}>
+          <div className="don-confirm-modal don-confirm-reject" onClick={e => e.stopPropagation()}>
+            <button className="don-confirm-close" onClick={() => setConfirmStatus(null)}>
+              <X size={18} />
+            </button>
+            <div className="don-confirm-visual">
+              <div className="don-confirm-icon-ring don-ring-reject">
+                <div className="don-confirm-icon-inner">
+                  <ShieldX size={32} />
+                </div>
+              </div>
+            </div>
+            <h3 className="don-confirm-title">Rejeter ce don ?</h3>
+            <p className="don-confirm-desc">
+              Le bénévole sera notifié du rejet. Vous pouvez préciser un motif pour l'aider à comprendre la décision.
+            </p>
+            <div className="don-confirm-textarea-wrap">
+              <label className="don-confirm-textarea-label">
+                <MessageSquare size={14} />
+                Motif du rejet <span className="don-confirm-optional">(visible par le bénévole)</span>
+              </label>
+              <textarea
+                className="don-confirm-textarea"
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                rows={3}
+                placeholder="Ex: Le contenu ne correspond pas aux critères de la bibliothèque, format incompatible..."
+              />
+            </div>
+            <div className="don-confirm-actions">
+              <button className="don-confirm-btn don-btn-cancel" onClick={() => setConfirmStatus(null)}>
+                Annuler
+              </button>
+              <button className="don-confirm-btn don-btn-reject" onClick={executeStatusUpdate}>
+                <XCircle size={16} />
+                Confirmer le rejet
               </button>
             </div>
           </div>
