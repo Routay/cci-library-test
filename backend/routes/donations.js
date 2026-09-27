@@ -12,8 +12,15 @@ router.post('/', protect, (req, res, next) => {
   uploadPdf.single('pdfFile')(req, res, (err) => {
     if (err) {
       console.error('❌ Erreur upload Cloudinary/Multer:', err.message);
-      console.error('❌ Détails complets:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-      return res.status(500).json({ message: `Erreur upload fichier: ${err.message}` });
+      
+      let customMessage = "Une erreur est survenue lors du téléchargement de votre fichier. Veuillez réessayer avec un autre fichier.";
+      if (err.message && err.message.toLowerCase().includes('large')) {
+        customMessage = "Le fichier PDF sélectionné est trop volumineux. Veuillez choisir un fichier plus léger (Maximum 10 Mo).";
+      } else if (err.message && err.message.toLowerCase().includes('format')) {
+        customMessage = "Le format du fichier est invalide. Seuls les documents au format PDF sont acceptés pour les dons.";
+      }
+
+      return res.status(400).json({ message: customMessage });
     }
     next();
   });
@@ -24,7 +31,7 @@ router.post('/', protect, (req, res, next) => {
     const donorEmail = req.user.email; // On utilise l'email du compte
 
     if (!req.file) {
-      return res.status(400).json({ message: 'Le fichier PDF est manquant.' });
+      return res.status(400).json({ message: "Veuillez joindre le document PDF de l'œuvre pour valider votre don." });
     }
 
     console.log('✅ Fichier uploadé:', req.file.path);
@@ -44,8 +51,7 @@ router.post('/', protect, (req, res, next) => {
     res.status(201).json({ message: 'Donation soumise avec succès.', donation });
   } catch (err) {
     console.error('❌ Erreur soumission donation:', err.message);
-    console.error('❌ Stack:', err.stack);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Un problème technique est survenu lors de l'enregistrement de votre don. Notre équipe technique en a été notifiée, veuillez réessayer ultérieurement." });
   }
 });
 
