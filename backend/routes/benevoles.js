@@ -2,12 +2,12 @@ import express from 'express';
 import User     from '../models/User.js';
 import Loan     from '../models/Loan.js';
 import Donation from '../models/Donation.js';
-import { protect, superAdminOnly } from '../middleware/auth.js';
+import { protect, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// ── GET /api/benevoles ── Liste enrichie des bénévoles (super_admin) ──
-router.get('/', protect, superAdminOnly, async (req, res) => {
+// ── GET /api/benevoles ── Liste enrichie des bénévoles (admin) ──
+router.get('/', protect, adminOnly, async (req, res) => {
   try {
     const members = await User.find({ role: 'membre', isBenevole: true })
       .select('-password')
@@ -68,8 +68,8 @@ router.get('/', protect, superAdminOnly, async (req, res) => {
   }
 });
 
-// ── GET /api/benevoles/stats ── KPI globaux bénévoles (super_admin) ──
-router.get('/stats', protect, superAdminOnly, async (req, res) => {
+// ── GET /api/benevoles/stats ── KPI globaux bénévoles (admin) ──
+router.get('/stats', protect, adminOnly, async (req, res) => {
   try {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -93,8 +93,8 @@ router.get('/stats', protect, superAdminOnly, async (req, res) => {
   }
 });
 
-// ── DELETE /api/benevoles/bulk ── Suppression en masse (super_admin) ──
-router.delete('/bulk', protect, superAdminOnly, async (req, res) => {
+// ── DELETE /api/benevoles/bulk ── Suppression en masse (admin) ──
+router.delete('/bulk', protect, adminOnly, async (req, res) => {
   try {
     const { ids } = req.body;
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
@@ -121,7 +121,7 @@ router.delete('/bulk', protect, superAdminOnly, async (req, res) => {
 });
 
 // ── PATCH /api/benevoles/bulk-toggle ── Bloquer/débloquer en masse ──
-router.patch('/bulk-toggle', protect, superAdminOnly, async (req, res) => {
+router.patch('/bulk-toggle', protect, adminOnly, async (req, res) => {
   try {
     const { ids, actif } = req.body;
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
