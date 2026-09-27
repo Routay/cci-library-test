@@ -66,7 +66,7 @@ export default function PdfReader({ url, zoom = 100 }) {
         >
           <Page 
             pageNumber={pageNumber} 
-            width={containerWidth * (zoom / 100)} 
+            width={Math.min(containerWidth, 750) * (zoom / 100)} 
             renderTextLayer={true}
             renderAnnotationLayer={false}
             className="pdf-page-render"
