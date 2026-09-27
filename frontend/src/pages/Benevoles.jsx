@@ -17,14 +17,19 @@ export default function Benevoles() {
   const handleBecomeBenevole = async () => {
     try {
       setLoading(true);
+      const token = admin?.token || sessionStorage.getItem('cci_token');
       const { data } = await axios.put(`${API}/api/auth/become-benevole`, {}, {
-        headers: { Authorization: `Bearer ${admin.token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       updateUser({ isBenevole: true });
       setSuccessMsg("Félicitations, vous êtes maintenant bénévole !");
     } catch (err) {
       console.error(err);
-      alert("Erreur lors de l'opération.");
+      if (err.response?.status === 401) {
+        alert("Votre session a expiré ou est invalide. Veuillez vous reconnecter.");
+      } else {
+        alert(err.response?.data?.message || "Erreur lors de l'opération.");
+      }
     } finally {
       setLoading(false);
     }
