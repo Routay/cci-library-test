@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { ChevronLeft, ChevronRight, Loader } from 'lucide-react';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
@@ -10,6 +10,20 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 export default function PdfReader({ url, zoom = 100 }) {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
+  const wrapperRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(800);
+
+  useEffect(() => {
+    if (!wrapperRef.current) return;
+    const observer = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        // -32 pour tenir compte du padding/scrollbar
+        setContainerWidth(entry.contentRect.width - 32);
+      }
+    });
+    observer.observe(wrapperRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -34,7 +48,7 @@ export default function PdfReader({ url, zoom = 100 }) {
 
   return (
     <div className="pdf-reader-container">
-      <div className="pdf-document-wrapper">
+      <div className="pdf-document-wrapper" ref={wrapperRef}>
         <Document
           file={url}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -52,7 +66,7 @@ export default function PdfReader({ url, zoom = 100 }) {
         >
           <Page 
             pageNumber={pageNumber} 
-            scale={zoom / 100} 
+            width={containerWidth * (zoom / 100)} 
             renderTextLayer={true}
             renderAnnotationLayer={false}
             className="pdf-page-render"
@@ -65,9 +79,9 @@ export default function PdfReader({ url, zoom = 100 }) {
           <button 
             disabled={pageNumber <= 1} 
             onClick={previousPage}
-            className="btn btn-outline"
+            className="btn btn-outline pdf-nav-btn"
           >
-            <ChevronLeft size={20} /> Précédent
+            <ChevronLeft size={20} /> <span>Précédent</span>
           </button>
           
           <span className="page-indicator">
@@ -77,9 +91,9 @@ export default function PdfReader({ url, zoom = 100 }) {
           <button 
             disabled={pageNumber >= numPages} 
             onClick={nextPage}
-            className="btn btn-outline"
+            className="btn btn-outline pdf-nav-btn"
           >
-            Suivant <ChevronRight size={20} />
+            <span>Suivant</span> <ChevronRight size={20} />
           </button>
         </div>
       )}

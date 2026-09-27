@@ -93,4 +93,11 @@ export const reportAPI = {
   downloadWeekly: () => api.get('/api/report/weekly-report', { responseType: 'blob' }),
 };
 
+export const benevolesAPI = {
+  getAll:       ()   => api.get('/api/benevoles'),
+  getStats:     ()   => api.get('/api/benevoles/stats'),
+  bulkDelete:   ids  => api.delete('/api/benevoles/bulk', { data: { ids } }),
+  bulkToggle:   (ids, actif) => api.patch('/api/benevoles/bulk-toggle', { ids, actif }),
+};
+
 export default api;

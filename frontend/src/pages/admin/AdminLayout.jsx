@@ -27,6 +27,7 @@ export default function AdminLayout() {
 
   const SUPER_NAV = [
     { to: '/admin/gestion-admins', icon: <UserCog size={18} />,  label: 'Gestion Admins'     },
+    { to: '/admin/benevoles',      icon: <Users size={18} />,     label: 'Comptes Bénévoles'  },
     { to: '/admin/partenariats',   icon: <HeartHandshake size={18} />, label: 'Partenariats'       },
     { to: '/admin/donations',      icon: <HeartHandshake size={18} />, label: 'Dons (Bénévoles)' },
     { to: '/admin/messages',       icon: <MessageSquare size={18} />, label: 'Boîte de réception' },

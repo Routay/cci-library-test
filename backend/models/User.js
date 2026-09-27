@@ -70,6 +70,14 @@ const userSchema = new mongoose.Schema(
       enum: ['none', 'pending', 'approved', 'rejected'],
       default: 'none',
     },
+    isBenevole: {
+      type: Boolean,
+      default: false,
+    },
+    benevoleRegisteredAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

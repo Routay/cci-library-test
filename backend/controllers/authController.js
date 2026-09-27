@@ -39,9 +39,9 @@ export const login = async (req, res) => {
                 entity: 'Session',
                 details: `Connexion de ${user.prenom} ${user.nom} (${user.role})`
             });
-            // Sauvegarder la date de dernière connexion
-            await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
         }
+        // Sauvegarder la date de dernière connexion pour tous les utilisateurs
+        await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
 
         // 6. Réponse de succès
         res.status(200).json({
@@ -53,6 +53,8 @@ export const login = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 lastLogin: user.lastLogin,
+                isBenevole: user.isBenevole,
+                partnerStatus: user.partnerStatus,
             }
         });
 
@@ -63,7 +65,7 @@ export const login = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-    const { nom, prenom, email, password, tel, etablissement, sexe } = req.body;
+    const { nom, prenom, email, password, tel, etablissement, sexe, isBenevole } = req.body;
 
     try {
         const userExists = await User.findOne({ email });
@@ -79,30 +81,55 @@ export const register = async (req, res) => {
             tel,
             etablissement,
             sexe,
-            role: 'membre' // Par défaut
+            isBenevole: isBenevole === true,
+            benevoleRegisteredAt: isBenevole === true ? new Date() : null,
+            role: 'membre'
         });
 
-        // Auto login after register
-        const token = jwt.sign(
-            { id: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
-
         res.status(201).json({
-            token,
+            message: "Inscription réussie. Veuillez vous connecter.",
             user: {
                 id: user._id,
                 nom: user.nom,
                 prenom: user.prenom,
                 email: user.email,
                 role: user.role,
-                partnerStatus: user.partnerStatus
+                partnerStatus: user.partnerStatus,
+                isBenevole: user.isBenevole,
+                benevoleRegisteredAt: user.benevoleRegisteredAt
             }
         });
 
     } catch (error) {
         console.error("Erreur Inscription:", error);
         res.status(500).json({ message: "Erreur serveur lors de l'inscription" });
+    }
+};
+
+export const becomeBenevole = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        user.isBenevole = true;
+        user.benevoleRegisteredAt = new Date();
+        await user.save();
+
+        res.status(200).json({
+            message: "Vous êtes maintenant un bénévole",
+            user: {
+                id: user._id,
+                nom: user.nom,
+                prenom: user.prenom,
+                email: user.email,
+                role: user.role,
+                isBenevole: user.isBenevole
+            }
+        });
+    } catch (error) {
+        console.error("Erreur Devenir Bénévole:", error);
+        res.status(500).json({ message: "Erreur serveur lors de l'opération" });
     }
 };

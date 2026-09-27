@@ -45,6 +45,7 @@ export default function Emprunts() {
     try {
       await loansAPI.requestPublic(form);
       setSubmit(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setErrorMsg(err.response?.data?.message || err.message || 'Erreur lors de la demande');
     } finally {
@@ -69,7 +70,7 @@ export default function Emprunts() {
                 .replace('{{email}}', form.email)
               }
             </p>
-            <button className="btn btn-primary" onClick={() => { setSubmit(false); setForm({ nom:'',prenom:'',email:'',tel:'',bookId:'',note:'',etablissement:'',sexe:'',departement:'',logeCampus:false,chambre:'' }); }}>
+            <button className="btn btn-primary" onClick={() => { setSubmit(false); setForm({ nom:'',prenom:'',email:'',tel:'',bookId:'',note:'',etablissement:'',sexe:'',departement:'',logeCampus:false,chambre:'' }); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
               {t('emprunts.success_btn')}
             </button>
           </div>

@@ -33,8 +33,14 @@ export function AuthProvider({ children }) {
     setAdmin(null);
   };
 
+  const updateUser = (userData) => {
+    const updatedUser = { ...admin, ...userData };
+    sessionStorage.setItem('cci_user', JSON.stringify(updatedUser));
+    setAdmin(updatedUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ admin, login, logout, isAuth: !!admin, loading: false }}>
+    <AuthContext.Provider value={{ admin, login, logout, updateUser, isAuth: !!admin, loading: false }}>
       {children}
     </AuthContext.Provider>
   );

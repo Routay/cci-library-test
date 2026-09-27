@@ -26,8 +26,13 @@ const pdfStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'cci-library/pdf',
-    allowed_formats: ['pdf'],
     resource_type: 'raw',
+    public_id: (req, file) => {
+      // Cloudinary "raw" ne met pas automatiquement d'extension. 
+      // On génère un nom unique qui se termine explicitement par ".pdf"
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      return `don_${uniqueSuffix}.pdf`;
+    }
   },
 });
 

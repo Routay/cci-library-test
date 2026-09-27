@@ -1,12 +1,34 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, ShieldCheck, Heart, ArrowRight } from 'lucide-react';
+import { BookOpen, ShieldCheck, Heart, ArrowRight, Loader2 } from 'lucide-react';
+import axios from 'axios';
 import './Benevoles.css';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Benevoles() {
   const { t } = useTranslation();
-  const { isAuth } = useAuth();
+  const { isAuth, admin, updateUser } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const handleBecomeBenevole = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.put(`${API}/api/auth/become-benevole`, {}, {
+        headers: { Authorization: `Bearer ${admin.token}` }
+      });
+      updateUser({ isBenevole: true });
+      setSuccessMsg("Félicitations, vous êtes maintenant bénévole !");
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'opération.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="benevoles-page" style={{ marginTop: 'var(--nav-h)' }}>
@@ -20,14 +42,21 @@ export default function Benevoles() {
           
           <div className="ben-hero-actions">
             {isAuth ? (
-              <Link to="/dashboard" className="btn-primary ben-btn">
-                {t('benevoles.hero_btn_auth')} <ArrowRight size={18} />
-              </Link>
+              admin?.isBenevole ? (
+                <Link to="/dashboard" className="btn-primary ben-btn">
+                  Accéder au dashboard <ArrowRight size={18} />
+                </Link>
+              ) : (
+                <button onClick={handleBecomeBenevole} disabled={loading} className="btn-primary ben-btn">
+                  {loading ? <Loader2 size={18} className="spin" /> : "Devenir Bénévole maintenant"} <ArrowRight size={18} />
+                </button>
+              )
             ) : (
-              <Link to="/login" className="btn-primary ben-btn">
+              <Link to="/login?type=benevole" className="btn-primary ben-btn">
                 {t('benevoles.hero_btn_no_auth')} <ArrowRight size={18} />
               </Link>
             )}
+            {successMsg && <p style={{color: '#10b981', marginTop: '10px', fontWeight: 'bold'}}>{successMsg}</p>}
           </div>
         </div>
       </section>
@@ -67,10 +96,16 @@ export default function Benevoles() {
             
             <div className="ben-cta-buttons">
               {isAuth ? (
-                <Link to="/dashboard" className="btn-primary ben-btn">{t('benevoles.cta_btn_auth')}</Link>
+                admin?.isBenevole ? (
+                  <Link to="/dashboard" className="btn-primary ben-btn">Accéder au dashboard</Link>
+                ) : (
+                  <button onClick={handleBecomeBenevole} disabled={loading} className="btn-primary ben-btn">
+                    {loading ? <Loader2 size={18} className="spin" /> : "Devenir Bénévole"}
+                  </button>
+                )
               ) : (
                 <>
-                  <Link to="/login" className="btn-primary ben-btn">{t('benevoles.cta_btn_register')}</Link>
+                  <Link to="/login?type=benevole" className="btn-primary ben-btn">{t('benevoles.cta_btn_register')}</Link>
                   <Link to="/login" className="btn-outline ben-btn">{t('benevoles.cta_btn_login')}</Link>
                 </>
               )}

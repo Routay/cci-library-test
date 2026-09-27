@@ -28,6 +28,7 @@ import AdminDonations from './pages/admin/AdminDonations.jsx';
 import AdminMessages from './pages/admin/AdminMessages.jsx';
 import AdminPartenariats from './pages/admin/AdminPartenariats.jsx';
 import AdminPdfConverter from './pages/admin/AdminPdfConverter.jsx';
+import AdminBenevoles from './pages/admin/AdminBenevoles.jsx';
 import LivreDetail from './pages/LivreDetail.jsx';
 import Benevoles from './pages/Benevoles.jsx';
 import Login from './pages/Login.jsx';
@@ -105,6 +106,7 @@ export default function App() {
               <Route path="donations"      element={<AdminDonations />} />
               <Route path="messages"       element={<AdminMessages />} />
               <Route path="partenariats"   element={<AdminPartenariats />} />
+              <Route path="benevoles"      element={<AdminBenevoles />} />
             </Route>
 
             {/* Pages publiques */}
