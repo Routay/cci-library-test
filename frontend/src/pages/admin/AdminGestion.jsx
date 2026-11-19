@@ -205,7 +205,7 @@ export default function AdminGestion() {
           </div>
         </div>
         <div className="gestion-kpi-card">
-          <div className="gestion-kpi-icon" style={{ background: 'rgba(184,146,42,0.12)', color: 'var(--gold)' }}>
+          <div className="gestion-kpi-icon" style={{ background: 'rgba(27, 104, 48,0.12)', color: 'var(--gold)' }}>
             <Crown size={24} />
           </div>
           <div className="gestion-kpi-info">

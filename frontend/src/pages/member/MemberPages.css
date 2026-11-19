@@ -18,7 +18,8 @@
 
 .md-page-title {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  /* Fluide — titre de page membre */
+  font-size: clamp(1.3rem, 2vw + 0.5rem, 1.6rem);
   font-weight: 700;
   color: var(--txt1);
   margin-bottom: 4px;
@@ -26,7 +27,8 @@
 
 .md-page-subtitle {
   color: var(--txt3);
-  font-size: 0.9rem;
+  /* Min 0.92rem — sous-titre lisible */
+  font-size: clamp(0.88rem, 1vw + 0.35rem, 0.95rem);
 }
 
 .md-header-btn {
@@ -38,7 +40,8 @@
 
 .md-section-title {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  /* Fluide — titre de section membre */
+  font-size: clamp(1rem, 1.3vw + 0.4rem, 1.1rem);
   color: var(--txt1);
   margin: 32px 0 16px;
 }
@@ -79,7 +82,7 @@
   width: 80px;
   height: 80px;
   margin: 0 auto 20px;
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(27, 104, 48, 0.08);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -189,7 +192,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(27, 104, 48, 0.08);
   color: var(--gold);
   display: flex;
   align-items: center;
@@ -204,7 +207,8 @@
 
 .md-donation-title {
   font-weight: 600;
-  font-size: 1rem;
+  /* Min 1rem — titre de donation lisible */
+  font-size: clamp(0.95rem, 1.1vw + 0.35rem, 1rem);
   color: var(--txt1);
   margin-bottom: 2px;
   white-space: nowrap;
@@ -213,7 +217,8 @@
 }
 
 .md-donation-author {
-  font-size: 0.85rem;
+  /* Min 0.88rem */
+  font-size: clamp(0.82rem, 0.9vw + 0.3rem, 0.88rem);
   color: var(--txt2);
 }
 
@@ -311,7 +316,8 @@
   background: var(--bg1);
   color: var(--txt1);
   font-family: inherit;
-  font-size: 0.95rem;
+  /* Min 1rem — confort de saisie */
+  font-size: clamp(0.95rem, 1vw + 0.35rem, 1rem);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -319,7 +325,7 @@
 .md-form-group textarea:focus {
   outline: none;
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 0 0 3px rgba(27, 104, 48, 0.15);
 }
 
 .md-upload-zone {
@@ -337,7 +343,7 @@
 
 .md-upload-zone:hover {
   border-color: var(--gold);
-  background: rgba(212, 175, 55, 0.03);
+  background: rgba(27, 104, 48, 0.03);
 }
 
 .md-upload-icon {
@@ -406,7 +412,7 @@
   width: 90px;
   height: 90px;
   margin: 0 auto 24px;
-  background: rgba(212, 175, 55, 0.1);
+  background: rgba(27, 104, 48, 0.1);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -416,7 +422,8 @@
 
 .md-success-state h2 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  /* Fluide — titre de l'état succès */
+  font-size: clamp(1.2rem, 2vw + 0.4rem, 1.5rem);
   color: var(--txt1);
   margin-bottom: 12px;
 }
@@ -425,7 +432,9 @@
   color: var(--txt2);
   max-width: 450px;
   margin: 0 auto 28px;
-  line-height: 1.6;
+  /* Min 1rem — texte explicatif lisible */
+  font-size: clamp(0.95rem, 1.1vw + 0.35rem, 1rem);
+  line-height: 1.7;
 }
 
 /* ── Chat ────────────────────────────────────────────── */
@@ -631,7 +640,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(27, 104, 48, 0.08);
   color: var(--gold);
   display: flex;
   align-items: center;

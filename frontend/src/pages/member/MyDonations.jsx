@@ -60,7 +60,7 @@ export default function MyDonations() {
       {/* Stats rapides */}
       <div className="md-stats-row">
         <div className="md-stat-card">
-          <div className="md-stat-icon" style={{ background: 'rgba(212,175,55,0.1)', color: 'var(--gold)' }}>
+          <div className="md-stat-icon" style={{ background: 'rgba(27, 104, 48,0.1)', color: 'var(--gold)' }}>
             <Book size={20} />
           </div>
           <div className="md-stat-info">

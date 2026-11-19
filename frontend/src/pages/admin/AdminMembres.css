@@ -16,7 +16,7 @@
 }
 .filter-select select {
   background: transparent; border: none; color: var(--txt1);
-  font-family: 'Outfit', sans-serif; font-size: 0.82rem;
+  font-family: 'Open Sans', sans-serif; font-size: 0.82rem;
   padding: 7px 4px; cursor: pointer; outline: none;
 }
 
@@ -41,7 +41,7 @@
   display: inline-flex; align-items: center; gap: 4px;
   padding: 5px 12px; border-radius: var(--r-sm);
   font-size: 0.75rem; font-weight: 600; border: 1px solid transparent;
-  cursor: pointer; transition: var(--trans); font-family: 'Outfit', sans-serif; white-space: nowrap;
+  cursor: pointer; transition: var(--trans); font-family: 'Open Sans', sans-serif; white-space: nowrap;
 }
 .rb-red {
   background: rgba(248,113,113,0.08); color: #F87171; border-color: rgba(248,113,113,0.2);
@@ -64,7 +64,7 @@
 .btn-danger {
   background: #EF4444; color: #fff; border: none;
   padding: 9px 22px; border-radius: var(--r-sm); font-weight: 600;
-  font-family: 'Outfit', sans-serif; cursor: pointer; transition: var(--trans);
+  font-family: 'Open Sans', sans-serif; cursor: pointer; transition: var(--trans);
 }
 .btn-danger:hover { background: #DC2626; }
 .btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -114,7 +114,7 @@
 .detail-stat-done svg { color: #4ADE80; }
 
 .detail-section-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.95rem; font-weight: 500; color: var(--txt1); margin: 0 0 10px;
 }
 .detail-empty { text-align: center; padding: 20px; color: var(--txt3); font-size: 0.85rem; }

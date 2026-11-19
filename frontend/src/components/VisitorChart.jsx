@@ -110,7 +110,7 @@ export default function VisitorChart() {
         ticks: {
           color: '#9ca3af',
           stepSize: 10,
-          font: { family: "'Outfit', sans-serif", size: 11 },
+          font: { family: "'Open Sans', sans-serif", size: 11 },
         },
         border: { display: false },
       },
@@ -118,7 +118,7 @@ export default function VisitorChart() {
         grid: { display: false },
         ticks: {
           color: '#9ca3af',
-          font: { family: "'Outfit', sans-serif", size: 10 },
+          font: { family: "'Open Sans', sans-serif", size: 10 },
           maxRotation: 0,
         },
         border: { display: false },

@@ -45,7 +45,7 @@ export default function CategoryChart({ data = [] }) {
         position: 'right',
         labels: {
           color: 'var(--txt2)',
-          font: { family: "'Outfit', sans-serif", size: 11 },
+          font: { family: "'Open Sans', sans-serif", size: 11 },
           usePointStyle: true,
           pointStyleWidth: 8,
           padding: 12,

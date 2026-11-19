@@ -9,18 +9,37 @@ import './Login.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+// ── Password strength calculator ──────────────────────
+function getPasswordStrength(password) {
+  if (!password) return { level: 0, label: '', color: 'transparent', segments: [false, false, false, false] };
+  
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[@$!%*?&.]/.test(password)) score++;
+
+  if (score <= 2) return { level: 1, label: 'Faible', color: '#ef4444', segments: [true, false, false, false] };
+  if (score === 3) return { level: 2, label: 'Moyen', color: '#eab308', segments: [true, true, false, false] };
+  if (score === 4) return { level: 3, label: 'Bon', color: '#f59e0b', segments: [true, true, true, false] };
+  return { level: 4, label: 'Fort', color: '#22c55e', segments: [true, true, true, true] };
+}
+
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isBenevoleFlow = searchParams.get('type') === 'benevole';
+  const startOnRegister = searchParams.get('mode') === 'register';
   const { login } = useAuth();
   
-  // Always start on LOGIN mode — the user must authenticate first
-  const [isLogin, setIsLogin] = useState(true);
+  // Start on REGISTER mode if coming from benevole page with mode=register
+  const [isLogin, setIsLogin] = useState(!startOnRegister);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   // Welcome modal state
@@ -30,6 +49,7 @@ export default function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     nom: '',
     prenom: '',
     tel: '',
@@ -37,17 +57,31 @@ export default function Login() {
     sexe: ''
   });
 
-  // Load remembered email on mount
+  // Load remembered email on mount — only in login mode
   useEffect(() => {
     const savedEmail = localStorage.getItem('cci_remember_email');
     if (savedEmail) {
+      setRememberMe(true);
       setFormData(prev => ({ ...prev, email: savedEmail }));
     }
   }, []);
 
+  // When switching modes, clear email if no remembered value
+  useEffect(() => {
+    if (isLogin) {
+      const savedEmail = localStorage.getItem('cci_remember_email');
+      if (savedEmail) {
+        setFormData(prev => ({ ...prev, email: savedEmail }));
+        setRememberMe(true);
+      }
+    }
+  }, [isLogin]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const passwordStrength = getPasswordStrength(formData.password);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,6 +100,20 @@ export default function Login() {
         await login(formData.email, formData.password);
         navigate('/dashboard'); 
       } else {
+        // Registration validations
+        if (formData.password !== formData.confirmPassword) {
+          setError('Les mots de passe ne correspondent pas.');
+          setLoading(false);
+          return;
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
+        if (!passwordRegex.test(formData.password)) {
+          setError('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
+          setLoading(false);
+          return;
+        }
+
         // Registration — always pass isBenevole based on the flow
         const payload = { ...formData, isBenevole: isBenevoleFlow };
         await axios.post(`${API}/api/auth/register`, payload);
@@ -83,10 +131,15 @@ export default function Login() {
 
   const handleWelcomeClose = () => {
     setShowWelcome(false);
-    // Switch to login mode and clear password
+    // Switch to login mode and clear ALL fields including email
     setIsLogin(true);
-    setFormData(prev => ({ ...prev, password: '', nom: '', prenom: '', tel: '', etablissement: '', sexe: '' }));
+    setFormData({ email: '', password: '', confirmPassword: '', nom: '', prenom: '', tel: '', etablissement: '', sexe: '' });
     setError(null);
+    // Restore remembered email if available
+    const savedEmail = localStorage.getItem('cci_remember_email');
+    if (savedEmail) {
+      setFormData(prev => ({ ...prev, email: savedEmail }));
+    }
   };
 
   return (
@@ -143,24 +196,65 @@ export default function Login() {
             <input type="email" name="email" placeholder={t('login.form_email')} value={formData.email} onChange={handleChange} required />
           </div>
 
-          <div className="input-group">
-            <Lock size={18} className="input-icon" />
-            <input 
-              type={showPassword ? "text" : "password"} 
-              name="password" 
-              placeholder={t('login.form_pwd')} 
-              value={formData.password} 
-              onChange={handleChange} 
-              required 
-            />
-            <button 
-              type="button" 
-              className="password-toggle"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+          <div className="input-group-wrap">
+            <div className="input-group">
+              <Lock size={18} className="input-icon" />
+              <input 
+                type={showPassword ? "text" : "password"} 
+                name="password" 
+                placeholder={t('login.form_pwd')} 
+                value={formData.password} 
+                onChange={handleChange} 
+                required 
+              />
+              <button 
+                type="button" 
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            {/* Password strength indicator — only in registration mode */}
+            {!isLogin && formData.password && (
+              <div className="pwd-strength">
+                <div className="pwd-strength-bars">
+                  {passwordStrength.segments.map((active, i) => (
+                    <div
+                      key={i}
+                      className={`pwd-strength-segment ${active ? 'active' : ''}`}
+                      style={{ backgroundColor: active ? passwordStrength.color : undefined }}
+                    />
+                  ))}
+                </div>
+                <span className="pwd-strength-label" style={{ color: passwordStrength.color }}>
+                  Force : {passwordStrength.label}
+                </span>
+              </div>
+            )}
           </div>
+
+          {!isLogin && (
+            <div className="input-group">
+              <Lock size={18} className="input-icon" />
+              <input 
+                type={showConfirmPassword ? "text" : "password"} 
+                name="confirmPassword" 
+                placeholder="Confirmez le mot de passe" 
+                value={formData.confirmPassword} 
+                onChange={handleChange} 
+                required={!isLogin} 
+              />
+              <button 
+                type="button" 
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          )}
 
           {!isLogin && (
             <>
@@ -197,7 +291,12 @@ export default function Login() {
               <input 
                 type="checkbox" 
                 checked={rememberMe} 
-                onChange={(e) => setRememberMe(e.target.checked)} 
+                onChange={(e) => {
+                  setRememberMe(e.target.checked);
+                  if (!e.target.checked) {
+                    localStorage.removeItem('cci_remember_email');
+                  }
+                }} 
               />
               <span className="login-remember-check" />
               <span>{t('login.remember_me')}</span>

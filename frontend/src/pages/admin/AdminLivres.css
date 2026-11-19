@@ -36,7 +36,7 @@
   border: none;
   outline: none;
   background: transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.88rem;
   color: var(--txt1);
 }
@@ -75,7 +75,7 @@
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1.5px solid;
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   white-space: nowrap;
 }
 .row-btn-edit {
@@ -153,7 +153,7 @@
   border-bottom: 1px solid var(--border);
 }
 .modal-header h2 {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--txt1);
@@ -200,7 +200,7 @@
   padding: 10px 14px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.88rem;
   color: var(--txt1);
   background: var(--bg3);

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { settingsAPI } from '../services/api';
+import api from '../services/api';
 import { BookOpen, Moon, Users, Star, BookText, Heart, MapPin, BookMarked, ClipboardList, Globe, MoreHorizontal } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 import './Apropos.css';
@@ -50,7 +50,7 @@ export default function Apropos() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/stats/public')
+    api.get('/api/stats/public')
       .then(res => setStats(res.data))
       .catch(() => {});
     
@@ -75,6 +75,158 @@ export default function Apropos() {
   return (
     <div className="apropos-page">
 
+      {/* ── Typographie anti-cache : garantit que les nouvelles tailles
+          s'affichent même si le navigateur a le CSS en cache.
+          Priorité inline > feuille CSS externe. ── */}
+      {/* ── Anti-cache : CSS injecté dans le bundle JS, immunisé au cache navigateur ── */}
+      <style>{`
+        /* Page */
+        .apropos-page { overflow-x: hidden; }
+
+        /* ── Hero ── */
+        .ap-hero-title {
+          font-size: clamp(1.9rem, 6.5vw, 5rem) !important;
+          line-height: 1.08 !important;
+        }
+        .ap-hero-sub {
+          font-size: clamp(1.02rem, 1.5vw + 0.4rem, 1.2rem) !important;
+          line-height: 1.82 !important;
+        }
+        .ap-hero-arabic {
+          font-size: clamp(1.3rem, 2vw + 0.5rem, 1.9rem) !important;
+        }
+        .ap-hero-trans {
+          font-size: clamp(0.92rem, 1vw + 0.35rem, 1.05rem) !important;
+        }
+
+        /* ── Section descriptions ── */
+        .ap-section-desc {
+          font-size: clamp(1.02rem, 1.3vw + 0.4rem, 1.18rem) !important;
+          line-height: 1.9 !important;
+        }
+
+        /* ── Mission cards ── */
+        .ap-mission-card h3 {
+          font-size: clamp(1.2rem, 1.6vw + 0.4rem, 1.5rem) !important;
+        }
+        .ap-mission-card p {
+          font-size: clamp(0.98rem, 1.1vw + 0.4rem, 1.1rem) !important;
+          line-height: 1.82 !important;
+        }
+
+        /* ── Bibliothèque ── */
+        .ap-lib-desc {
+          font-size: clamp(1rem, 1.2vw + 0.4rem, 1.15rem) !important;
+          line-height: 1.9 !important;
+        }
+        .ap-lib-features li {
+          font-size: clamp(1rem, 1.1vw + 0.4rem, 1.1rem) !important;
+        }
+
+        /* ── Catégories ── */
+        .ap-cat-label {
+          font-size: clamp(0.95rem, 1.1vw + 0.35rem, 1.08rem) !important;
+        }
+        .ap-cat-desc {
+          font-size: clamp(0.82rem, 0.9vw + 0.3rem, 0.92rem) !important;
+        }
+
+        /* ── Stats ── */
+        .ap-stat-value {
+          font-size: clamp(1.9rem, 3.5vw + 0.5rem, 2.8rem) !important;
+        }
+        .ap-stat-label {
+          font-size: clamp(0.88rem, 0.9vw + 0.4rem, 1rem) !important;
+        }
+
+        /* ── Contact ── */
+        .ap-contact-card h3 {
+          font-size: clamp(1.25rem, 1.5vw + 0.5rem, 1.6rem) !important;
+        }
+        .ap-contact-list li {
+          font-size: clamp(0.92rem, 1vw + 0.35rem, 1.05rem) !important;
+        }
+
+        /* ── Citation — sans bande jaune ── */
+        .ap-citation-card {
+          border-left: none !important;
+          border: 1px solid rgba(27, 104, 48, 0.30) !important;
+          box-shadow: 0 4px 32px rgba(27, 104, 48, 0.12),
+                      inset 0 0 0 1px rgba(255,255,255,0.04) !important;
+        }
+        .ap-citation-arabic {
+          font-size: clamp(1.4rem, 2vw + 0.5rem, 2rem) !important;
+        }
+        .ap-citation-trans {
+          font-size: clamp(0.98rem, 1.1vw + 0.4rem, 1.1rem) !important;
+          line-height: 1.78 !important;
+        }
+        .ap-citation-ref {
+          font-size: clamp(0.78rem, 0.85vw + 0.3rem, 0.92rem) !important;
+        }
+
+        /* ── Responsive anti-cache ── */
+        @media (max-width: 768px) {
+          .ap-hero-title { font-size: clamp(1.9rem, 7vw, 3.2rem) !important; }
+        }
+        @media (max-width: 600px) {
+          /* Mission card : CSS Grid 2 zones garanties */
+          .ap-mission-card {
+            display: grid !important;
+            grid-template-columns: 52px 1fr !important;
+            grid-template-rows: auto auto !important;
+            grid-template-areas: "icon title" "desc desc" !important;
+            column-gap: 14px !important;
+            row-gap: 10px !important;
+            padding: 20px 18px !important;
+            text-align: left !important;
+            align-items: center !important;
+          }
+          .ap-mission-icon {
+            grid-area: icon !important;
+            width: 52px !important;
+            height: 52px !important;
+            align-self: center !important;
+          }
+          .ap-mission-card h3 {
+            grid-area: title !important;
+            font-size: clamp(1rem, 4vw, 1.2rem) !important;
+            text-align: left !important;
+            margin: 0 !important;
+            align-self: center !important;
+          }
+          .ap-mission-card p {
+            grid-area: desc !important;
+            font-size: clamp(0.9rem, 3.5vw, 1rem) !important;
+            text-align: left !important;
+            margin: 0 !important;
+            line-height: 1.65 !important;
+          }
+          .ap-hero-title  { font-size: clamp(1.7rem, 8vw, 2.6rem) !important; }
+          .ap-stat-value  { font-size: clamp(1.6rem, 7vw, 2.2rem) !important; }
+        }
+        @media (max-width: 480px) {
+          .ap-mission-card {
+            grid-template-columns: 46px 1fr !important;
+            column-gap: 12px !important;
+            padding: 16px 14px !important;
+          }
+          .ap-mission-icon   { width: 46px !important; height: 46px !important; }
+          .ap-mission-card h3 { font-size: clamp(0.95rem, 4vw, 1.1rem) !important; }
+          .ap-mission-card p  { font-size: clamp(0.88rem, 3.5vw, 0.98rem) !important; }
+        }
+        @media (max-width: 380px) {
+          .ap-hero-title { font-size: clamp(1.55rem, 8.5vw, 2.2rem) !important; }
+          .ap-citation-arabic { font-size: clamp(1.2rem, 6vw, 1.6rem) !important; }
+          .ap-mission-card {
+            grid-template-columns: 40px 1fr !important;
+            column-gap: 10px !important;
+            padding: 14px 12px !important;
+          }
+          .ap-mission-icon { width: 40px !important; height: 40px !important; }
+        }
+      `}</style>
+
       {/* ── HERO ─────────────────────────────────────────── */}
       <section className="ap-hero">
         <div className="ap-hero-orb ap-hero-orb-1" />
@@ -88,13 +240,14 @@ export default function Apropos() {
           <p className="ap-hero-sub anim-up d2">
             {t('apropos.hero_sub')}
           </p>
-        </div>
-        {/* Arabesque décoratif */}
-        <div className="ap-hero-bismillah">
-          <div className="ap-hero-arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-          {t('apropos.bismillah_trans') && (
-            <div className="ap-hero-trans">{t('apropos.bismillah_trans')}</div>
-          )}
+
+          {/* Arabesque décoratif */}
+          <div className="ap-hero-bismillah">
+            <div className="ap-hero-arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+            {t('apropos.bismillah_trans') && (
+              <div className="ap-hero-trans">{t('apropos.bismillah_trans')}</div>
+            )}
+          </div>
         </div>
       </section>
 

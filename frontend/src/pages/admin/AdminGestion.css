@@ -59,7 +59,7 @@
   min-width: 0;
 }
 .gestion-kpi-value {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.65rem;
   font-weight: 700;
   color: var(--txt1);
@@ -153,7 +153,7 @@
   color: var(--txt3);
   transition: all 0.18s;
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   flex-shrink: 0;
 }
 .gestion-action-btn:hover {
@@ -217,9 +217,9 @@
   text-transform: uppercase;
   padding: 2px 8px;
   border-radius: 20px;
-  background: rgba(184,146,42,0.12);
+  background: rgba(27,104,48,0.12);
   color: var(--gold-l);
-  border: 1px solid rgba(184,146,42,0.25);
+  border: 1px solid rgba(27,104,48,0.25);
 }
 
 /* ─── Password Modal ───────────────────────────────── */

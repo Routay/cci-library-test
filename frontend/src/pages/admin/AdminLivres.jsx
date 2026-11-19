@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useBooks } from '../../hooks/useBooks';
 import { XCircle, Pencil, Trash2, Plus, Search, BookOpen, Sparkles, Image as ImageIcon } from 'lucide-react';
 import api, { aiAPI } from '../../services/api';
+import BookCover from '../../components/BookCover';
 import './AdminLivres.css';
 
 const CATS  = ['Aqida', 'Tawhid', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Autre'];
@@ -281,6 +282,21 @@ export default function AdminLivres() {
 
               <div className="form-field">
                 <label>Image de couverture (Page de garde)</label>
+                <div style={{
+                  background: 'rgba(27, 104, 48, 0.08)',
+                  border: '1px solid rgba(27, 104, 48, 0.22)',
+                  borderRadius: '8px',
+                  padding: '9px 12px',
+                  fontSize: '0.8rem',
+                  color: 'var(--txt2)',
+                  lineHeight: 1.45,
+                  marginBottom: '8px',
+                }}>
+                  <strong style={{ color: 'var(--cci-vert)', display: 'block', marginBottom: '2px' }}>
+                    📐 Recommandation d'affichage CCI :
+                  </strong>
+                  Uploadez une image de livre <strong>sans arrière-plan (fond transparent PNG)</strong> ou une couverture droite (ratio 2:3, ex. <strong>600 × 900 px</strong>). Le système intègre automatiquement le livre sur le présentoir bibliothèque avec cadre vert institutionnel.
+                </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <input type="text" value={current.cover || ''} onChange={(e) => setCurrent({ ...current, cover: e.target.value })} placeholder="URL de l'image (ou uploadez un fichier)" style={{ flex: 1 }} />
                   <label className={`btn btn-outline upload-btn ${uploadingCover ? 'uploading' : ''}`} style={{ cursor: uploadingCover ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -288,7 +304,22 @@ export default function AdminLivres() {
                     <input type="file" accept="image/*" onChange={handleCoverUpload} disabled={uploadingCover} style={{ display: 'none' }} />
                   </label>
                 </div>
-                {current.cover && <img src={current.cover} alt="Couverture" className="cover-preview" />}
+                {current.cover && (
+                  <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--bg3)', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                    <div style={{ width: '110px', flexShrink: 0 }}>
+                      <BookCover
+                        title={current.title || 'Aperçu du livre'}
+                        author={current.author || 'Auteur'}
+                        coverUrl={current.cover}
+                        size="sm"
+                      />
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: 'var(--txt2)', lineHeight: 1.4 }}>
+                      <p style={{ margin: 0, fontWeight: 700, color: 'var(--txt1)' }}>Aperçu sur présentoir Bibliothèque CCI</p>
+                      <p style={{ margin: '4px 0 0', color: 'var(--txt3)' }}>Voici comment ce livre apparaîtra sur le site avec son décor unifié et son cadre vert institutionnel.</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="form-field">

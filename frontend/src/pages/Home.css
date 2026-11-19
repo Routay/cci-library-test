@@ -1,4 +1,4 @@
-/* ─── HERO ─────────────────────────────────────────────── */
+/* ─── HERO — CCI v2 ───────────────────────────────────── */
 .hero {
   position: relative;
   height: 580px;
@@ -20,9 +20,9 @@
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,0.1) 0%,
-    rgba(0,0,0,0.4) 55%,
-    rgba(0,0,0,0.8) 100%
+    rgba(10,61,22,0.15) 0%,
+    rgba(10,61,22,0.5) 55%,
+    rgba(10,61,22,0.9) 100%
   );
 }
 
@@ -33,24 +33,32 @@
 }
 
 .hero-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(3rem, 8vw, 6.5rem);
-  font-weight: 700;
+  font-family: 'Open Sans', sans-serif;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 800;
   color: #fff;
-  line-height: 0.92;
-  letter-spacing: -2px;
+  line-height: 0.95;
+  letter-spacing: -1px;
   text-shadow: 0 4px 32px rgba(0,0,0,0.5);
 }
-.hero-title-cci { color: var(--gold-l); font-size: 1.2em; }
+.hero-title-cci {
+  font-family: 'Kaushan Script', cursive;
+  background: var(--grad-or);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.1em;
+}
 .hero-subtitle  { margin-top: 8px; }
 .hero-script {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-style: italic;
-  color: rgba(255,255,255,0.9);
+  font-family: 'Kaushan Script', cursive;
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  background: var(--grad-or);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: block;
-  text-shadow: 0 2px 16px rgba(0,0,0,0.4);
-  font-weight: 300;
+  text-shadow: none;
 }
 
 /* Scroll indicator */
@@ -72,7 +80,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--gold-l);
+  background: var(--cci-or);
   animation: scrollDown 1.5s ease-in-out infinite;
 }
 
@@ -86,12 +94,14 @@
   font-family: 'Noto Naskh Arabic', serif;
   font-size: clamp(1.5rem, 3vw, 2.3rem);
   font-weight: 500;
-  color: var(--gold-l);
+  background: var(--grad-or);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-align: center;
   direction: rtl;
   margin-bottom: 12px;
   line-height: 1.8;
-  opacity: 0.85;
 }
 
 .welcome-label {
@@ -100,15 +110,16 @@
   font-weight: 700;
   letter-spacing: 3.5px;
   text-transform: uppercase;
-  color: var(--txt3);
+  color: var(--cci-vert);
   margin-bottom: 16px;
 }
+[data-theme="dark"] .welcome-label { color: var(--cci-or); }
 
 .welcome-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   text-align: center;
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  font-weight: 400;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
   color: var(--txt1);
   max-width: 780px;
   margin: 0 auto 16px;
@@ -117,17 +128,18 @@
 
 .welcome-desc {
   text-align: center;
-  font-size: 1.05rem;
+  /* Min 1rem — description principale lisible */
+  font-size: clamp(1rem, 1.2vw + 0.4rem, 1.1rem);
   color: var(--txt2);
   max-width: 580px;
   margin: 0 auto;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .welcome-divider {
   border: none;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cci-vert), var(--cci-or), transparent);
   margin: 52px 0;
 }
 
@@ -153,34 +165,38 @@
 }
 
 .action-card h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 400;
+  font-family: 'Open Sans', sans-serif;
+  /* Fluide — titres des action cards */
+  font-size: clamp(1.2rem, 1.5vw + 0.4rem, 1.4rem);
+  font-weight: 700;
   margin-bottom: 10px;
   color: var(--txt1);
 }
 
 .action-card p {
-  font-size: 1rem;
+  /* Min 1rem — texte descriptif des cards */
+  font-size: clamp(0.95rem, 1.1vw + 0.35rem, 1rem);
   color: var(--txt2);
   margin-bottom: 20px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .action-link {
   font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--gold);
+  font-weight: 700;
+  color: var(--cci-vert);
   text-decoration: underline;
   text-underline-offset: 4px;
   transition: var(--trans);
   letter-spacing: 0.3px;
 }
-.action-link:hover { color: var(--gold-l); }
+[data-theme="dark"] .action-link { color: var(--cci-or); }
+.action-link:hover { color: var(--cci-vert-deep); }
+[data-theme="dark"] .action-link:hover { color: var(--gold-l); }
 
-/* ─── STATS ─────────────────────────────────────────────── */
+/* ─── STATS — CCI deep green ──────────────────────────── */
 .stats-section {
-  background: linear-gradient(135deg, #1A3A2A 0%, #0D2A1E 50%, #1A3A2A 100%);
+  background: linear-gradient(135deg, #0A3D16 0%, #071A0E 50%, #0A3D16 100%);
   padding: 56px 0;
   position: relative;
   overflow: hidden;
@@ -189,7 +205,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(184,146,42,0.08) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(255,194,14,0.06) 0%, transparent 60%);
   pointer-events: none;
 }
 .stats-grid {
@@ -208,17 +224,21 @@
 }
 .stat-item:last-child { border-right: none; }
 .stat-icon-wrap {
-  color: rgba(184,146,42,0.7);
+  color: var(--cci-or);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 4px;
+  opacity: 0.85;
 }
 .stat-value {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 2.6rem;
-  font-weight: 700;
-  color: var(--gold-l);
+  font-weight: 800;
+  background: var(--grad-or);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   line-height: 1;
 }
 .stat-label {
@@ -226,48 +246,70 @@
   color: rgba(255,255,255,0.6);
   text-align: center;
   letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 /* ─── WEEKLY TEASER ─────────────────────────────────────── */
 .weekly-inner {
   display: flex;
   align-items: center;
-  gap: 48px;
-  padding: 48px;
+  gap: 56px;
+  padding: 56px 56px;
   background: var(--bg2);
   border: 1px solid var(--border2);
 }
 .weekly-text { flex: 1; }
 .weekly-text h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.9rem;
-  font-weight: 400;
+  font-family: 'Open Sans', sans-serif;
+  /* Fluide — titre du teaser livre de la semaine */
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-weight: 700;
   color: var(--txt1);
   margin-bottom: 12px;
 }
 .weekly-text p {
   color: var(--txt2);
-  font-size: 1.05rem;
-  line-height: 1.7;
+  /* Min 1rem — description du teaser */
+  font-size: clamp(1rem, 1.2vw + 0.35rem, 1.05rem);
+  line-height: 1.75;
   max-width: 420px;
 }
 .weekly-cover {
   flex-shrink: 0;
-  width: 165px;
-  height: 220px;
+  width: 190px;
+  height: 300px;
   border-radius: var(--r-md);
   overflow: hidden;
-  box-shadow: 8px 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(184,146,42,0.2);
+  box-shadow:
+    12px 16px 40px rgba(0,0,0,0.30),
+    0 0 0 2.5px var(--cci-vert),
+    4px 4px 0 0 rgba(27,104,48,0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
+.weekly-cover:hover {
+  transform: translateY(-6px) rotate(-0.5deg);
+  box-shadow:
+    16px 24px 50px rgba(0,0,0,0.35),
+    0 0 0 2.5px var(--cci-or),
+    6px 6px 0 0 rgba(255,194,14,0.15);
+}
+.weekly-cover img,
+.weekly-cover .book-cover-flat {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Placeholder sans image */
 .cover-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(145deg, #1A3A2A, #0D2218);
+  background: linear-gradient(145deg, #0A3D16, #071A0E);
   border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 8px 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(184,146,42,0.2);
+  box-shadow: 8px 8px 32px rgba(0,0,0,0.35), 0 0 0 2px var(--cci-vert);
 }
 
 /* ─── CATEGORIES ────────────────────────────────────────── */
@@ -278,7 +320,7 @@
   gap: 20px;
 }
 .cat-card:last-child:nth-child(3n + 1) {
-  grid-column: 2; /* Centre le 7ème élément si la grille a 3 colonnes */
+  grid-column: 2;
 }
 .cat-card {
   padding: 28px 24px;
@@ -294,18 +336,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--cci-vert);
   opacity: 0.85;
   width: 36px;
   height: 36px;
 }
+[data-theme="dark"] .cat-icon { color: var(--cci-or); }
 .cat-card h4 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.25rem;
-  font-weight: 400;
+  font-family: 'Open Sans', sans-serif;
+  /* Fluide — titres des catégories */
+  font-size: clamp(1rem, 1.3vw + 0.4rem, 1.15rem);
+  font-weight: 700;
   color: var(--txt1);
 }
-.cat-card p { font-size: 0.95rem; color: var(--txt2); }
+.cat-card p {
+  /* Min 0.95rem — descriptions de catégories */
+  font-size: clamp(0.88rem, 1vw + 0.3rem, 0.95rem);
+  color: var(--txt2);
+}
 .discover-cta { text-align: center; margin-top: 44px; }
 
 /* ─── Responsive ─────────────────────────────────────────── */
@@ -313,11 +361,27 @@
   .action-grid        { grid-template-columns: 1fr; }
   .stats-grid         { grid-template-columns: repeat(2, 1fr); }
   .stat-item:nth-child(2) { border-right: none; }
-  .weekly-inner       { flex-direction: column; gap: 28px; padding: 32px; }
+  /* Weekly teaser : passage en colonne sur tablette */
+  .weekly-inner       {
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: clamp(28px, 4vw, 36px);
+  }
+  .weekly-text        { text-align: center; }
+  .weekly-text p      { max-width: 100%; }
+  .weekly-text h2     { font-size: 1.5rem; }
+  .weekly-cover       { width: 180px; height: 240px; }
   .categories-grid    { grid-template-columns: repeat(2, 1fr); }
 }
+
 @media (max-width: 480px) {
   .hero             { height: 460px; }
   .categories-grid  { grid-template-columns: 1fr; }
   .stats-grid       { grid-template-columns: 1fr 1fr; }
+  /* Action cards : padding réduit sur petit mobile */
+  .action-card      { padding: 24px 20px; }
+  /* Teaser : couverture centrée sur mobile */
+  .weekly-cover     { width: 150px; height: 200px; }
+  .stats-section    { padding: 40px 0; }
 }

@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { BookOpen } from 'lucide-react';
-
-// The backend now handles fetching covers automatically upon creation.
-// COVER_CACHE and fetchCoverUrl have been removed to prevent client-side rate limiting (HTTP 429).
+import './BookCover.css';
 
 // Palette de couleurs de fond basée sur la première lettre du titre
 const BG_PALETTES = [
@@ -23,41 +21,73 @@ function getColorPalette(str) {
 }
 
 export default function BookCover({
-  title,
-  author,
-  coverUrl,       // URL already stored in DB (priority)
-  cover,          // Legacy field name
+  title = '',
+  author = '',
+  coverUrl,       // URL déjà en BDD (prioritaire)
+  cover,          // Ancien nom de champ
   style = {},
   className = '',
   size = 'md',    // 'sm' | 'md' | 'lg'
+  stage = true,   // Présentation unifiée avec décor de bibliothèque et cadre vert CCI
 }) {
   const [imgSrc, setImgSrc]     = useState(coverUrl || cover || null);
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
-    // If the cover URL is provided from the DB, use it
     setImgSrc(coverUrl || cover || null);
-    setImgError(false); // Reset error state on new cover
+    setImgError(false);
   }, [coverUrl, cover]);
 
   const [bg1, bg2, accent] = getColorPalette(title);
+  const iconSize = size === 'sm' ? 24 : size === 'lg' ? 44 : 32;
 
-  const iconSize = size === 'sm' ? 24 : size === 'lg' ? 56 : 36;
-  const fontSize = size === 'sm' ? '0.6rem' : size === 'lg' ? '0.85rem' : '0.7rem';
+  // ── Mode 1 : Présentation Studio Stage (Décor bibliothèque CCI) ──
+  if (stage) {
+    return (
+      <div className={`book-stage-frame ${className}`} style={style}>
 
+        {/* Emplacement centré du livre */}
+        <div className="book-stage-slot">
+          {imgSrc && !imgError ? (
+            <img
+              src={imgSrc}
+              alt={`Couverture : ${title}`}
+              className="book-stage-image"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div
+              className="book-stage-placeholder"
+              style={{
+                background: `linear-gradient(145deg, ${bg1} 0%, ${bg2} 100%)`,
+              }}
+            >
+              <div className="book-stage-ph-inner">
+                <BookOpen size={iconSize} color={accent} strokeWidth={1.5} />
+                {title && <span className="book-stage-ph-title">{title}</span>}
+                {author && <span className="book-stage-ph-author">{author}</span>}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Mode 2 : Mode plat simple (stage = false) ──
   if (imgSrc && !imgError) {
     return (
       <img
         src={imgSrc}
         alt={`Couverture : ${title}`}
-        className={className}
+        className={`book-cover-flat ${className}`}
         style={{ objectFit: 'cover', ...style }}
         onError={() => setImgError(true)}
       />
     );
   }
 
-  // Elegant placeholder
+  // Placeholder plat
   return (
     <div
       className={className}
@@ -74,7 +104,6 @@ export default function BookCover({
         ...style,
       }}
     >
-      {/* Decorative border */}
       <div style={{
         position: 'absolute', inset: 8,
         border: `1px solid ${accent}30`,
@@ -85,19 +114,18 @@ export default function BookCover({
       {title && (
         <span style={{
           color: accent,
-          fontSize,
+          fontSize: size === 'sm' ? '0.6rem' : '0.75rem',
           fontWeight: 600,
           textAlign: 'center',
           lineHeight: 1.3,
           maxWidth: '90%',
           opacity: 0.85,
-          fontFamily: "'Cormorant Garamond', serif",
+          fontFamily: "'Open Sans', sans-serif",
           letterSpacing: '0.5px',
         }}>
           {title.length > 28 ? title.slice(0, 28) + '…' : title}
         </span>
       )}
-      <style>{`@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}`}</style>
     </div>
   );
 }

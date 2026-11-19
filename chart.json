@@ -1,0 +1,249 @@
+{
+  "structure": "CCI",
+  "nom_complet": "Comité Culturel Islamique · Mosquée ESP · Dakar",
+  "source": "Charte graphique CCI v2 (octobre 2026), PDF Claude Design envoyé par Mouhammad le 16/10/2026",
+  "statut": "validé le 16/10/2026 (couleurs, polices, transitions 1, 2, 8, 9, 10 et logos)",
+  "couleurs": {
+    "vert_cci": {
+      "hex": "#1B6830",
+      "usage": "couleur principale : panneaux, bandeaux"
+    },
+    "vert_profond": {
+      "hex": "#0A3D16",
+      "usage": "fonds vidéo, écrans titre"
+    },
+    "vert_vif": {
+      "hex": "#009D24",
+      "usage": "logo, contours"
+    },
+    "or": {
+      "hex": "#FFC20E",
+      "usage": "mots clés, arabe (toujours en dégradé)"
+    },
+    "orange": {
+      "hex": "#E87E00",
+      "usage": "pastilles, accents (toujours en dégradé pour le texte)"
+    },
+    "creme": {
+      "hex": "#F9FAF5",
+      "usage": "fonds clairs"
+    },
+    "bleu_vert": {
+      "hex": "#003839",
+      "usage": "invocations"
+    },
+    "rose": {
+      "hex": "#9C1A8C",
+      "usage": "féminin, accent seul, jamais en grand fond"
+    },
+    "wave": {
+      "hex": "#1DC4FF",
+      "usage": "blocs de don seulement"
+    },
+    "orange_money": {
+      "hex": "#FF7900",
+      "usage": "blocs de don seulement"
+    },
+    "blanc": {
+      "hex": "#FFFFFF",
+      "usage": "texte courant sur vert"
+    }
+  },
+  "degrades": {
+    "or": {
+      "stops": ["#FFE135", "#FFC20E", "#F39200"],
+      "sens": "vertical",
+      "usage": "tout texte or"
+    },
+    "orange": {
+      "stops": ["#FFC20E", "#F39200", "#E87E00"],
+      "sens": "vertical",
+      "usage": "mots clés orange"
+    },
+    "panneau": {
+      "stops": ["#C9B11A", "#1B6830", "#1B6830"],
+      "sens": "horizontal",
+      "usage": "bandeaux de titre (valeur de départ estimée sur le PDF)"
+    },
+    "nom": {
+      "stops": ["#C9B11A", "#1B6830", "#0A3D16"],
+      "sens": "horizontal",
+      "usage": "étiquettes de nom (estimé)"
+    },
+    "cadre": {
+      "stops": ["#1B6830", "#FFC20E"],
+      "sens": "vertical",
+      "usage": "cadre des portraits, vert vers or"
+    },
+    "plateau": {
+      "stops": ["#1B6830", "#0A3D16"],
+      "sens": "radial",
+      "usage": "fonds vidéo"
+    }
+  },
+  "rubriques": {
+    "regle": "La couleur de rubrique va sur la pastille uniquement, en capitales espacées, en haut à gauche.",
+    "khutba": "#007D00",
+    "cours": "#E87E00",
+    "conference": "#E87E00",
+    "tafsir": "#E87E00",
+    "evenement": "#FFC20E",
+    "feminin": "#9C1A8C"
+  },
+  "polices": {
+    "texte": {
+      "famille": "Open Sans",
+      "graisses": [400, 600, 700, 800],
+      "usage": "tout le texte, 700 à 800 pour l'écran"
+    },
+    "script": {
+      "famille": "Kaushan Script",
+      "usage": "1 à 3 mots-titres, en dégradé or, jamais seule (toujours avec Open Sans)"
+    },
+    "arabe": {
+      "famille": "Noto Naskh Arabic",
+      "usage": "tout l'arabe, vocalisé, au-dessus du français, plus grand, en or"
+    },
+    "interdites": ["Georgia", "toute autre police script", "toute autre police"],
+    "echelle_px_sur_1080": {
+      "titre_xl": 140,
+      "titre": 96,
+      "sous_titre": 64,
+      "texte": 36,
+      "legende": 30,
+      "minimum": 28
+    },
+    "titre_blanc_sur_fond_clair": "contour vert foncé obligatoire"
+  },
+  "titres": {
+    "modeles": {
+      "contour": "Open Sans évidé vert + mot Kaushan or qui chevauche (affiches)",
+      "panneau": "Kaushan or au-dessus d'un bandeau vert avec sous-titre blanc Open Sans (miniatures, cartons vidéo)",
+      "etiquette": "un mot Kaushan sur pavé vert (matière, mot clé)"
+    }
+  },
+  "logo": {
+    "fichiers": {
+      "ecusson_couleur": "series/cci/logo/ecusson-couleur-3d.png (reçu le 16/10/2026, PNG transparent 1080×1350)",
+      "monogramme_blanc": "series/cci/logo/monogramme-blanc.png (fabriqué le 16/10/2026 à partir de l'écusson couleur : croissant, coupole et CCI en blanc, fond transparent)",
+      "lockup_blanc": "series/cci/logo/ecusson-blanc.png (fabriqué le 16/10/2026 : écusson vert en blanc plein, écusson jaune en blanc à 45 %, symbole évidé)",
+      "usage_blanc": "Le blanc va sur fond vert profond, sur image sombre et en filigrane ; la version couleur reste la version principale."
+    },
+    "usage": {
+      "defaut": "écusson couleur",
+      "video_coin": "monogramme blanc sur fond sombre",
+      "ecran_de_fin": "lockup blanc"
+    },
+    "position": "haut droite (affiches et vidéos) ; exception : miniature khutba en bas à gauche",
+    "zone_protection": "au moins la largeur du croissant tout autour",
+    "interdits": ["déformer", "changer les couleurs", "ombre colorée", "fond illisible"]
+  },
+  "formats": {
+    "16:9": {
+      "taille": [1920, 1080],
+      "usage": "YouTube, miniatures, épisodes longs"
+    },
+    "9:16": {
+      "taille": [1080, 1920],
+      "usage": "Reels, TikTok, Shorts, statuts",
+      "marge_haut_px": 220,
+      "marge_bas_px": 340
+    },
+    "1:1": {
+      "taille": [1080, 1080],
+      "usage": "extraits vidéo carrés"
+    },
+    "4:5": {
+      "taille": [1080, 1350],
+      "usage": "affiches Instagram, Facebook, WhatsApp"
+    }
+  },
+  "habillage_video": {
+    "carton_titre": "ouverture : pastille rubrique + logo, titre (modèle panneau), portrait détouré en cadre vert→or, nom, date ; fond = photo floutée + voile vert profond",
+    "bandeau_nom": "quand l'intervenant commence à parler : pastille verte, titre honorifique en or + nom en blanc, ligne optionnelle (événement ou sujet)",
+    "ecran_live": "pastille LIVE KHOUTBA + Mosquée ESP",
+    "ecran_de_fin": "lockup blanc sur vert profond, réseaux @mosqueeesp",
+    "collecte": "jauge pendant l'appel, écran « Comment donner » à la fin (Wave + Orange Money, seuls endroits où leurs couleurs apparaissent)",
+    "elements": [
+      "gouttes (forme du logo) or et orange, floutées",
+      "hexagones clairs très discrets",
+      "étoile khatam",
+      "calligraphie en filigrane"
+    ],
+    "portraits": "toujours détourés : cadre (vidéo), cadre avec tête qui dépasse (miniatures), bloc orange (invités), halo or (affiches) ; médaillon rond, arche et photo non détourée abandonnés"
+  },
+  "sous_titres": {
+    "par_defaut_video_longue": "parole",
+    "par_defaut_shorts": "mixte",
+    "styles": {
+      "parole": "Open Sans 700 blanc ombré, bas de l'écran ; arabe au-dessus si présent ; mots clés en dégradé or",
+      "parole_panneau": "même chose sur un panneau vert, pour les fonds chargés",
+      "mixte": "lignes Kaushan or + un mot-clé en grandes capitales Open Sans 800 (extraits, Reels)",
+      "coran": "arabe or entre ﴿ ﴾, traduction en italique, référence obligatoire ; aucun effet",
+      "intro": "basmala plein écran sur fond vert",
+      "lecture": "étiquette « Lecture · nom du livre », arabe blanc sur bandeau vert à double liseré, traduction dessous"
+    },
+    "regles": [
+      "or et orange toujours en dégradé",
+      "minimum 28 px sur 1080",
+      "ﷺ après « le Prophète Muhammad »",
+      "wolof : étiquette WOLOF + filet aux couleurs du Sénégal"
+    ],
+    "interdit_sur_verset": ["emoji", "effet sonore", "animation mot par mot", "Kaushan"]
+  },
+  "transitions": {
+    "statut": "validé par Mouhammad le 16/10/2026 : 1, 2, 8, 9, 10",
+    "apercu": "https://claude.ai/artifact/ERq6qVcvVhi3MaxpWW9Ts3",
+    "kit": {
+      "defaut": "coupe franche",
+      "ouverture_episode": "lumière de la coupole",
+      "chapitre": "encre d'or, puis carton de chapitre",
+      "entre_idees": "voile de lumière",
+      "avant_verset_ou_invocation": "fondu solennel, sans bruitage",
+      "fin_episode": "lumière de la coupole (version courte) vers l'écran de fin",
+      "shorts": ["pluie de gouttes", "coupe avec zoom"]
+    },
+    "catalogue": [
+      { "n": 1, "nom": "encre d'or", "duree_s": 1.2, "son": "souffle d'encre", "idee": "le plan suivant se répand comme une encre, liseré d'or brillant" },
+      { "n": 2, "nom": "lumière de la coupole", "duree_s": 2.0, "son": "résonance qui monte", "idee": "fil d'or qui dessine coupole + croissant du logo, rayons, éclat qui ouvre le plan" },
+      { "n": 8, "nom": "pluie de gouttes", "duree_s": 1.0, "son": "impacts feutrés", "idee": "gouttes du logo or et vertes en cascade" },
+      { "n": 9, "nom": "voile de lumière", "duree_s": 0.9, "son": "souffle bref", "idee": "balayage de lumière dorée avec reflets ronds" },
+      { "n": 10, "nom": "fondu solennel", "duree_s": 1.5, "son": "aucun", "idee": "fondu vers le vert profond avec quelques points d'or flottants" }
+    ],
+    "fabrication": "HyperFrames, 1920×1080 et 1080×1920, fond transparent, rangées dans series/cci/habillage/transitions/ ; coupe franche et coupe avec zoom faites dans CapCut",
+    "regle": "jamais de transition animée ni de bruitage sur un verset"
+  },
+  "ton": {
+    "registre": "respectueux, sobre, chaleureux",
+    "vouvoiement": true,
+    "imperatif_pluriel": true,
+    "titres_honorifiques": ["Oustaz", "Imam", "Dr"],
+    "infos_max_par_ecran": 4
+  },
+  "images_generees": {
+    "style": "décor réel et chaleureux de la mosquée et du campus, arrière-plan flouté, voile vert profond, hexagones très discrets, gouttes or et orange floutées",
+    "interdits": [
+      "tout être animé : personne, visage, silhouette, animal",
+      "figure sacrée",
+      "texte dans l'image"
+    ]
+  },
+  "son": {
+    "musique": "aucune, ni instrument ni nashid",
+    "sound_design": "ambiances, bruitages et transitions sonores discrets (skill banque-sons)",
+    "interdit_sur_verset": "aucun effet sonore"
+  },
+  "interdits": [
+    "violet, bleu, néon (hors Wave dans les blocs de don)",
+    "rose en grand fond",
+    "texte or ou orange en aplat (toujours en dégradé)",
+    "Kaushan seule ou sur plus de 3 mots",
+    "arabe sous le français ou plus petit",
+    "emoji, tutoiement",
+    "logo déformé, recoloré, ombré ou sur fond illisible",
+    "portrait non détouré, médaillon rond, arche",
+    "plus de 4 informations à l'écran",
+    "texte sous 28 px (sur 1080)",
+    "couper au milieu d'un verset, d'un hadith ou d'une invocation"
+  ]
+}

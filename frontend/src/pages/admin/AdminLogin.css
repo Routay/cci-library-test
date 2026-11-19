@@ -22,7 +22,7 @@
 }
 .login-orb-1 {
   width: 420px; height: 420px;
-  background: rgba(184,146,42,0.1);
+  background: rgba(27,104,48,0.1);
   top: -80px; left: -80px;
   animation: orbFloat1 12s ease-in-out infinite;
 }
@@ -64,8 +64,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(184,146,42,0.25);
-  border: 1px solid rgba(184,146,42,0.2);
+  box-shadow: 0 4px 20px rgba(27,104,48,0.25);
+  border: 1px solid rgba(27,104,48,0.2);
 }
 .login-logo-img {
   width: 42px;
@@ -73,7 +73,7 @@
   object-fit: contain;
 }
 .login-brand h1 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.6rem;
   font-weight: 400;
   color: var(--txt1);
@@ -90,7 +90,7 @@
 /* ── Séparateur gold ── */
 .login-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), rgba(184,146,42,0.3), transparent);
+  background: linear-gradient(90deg, transparent, var(--gold), rgba(27,104,48,0.3), transparent);
   margin: 0 0 28px;
 }
 
@@ -117,7 +117,7 @@
   background: var(--bg3);
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.9rem;
   color: var(--txt1);
   outline: none;

@@ -10,7 +10,7 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError]  = useState('');
   const [loading, setLoad] = useState(false);
-  const { login, isAuth }  = useAuth();
+  const { adminLogin, isAuth }  = useAuth();
   const navigate           = useNavigate();
 
   const getEmailProgress = (email) => {
@@ -36,7 +36,7 @@ export default function AdminLogin() {
     setError('');
     setLoad(true);
     try {
-      await login(form.email, form.password);
+      await adminLogin(form.email, form.password);
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Identifiants incorrects');

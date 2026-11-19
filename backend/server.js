@@ -19,6 +19,8 @@ import reportRoutes from './routes/report.js';
 import messagesRoutes from './routes/messages.js';
 import benevolesRoutes from './routes/benevoles.js';
 import { startCronJobs } from './services/cron.js';
+import { authLimiter, apiLimiter } from './middleware/rateLimiter.js';
+import errorHandler from './middleware/errorHandler.js';
 
 dotenv.config();
 
@@ -48,8 +50,11 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 
+// ── Rate limiting global ──────────────────────────────────
+app.use('/api/', apiLimiter);
+
 // ── Routes ────────────────────────────────────────────────
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/users', userRoutes);
@@ -68,14 +73,8 @@ app.get('/api/health', (_req, res) =>
   res.json({ status: 'ok', time: new Date() })
 );
 
-// ── Gestion des erreurs globale ───────────────────────────
-app.use((err, _req, res, _next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    message: err.message || 'Erreur serveur interne',
-    error_details: typeof err === 'object' ? JSON.stringify(err) : String(err)
-  });
-});
+// ── Gestion des erreurs globale (centralisée) ────────────
+app.use(errorHandler);
 
 // ── Connexion MongoDB puis démarrage ──────────────────────
 mongoose

@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 16px rgba(184, 146, 42, 0.25);
+  box-shadow: 0 6px 16px rgba(27, 104, 48, 0.25);
 }
 
 /* ─── Error Banner ────────────────────────────────── */
@@ -61,8 +61,8 @@
 
 .prt-stat-card.prt-stat-active {
   border-color: var(--gold);
-  background: var(--gold-glow2, rgba(184, 146, 42, 0.06));
-  box-shadow: 0 4px 16px rgba(184, 146, 42, 0.12);
+  background: var(--gold-glow2, rgba(27, 104, 48, 0.06));
+  box-shadow: 0 4px 16px rgba(27, 104, 48, 0.12);
 }
 
 .prt-stat-icon {
@@ -84,8 +84,8 @@
   color: #f59e0b;
 }
 .prt-stat-icon-approved {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background: rgba(27, 104, 48, 0.1);
+  color: #1B6830;
 }
 .prt-stat-icon-rejected {
   background: rgba(239, 68, 68, 0.1);
@@ -102,7 +102,7 @@
   font-weight: 800;
   color: var(--txt1);
   line-height: 1;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .prt-stat-label {
@@ -148,7 +148,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: rgba(184, 146, 42, 0.08);
+  background: rgba(27, 104, 48, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,7 +194,7 @@
 .prt-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-  border-color: rgba(184, 146, 42, 0.25);
+  border-color: rgba(27, 104, 48, 0.25);
 }
 
 /* ─── Status Ribbon ───────────────────────────────── */
@@ -216,9 +216,9 @@
 }
 
 .prt-ribbon-approved {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.04));
-  color: #059669;
-  border-bottom: 1px solid rgba(16, 185, 129, 0.12);
+  background: linear-gradient(90deg, rgba(27, 104, 48, 0.1), rgba(27, 104, 48, 0.04));
+  color: #0A3D16;
+  border-bottom: 1px solid rgba(27, 104, 48, 0.12);
 }
 
 .prt-ribbon-rejected {
@@ -247,9 +247,9 @@
   font-weight: 700;
   font-size: 1.1rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(184, 146, 42, 0.2);
+  box-shadow: 0 4px 12px rgba(27, 104, 48, 0.2);
   text-transform: uppercase;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .prt-card-identity {
@@ -324,7 +324,7 @@
   font-weight: 800;
   color: var(--txt1);
   line-height: 1;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .prt-card-stat-val.prt-val-danger {
@@ -374,19 +374,19 @@
   border: 1.5px solid transparent;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .prt-btn-approve {
-  background: rgba(16, 185, 129, 0.08);
-  color: #10b981;
-  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(27, 104, 48, 0.08);
+  color: #1B6830;
+  border-color: rgba(27, 104, 48, 0.2);
 }
 .prt-btn-approve:hover {
-  background: #10b981;
+  background: #1B6830;
   color: white;
-  border-color: #10b981;
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+  border-color: #1B6830;
+  box-shadow: 0 6px 16px rgba(27, 104, 48, 0.25);
   transform: translateY(-1px);
 }
 
@@ -423,7 +423,7 @@
   background: var(--gold);
   color: white;
   border-color: var(--gold);
-  box-shadow: 0 6px 16px rgba(184, 146, 42, 0.25);
+  box-shadow: 0 6px 16px rgba(27, 104, 48, 0.25);
   transform: translateY(-1px);
 }
 

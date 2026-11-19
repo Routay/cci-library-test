@@ -4,7 +4,6 @@ import { Mail, MapPin, Phone, Clock } from 'lucide-react';
 import { settingsAPI } from '../services/api';
 import CCI_LOGO from '../assets/logo.png';
 import './Footer.css';
-
 export default function Footer() {
   const [settings, setSettings] = useState(null);
 
@@ -36,6 +35,8 @@ export default function Footer() {
               <Link to="/"               className="footer-link clickable">La bibliothèque</Link>
               <Link to="/catalogue"      className="footer-link clickable">Catalogue</Link>
               <Link to="/livre-semaine"  className="footer-link clickable">Livre de la semaine</Link>
+              {/* Lien Bénévoles ajouté dans le footer */}
+              <Link to="/benevoles"      className="footer-link clickable">Bénévoles</Link>
               <Link to="/apropos"        className="footer-link clickable">À propos</Link>
             </div>
           </div>
@@ -48,6 +49,8 @@ export default function Footer() {
             <p className="footer-contact-item"><Clock size={14} style={{ color: 'var(--gold)' }} /> {settings?.openingHours || 'Lun–Ven : 9h – 19h'}</p>
           </div>
         </div>
+
+        {/* ── Copyright ── */}
         <div className="footer-bottom">
           © {new Date().getFullYear()} {settings?.libraryName || 'Comité Culturel Islamique ESP'} — Tous droits réservés
         </div>

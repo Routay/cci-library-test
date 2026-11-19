@@ -165,7 +165,8 @@ export default function Home() {
                   author={stats.weeklyBook.author}
                   coverUrl={stats.weeklyBook.cover}
                   size="lg"
-                  style={{ width: '100%', height: '100%', borderRadius: 12 }}
+                  stage={false}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 12 }}
                 />
               ) : (
                 <div className="cover-placeholder">
@@ -187,20 +188,21 @@ export default function Home() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24 }}>
               {stats.recentBooks.map((book, i) => (
-                <Link to={`/livre/${book._id}`} key={book._id} className="card" style={{ overflow: 'hidden', textDecoration: 'none', display: 'flex', flexDirection: 'column', animationDelay: `${i * 0.08}s` }}>
-                  <div style={{ height: 260 }}>
+                <Link to={`/livre/${book._id}`} key={book._id} className="card" style={{ overflow: 'hidden', textDecoration: 'none', display: 'flex', flexDirection: 'column', padding: '10px', animationDelay: `${i * 0.08}s` }}>
+                  <div style={{ aspectRatio: '2/3', width: '100%', overflow: 'hidden', borderRadius: 'calc(var(--r-md) - 4px)' }}>
                     <BookCover
                       title={book.title}
                       author={book.author}
                       coverUrl={book.cover}
                       size="md"
-                      style={{ width: '100%', height: '100%', borderRadius: '8px 8px 0 0' }}
+                      stage={false}
+                      style={{ width: '100%', height: '100%' }}
                     />
                   </div>
-                  <div style={{ padding: '12px 14px' }}>
+                  <div style={{ padding: '12px 4px 4px' }}>
                     <span className="badge badge-gold" style={{ fontSize: '0.7rem', marginBottom: 6, display: 'inline-block' }}>{book.category}</span>
-                    <p style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', color: 'var(--txt1)', margin: 0, lineHeight: 1.3 }}>{book.title}</p>
-                    <p style={{ color: 'var(--txt3)', fontSize: '0.78rem', marginTop: 4 }}>{book.author}</p>
+                    <p style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', color: 'var(--txt1)', margin: 0, lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', wordBreak: 'break-word' }}>{book.title}</p>
+                    <p style={{ color: 'var(--txt3)', fontSize: '0.78rem', marginTop: 4, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', wordBreak: 'break-word' }}>{book.author}</p>
                   </div>
                 </Link>
               ))}

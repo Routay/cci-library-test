@@ -155,7 +155,7 @@ export default function AdminParametres() {
         {/* ═══ Règles d'Emprunt ═══ */}
         <div className="settings-section">
           <div className="settings-section-header">
-            <div className="settings-section-icon" style={{ background: 'rgba(184,146,42,0.12)', color: 'var(--gold)' }}>
+            <div className="settings-section-icon" style={{ background: 'rgba(27, 104, 48,0.12)', color: 'var(--gold)' }}>
               <BookOpenCheck size={20} />
             </div>
             <div>

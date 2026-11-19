@@ -4,281 +4,251 @@ import User from '../models/User.js';
 import ActivityLog from '../models/ActivityLog.js';
 import { sendValidationEmail, sendAdminNewLoanNotification } from '../utils/mailer.js';
 import { runLoanCheck } from '../services/cron.js';
+import asyncHandler from '../middleware/asyncHandler.js';
+import AppError from '../utils/AppError.js';
 
-export const testCron = async (req, res) => {
-  try {
-    await runLoanCheck();
-    res.json({ message: 'Vérification manuelle des emprunts et envoi d\'emails exécutés avec succès.' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+export const testCron = asyncHandler(async (req, res) => {
+  await runLoanCheck();
+  res.json({ message: 'Vérification manuelle des emprunts et envoi d\'emails exécutés avec succès.' });
+});
+
+export const getLoans = asyncHandler(async (req, res) => {
+  const { status, page = 1, limit = 50 } = req.query;
+  const query = {};
+
+  if (status && status !== 'tous') {
+    query.status = status;
   }
-};
 
-export const getLoans = async (req, res) => {
-  try {
-    const { status, page = 1, limit = 50 } = req.query;
-    const query = {};
+  // Met à jour automatiquement les emprunts en retard
+  await Loan.updateMany(
+    { dueDate: { $lt: new Date() }, status: 'actif' },
+    { status: 'retard' }
+  );
 
-    if (status && status !== 'tous') {
-      query.status = status;
+  const skip = (Number(page) - 1) * Number(limit);
+  const total = await Loan.countDocuments(query);
+  const loans = await Loan.find(query)
+    .populate('member', 'nom prenom email tel')
+    .populate('book', 'title author')
+    .skip(skip)
+    .limit(Number(limit))
+    .sort({ createdAt: -1 });
+
+  res.json({ loans, total });
+});
+
+export const createLoanAdmin = asyncHandler(async (req, res) => {
+  const { member, book, dueDate, notes } = req.body;
+
+  // Vérifier que le membre est actif
+  const memberDoc = await User.findById(member);
+  if (!memberDoc) throw new AppError('Membre introuvable', 404);
+  if (!memberDoc.actif) throw new AppError('Ce membre est désactivé. Il ne peut pas effectuer d\'emprunt.', 403);
+
+  const bookDoc = await Book.findById(book);
+  if (!bookDoc) throw new AppError('Livre introuvable', 404);
+  if (bookDoc.stock <= 0) throw new AppError('Livre non disponible (stock épuisé)', 400);
+
+  const loan = await Loan.create({ member, book, dueDate, notes, status: 'actif' });
+  await Book.findByIdAndUpdate(book, { $inc: { stock: -1 } });
+
+  await loan.populate([
+    { path: 'member', select: 'nom prenom email tel' },
+    { path: 'book', select: 'title author' },
+  ]);
+
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'CREATE',
+    entity: 'Loan',
+    details: `Création manuelle de l'emprunt pour le livre "${loan.book.title}" pour le membre "${loan.member.prenom} ${loan.member.nom}"`
+  });
+
+  res.status(201).json(loan);
+});
+
+export const requestPublicLoan = asyncHandler(async (req, res) => {
+  const { nom, prenom, email, tel, bookId, livre, note,
+          etablissement, sexe, departement, logeCampus, chambre } = req.body;
+
+  // Vérifier que le numéro de téléphone (WhatsApp) est fourni
+  if (!tel || !tel.trim()) {
+    throw new AppError('Le numéro de téléphone (WhatsApp) est obligatoire.', 400);
+  }
+
+  let member = await User.findOne({ email });
+  if (!member) {
+    member = await User.create({
+      nom, prenom, email, telephone: tel,
+      role: 'membre', password: 'password123',
+      etablissement: etablissement || '',
+      sexe: sexe || '',
+      departement: departement || '',
+      logeCampus: logeCampus || false,
+      chambre: chambre || '',
+    });
+  } else {
+    // Mettre à jour les infos du membre existant (uniquement s'il n'est pas admin/super_admin)
+    if (member.role === 'membre') {
+      if (nom) member.nom = nom;
+      if (prenom) member.prenom = prenom;
     }
-
-    // Met à jour automatiquement les emprunts en retard
-    await Loan.updateMany(
-      { dueDate: { $lt: new Date() }, status: 'actif' },
-      { status: 'retard' }
-    );
-
-    const skip = (Number(page) - 1) * Number(limit);
-    const total = await Loan.countDocuments(query);
-    const loans = await Loan.find(query)
-      .populate('member', 'nom prenom email tel')
-      .populate('book', 'title author')
-      .skip(skip)
-      .limit(Number(limit))
-      .sort({ createdAt: -1 });
-
-    res.json({ loans, total });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (etablissement) member.etablissement = etablissement;
+    if (sexe) member.sexe = sexe;
+    if (departement) member.departement = departement;
+    if (logeCampus !== undefined) member.logeCampus = logeCampus;
+    if (chambre) member.chambre = chambre;
+    if (tel) member.tel = tel;
+    await member.save();
   }
-};
 
-export const createLoanAdmin = async (req, res) => {
+  // Vérifier que le membre est actif
+  if (!member.actif) {
+    throw new AppError('Votre compte a été désactivé par l\'administration. Vous ne pouvez pas effectuer d\'emprunt.', 403);
+  }
+
+  let bookDoc;
+  if (bookId) {
+    bookDoc = await Book.findById(bookId);
+  } else if (livre) {
+    bookDoc = await Book.findOne({ title: livre });
+  }
+
+  if (!bookDoc) throw new AppError('Livre introuvable', 404);
+  if (bookDoc.stock <= 0) throw new AppError('Livre non disponible (stock épuisé)', 400);
+
+  const loan = await Loan.create({
+    member: member._id,
+    book: bookDoc._id,
+    notes: note,
+    status: 'en_attente',
+  });
+
+  await loan.populate([
+    { path: 'member', select: 'nom prenom email tel' },
+    { path: 'book', select: 'title author' },
+  ]);
+
+  // Notifier les super-admins de la nouvelle demande (en arrière-plan)
   try {
-    const { member, book, dueDate, notes } = req.body;
+    const superAdmins = await User.find({ role: { $in: ['super_admin', 'admin'] }, actif: true });
+    if (superAdmins.length > 0) {
+      sendAdminNewLoanNotification(superAdmins, loan, member).catch(err => console.error('[EMAIL] Erreur asynchrone:', err));
+    }
+  } catch (emailErr) {
+    console.error('[EMAIL] Erreur recherche admins:', emailErr);
+  }
 
-    // Vérifier que le membre est actif
-    const memberDoc = await User.findById(member);
-    if (!memberDoc) return res.status(404).json({ message: 'Membre introuvable' });
-    if (!memberDoc.actif) return res.status(403).json({ message: 'Ce membre est désactivé. Il ne peut pas effectuer d\'emprunt.' });
+  res.status(201).json(loan);
+});
 
-    const bookDoc = await Book.findById(book);
-    if (!bookDoc) return res.status(404).json({ message: 'Livre introuvable' });
-    if (bookDoc.stock <= 0) return res.status(400).json({ message: 'Livre non disponible (stock épuisé)' });
+export const markLoanReturned = asyncHandler(async (req, res) => {
+  const loan = await Loan.findById(req.params.id).populate('book member');
+  if (!loan) throw new AppError('Emprunt introuvable', 404);
 
-    const loan = await Loan.create({ member, book, dueDate, notes, status: 'actif' });
-    await Book.findByIdAndUpdate(book, { $inc: { stock: -1 } });
+  loan.status = 'rendu';
+  loan.returnDate = new Date();
+  await loan.save();
 
-    await loan.populate([
-      { path: 'member', select: 'nom prenom email tel' },
-      { path: 'book', select: 'title author' },
-    ]);
+  await Book.findByIdAndUpdate(loan.book._id, { $inc: { stock: 1 } });
 
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'RETURN',
+    entity: 'Loan',
+    details: `Retour de l'emprunt du livre "${loan.book.title}" par le membre "${loan.member.prenom} ${loan.member.nom}"`
+  });
+
+  res.json(loan);
+});
+
+export const updateLoan = asyncHandler(async (req, res) => {
+  const existing = await Loan.findById(req.params.id).populate('book member');
+  if (!existing) throw new AppError('Emprunt introuvable', 404);
+
+  const newStatus = req.body.status;
+  let validated = false;
+
+  if (existing.status === 'en_attente' && newStatus === 'actif') {
+    if (existing.book.stock <= 0) throw new AppError('Stock épuisé', 400);
+    await Book.findByIdAndUpdate(existing.book._id, { $inc: { stock: -1 } });
+    validated = true;
+  }
+
+  const updates = { ...req.body };
+  if (validated) updates.borrowDate = new Date();
+
+  const loan = await Loan.findByIdAndUpdate(req.params.id, updates, { new: true })
+    .populate('member', 'nom prenom email tel')
+    .populate('book', 'title author');
+
+  if (validated) {
+    sendValidationEmail(loan.member, loan.book).catch(err => console.error('[EMAIL]', err));
     await ActivityLog.create({
       adminId: req.user._id,
-      action: 'CREATE',
+      action: 'VALIDATE',
       entity: 'Loan',
-      details: `Création manuelle de l'emprunt pour le livre "${loan.book.title}" pour le membre "${loan.member.prenom} ${loan.member.nom}"`
+      details: `Validation de l'emprunt du livre "${loan.book.title}" pour le membre "${loan.member.prenom} ${loan.member.nom}"`
     });
-
-    res.status(201).json(loan);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-export const requestPublicLoan = async (req, res) => {
-  try {
-    const { nom, prenom, email, tel, bookId, livre, note,
-            etablissement, sexe, departement, logeCampus, chambre } = req.body;
-
-    // Vérifier que le numéro de téléphone (WhatsApp) est fourni
-    if (!tel || !tel.trim()) {
-      return res.status(400).json({ message: 'Le numéro de téléphone (WhatsApp) est obligatoire.' });
-    }
-
-    let member = await User.findOne({ email });
-    if (!member) {
-      member = await User.create({
-        nom, prenom, email, telephone: tel,
-        role: 'membre', password: 'password123',
-        etablissement: etablissement || '',
-        sexe: sexe || '',
-        departement: departement || '',
-        logeCampus: logeCampus || false,
-        chambre: chambre || '',
-      });
-    } else {
-      // Mettre à jour les infos du membre existant (uniquement s'il n'est pas admin/super_admin)
-      if (member.role === 'membre') {
-        if (nom) member.nom = nom;
-        if (prenom) member.prenom = prenom;
-      }
-      if (etablissement) member.etablissement = etablissement;
-      if (sexe) member.sexe = sexe;
-      if (departement) member.departement = departement;
-      if (logeCampus !== undefined) member.logeCampus = logeCampus;
-      if (chambre) member.chambre = chambre;
-      if (tel) member.tel = tel;
-      await member.save();
-    }
-
-    // Vérifier que le membre est actif
-    if (!member.actif) {
-      return res.status(403).json({ message: 'Votre compte a été désactivé par l\'administration. Vous ne pouvez pas effectuer d\'emprunt.' });
-    }
-
-    let bookDoc;
-    if (bookId) {
-      bookDoc = await Book.findById(bookId);
-    } else if (livre) {
-      bookDoc = await Book.findOne({ title: livre });
-    }
-
-    if (!bookDoc) return res.status(404).json({ message: 'Livre introuvable' });
-    if (bookDoc.stock <= 0) return res.status(400).json({ message: 'Livre non disponible (stock épuisé)' });
-
-    const loan = await Loan.create({
-      member: member._id,
-      book: bookDoc._id,
-      notes: note,
-      status: 'en_attente',
-    });
-
-    await loan.populate([
-      { path: 'member', select: 'nom prenom email tel' },
-      { path: 'book', select: 'title author' },
-    ]);
-
-    // Notifier les super-admins de la nouvelle demande (en arrière-plan)
-    try {
-      const superAdmins = await User.find({ role: { $in: ['super_admin', 'admin'] }, actif: true });
-      if (superAdmins.length > 0) {
-        sendAdminNewLoanNotification(superAdmins, loan, member).catch(err => console.error('[EMAIL] Erreur asynchrone:', err));
-      }
-    } catch (emailErr) {
-      console.error('[EMAIL] Erreur recherche admins:', emailErr);
-    }
-
-    res.status(201).json(loan);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-export const markLoanReturned = async (req, res) => {
-  try {
-    const loan = await Loan.findById(req.params.id).populate('book member');
-    if (!loan) return res.status(404).json({ message: 'Emprunt introuvable' });
-
-    loan.status = 'rendu';
-    loan.returnDate = new Date();
-    await loan.save();
-
-    await Book.findByIdAndUpdate(loan.book._id, { $inc: { stock: 1 } });
-
-    await ActivityLog.create({
-      adminId: req.user._id,
-      action: 'RETURN',
-      entity: 'Loan',
-      details: `Retour de l'emprunt du livre "${loan.book.title}" par le membre "${loan.member.prenom} ${loan.member.nom}"`
-    });
-
-    res.json(loan);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-export const updateLoan = async (req, res) => {
-  try {
-    const existing = await Loan.findById(req.params.id).populate('book member');
-    if (!existing) return res.status(404).json({ message: 'Emprunt introuvable' });
-
-    const newStatus = req.body.status;
-    let validated = false;
-
-    if (existing.status === 'en_attente' && newStatus === 'actif') {
-      if (existing.book.stock <= 0) return res.status(400).json({ message: 'Stock épuisé' });
-      await Book.findByIdAndUpdate(existing.book._id, { $inc: { stock: -1 } });
-      validated = true;
-    }
-
-    const updates = { ...req.body };
-    if (validated) updates.borrowDate = new Date();
-
-    const loan = await Loan.findByIdAndUpdate(req.params.id, updates, { new: true })
-      .populate('member', 'nom prenom email tel')
-      .populate('book', 'title author');
-
-    if (validated) {
-      sendValidationEmail(loan.member, loan.book).catch(err => console.error('[EMAIL]', err));
-      await ActivityLog.create({
-        adminId: req.user._id,
-        action: 'VALIDATE',
-        entity: 'Loan',
-        details: `Validation de l'emprunt du livre "${loan.book.title}" pour le membre "${loan.member.prenom} ${loan.member.nom}"`
-      });
-    } else {
-      await ActivityLog.create({
-        adminId: req.user._id,
-        action: 'UPDATE',
-        entity: 'Loan',
-        details: `Mise à jour de l'emprunt (${loan._id})`
-      });
-    }
-
-    res.json(loan);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-export const extendLoan = async (req, res) => {
-  try {
-    const { days = 7 } = req.body;
-    const loan = await Loan.findById(req.params.id).populate('book member');
-    if (!loan) return res.status(404).json({ message: 'Emprunt introuvable' });
-    if (loan.status === 'rendu') {
-      return res.status(400).json({ message: 'Impossible de prolonger un emprunt déjà rendu' });
-    }
-
-    const oldDate = new Date(loan.dueDate);
-    const newDate = new Date(oldDate);
-    newDate.setDate(newDate.getDate() + Number(days));
-    loan.dueDate = newDate;
-
-    // Recalcul du statut
-    if (loan.status === 'retard' && newDate > new Date()) {
-      loan.status = 'actif';
-    }
-    await loan.save();
-
-    await loan.populate([
-      { path: 'member', select: 'nom prenom email tel' },
-      { path: 'book', select: 'title author' },
-    ]);
-
+  } else {
     await ActivityLog.create({
       adminId: req.user._id,
       action: 'UPDATE',
       entity: 'Loan',
-      details: `Prolongation de l'emprunt du livre "${loan.book.title}" pour "${loan.member.prenom} ${loan.member.nom}" (+${days} jours)`
+      details: `Mise à jour de l'emprunt (${loan._id})`
     });
-
-    res.json(loan);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
-};
 
-export const deleteLoan = async (req, res) => {
-  try {
-    const loan = await Loan.findById(req.params.id).populate('book member');
-    if (!loan) return res.status(404).json({ message: 'Emprunt introuvable' });
-    
-    await Loan.findByIdAndDelete(req.params.id);
+  res.json(loan);
+});
 
-    await ActivityLog.create({
-      adminId: req.user._id,
-      action: 'DELETE',
-      entity: 'Loan',
-      details: `Suppression de l'emprunt du livre "${loan.book?.title || 'Inconnu'}" pour "${loan.member?.prenom || ''} ${loan.member?.nom || ''}"`
-    });
-
-    res.json({ message: 'Emprunt supprimé' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+export const extendLoan = asyncHandler(async (req, res) => {
+  const { days = 7 } = req.body;
+  const loan = await Loan.findById(req.params.id).populate('book member');
+  if (!loan) throw new AppError('Emprunt introuvable', 404);
+  if (loan.status === 'rendu') {
+    throw new AppError('Impossible de prolonger un emprunt déjà rendu', 400);
   }
-};
+
+  const oldDate = new Date(loan.dueDate);
+  const newDate = new Date(oldDate);
+  newDate.setDate(newDate.getDate() + Number(days));
+  loan.dueDate = newDate;
+
+  // Recalcul du statut
+  if (loan.status === 'retard' && newDate > new Date()) {
+    loan.status = 'actif';
+  }
+  await loan.save();
+
+  await loan.populate([
+    { path: 'member', select: 'nom prenom email tel' },
+    { path: 'book', select: 'title author' },
+  ]);
+
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'UPDATE',
+    entity: 'Loan',
+    details: `Prolongation de l'emprunt du livre "${loan.book.title}" pour "${loan.member.prenom} ${loan.member.nom}" (+${days} jours)`
+  });
+
+  res.json(loan);
+});
+
+export const deleteLoan = asyncHandler(async (req, res) => {
+  const loan = await Loan.findById(req.params.id).populate('book member');
+  if (!loan) throw new AppError('Emprunt introuvable', 404);
+  
+  await Loan.findByIdAndDelete(req.params.id);
+
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'DELETE',
+    entity: 'Loan',
+    details: `Suppression de l'emprunt du livre "${loan.book?.title || 'Inconnu'}" pour "${loan.member?.prenom || ''} ${loan.member?.nom || ''}"`
+  });
+
+  res.json({ message: 'Emprunt supprimé' });
+});

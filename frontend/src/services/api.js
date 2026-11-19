@@ -15,8 +15,16 @@ api.interceptors.response.use(
   res => res,
   err => {
     if (err.response?.status === 401) {
+      // Determine redirect based on user role before clearing session
+      let redirectPath = '/login';
+      try {
+        const user = JSON.parse(sessionStorage.getItem('cci_user') || '{}');
+        if (user.role === 'admin' || user.role === 'super_admin') {
+          redirectPath = '/admin/login';
+        }
+      } catch { /* ignore parse errors */ }
       sessionStorage.clear();
-      window.location.href = '/admin/login';
+      window.location.href = redirectPath;
     }
     return Promise.reject(err);
   }

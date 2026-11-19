@@ -27,6 +27,14 @@ export function AuthProvider({ children }) {
     return data;
   };
 
+  const adminLogin = async (email, password) => {
+    const { data } = await axios.post(`${API}/api/auth/admin-login`, { email, password });
+    sessionStorage.setItem('cci_token', data.token);
+    sessionStorage.setItem('cci_user', JSON.stringify(data.user));
+    setAdmin({ token: data.token, ...data.user });
+    return data;
+  };
+
   const logout = () => {
     sessionStorage.removeItem('cci_token');
     sessionStorage.removeItem('cci_user');
@@ -40,7 +48,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ admin, login, logout, updateUser, isAuth: !!admin, loading: false }}>
+    <AuthContext.Provider value={{ admin, login, adminLogin, logout, updateUser, isAuth: !!admin, loading: false }}>
       {children}
     </AuthContext.Provider>
   );

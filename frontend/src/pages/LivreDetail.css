@@ -84,7 +84,7 @@
 .thumbnail-btn.active {
   border-color: var(--gold);
   opacity: 1;
-  box-shadow: 0 4px 12px rgba(184, 146, 42, 0.2);
+  box-shadow: 0 4px 12px rgba(27, 104, 48, 0.2);
 }
 
 .thumbnail-btn img {
@@ -108,7 +108,7 @@
 }
 
 .book-title-lg {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: clamp(2.2rem, 4.5vw, 3.8rem);
   font-weight: 400;
   color: var(--txt1);
@@ -247,7 +247,7 @@
 }
 
 .ld-modal-header h2 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.4rem;
   font-weight: 500;
   color: var(--txt1);
@@ -267,7 +267,7 @@
   font-style: italic;
   margin-bottom: 24px;
   padding: 16px;
-  background: rgba(184, 146, 42, 0.1);
+  background: rgba(27, 104, 48, 0.1);
   border-radius: 8px;
   border-left: 3px solid var(--gold);
 }
@@ -290,7 +290,7 @@
 }
 
 .ld-modal-body h3 {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   color: var(--txt1);
   font-size: 1.1rem;
   font-weight: 600;
@@ -396,7 +396,7 @@
   color: var(--txt1);
   min-width: 48px;
   text-align: center;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .reader-icon {
@@ -503,7 +503,7 @@
 }
 
 .page-indicator {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-weight: 500;
   color: var(--txt1);
   min-width: 120px;
@@ -544,5 +544,11 @@
   }
   .zoom-level {
     min-width: 40px;
+  }
+  .pdf-document-wrapper {
+    padding: 4px 0 !important;
+  }
+  .pdf-page-render {
+    margin-bottom: 12px;
   }
 }

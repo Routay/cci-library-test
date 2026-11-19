@@ -9,6 +9,8 @@ import Book from '../models/Book.js';
 import Loan from '../models/Loan.js';
 import GrandHomme from '../models/GrandHomme.js';
 import { protect, adminOnly } from '../middleware/auth.js';
+import asyncHandler from '../middleware/asyncHandler.js';
+import AppError from '../utils/AppError.js';
 
 const router = express.Router();
 
@@ -158,9 +160,9 @@ function separator() {
 }
 
 // ── Main route ──────────────────────────────────────────
-router.get('/weekly-report', protect, adminOnly, async (req, res) => {
+router.get('/weekly-report', protect, adminOnly, asyncHandler(async (req, res) => {
   try {
-    const now = new Date();
+  const now = new Date();
     const endThursday = getPreviousThursday(now);
     const startThursday = getThursdayBefore(endThursday);
 
@@ -673,8 +675,8 @@ router.get('/weekly-report', protect, adminOnly, async (req, res) => {
     res.send(buffer);
   } catch (err) {
     console.error('Report generation error:', err);
-    res.status(500).json({ message: err.message });
+    throw new AppError(err.message, 500);
   }
-});
+}));
 
 export default router;

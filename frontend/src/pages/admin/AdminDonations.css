@@ -51,7 +51,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.25);
+  box-shadow: 0 6px 16px rgba(27, 104, 48, 0.25);
 }
 
 .don-hero-content h1 {
@@ -102,7 +102,7 @@
 }
 
 .don-stat-pending { color: #f59e0b; }
-.don-stat-approved { color: #10b981; }
+.don-stat-approved { color: #1B6830; }
 .don-stat-rejected { color: #ef4444; }
 
 .don-stat-label {
@@ -144,7 +144,7 @@
 
 .don-search:focus-within {
   border-color: var(--gold);
-  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.08);
+  box-shadow: 0 0 0 4px rgba(27, 104, 48, 0.08);
 }
 
 .don-search input {
@@ -194,7 +194,7 @@
 .don-filter.active {
   background: var(--gold);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+  box-shadow: 0 4px 12px rgba(27, 104, 48, 0.25);
 }
 
 /* ── TABLE CARD ──────────────────────────────────────── */
@@ -245,7 +245,7 @@
 }
 
 .don-table tbody tr:hover {
-  background: rgba(212, 175, 55, 0.03);
+  background: rgba(27, 104, 48, 0.03);
 }
 
 .don-table td {
@@ -289,7 +289,7 @@
   font-weight: 700;
   font-size: 0.85rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 4px 10px rgba(27, 104, 48, 0.2);
   text-transform: uppercase;
 }
 
@@ -391,9 +391,9 @@
 }
 
 .don-badge-approved {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.05));
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, rgba(27, 104, 48, 0.12), rgba(27, 104, 48, 0.05));
+  color: #1B6830;
+  border: 1px solid rgba(27, 104, 48, 0.2);
 }
 
 .don-badge-rejected {
@@ -421,14 +421,14 @@
 }
 
 .don-action-approve {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background: rgba(27, 104, 48, 0.1);
+  color: #1B6830;
 }
 
 .don-action-approve:hover {
-  background: #10b981;
+  background: #1B6830;
   color: white;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 4px 12px rgba(27, 104, 48, 0.25);
   transform: scale(1.08);
 }
 
@@ -566,7 +566,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 12px rgba(27, 104, 48, 0.3);
 }
 
 .don-pdf-topbar-title {
@@ -723,7 +723,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #10b981, #34d399, #10b981);
+  background: linear-gradient(90deg, #1B6830, #34d399, #1B6830);
 }
 
 .don-confirm-reject::before {
@@ -785,9 +785,9 @@
 }
 
 .don-ring-approve {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.08));
-  border: 2px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 0 0 40px rgba(16, 185, 129, 0.1);
+  background: linear-gradient(135deg, rgba(27, 104, 48, 0.15), rgba(52, 211, 153, 0.08));
+  border: 2px solid rgba(27, 104, 48, 0.25);
+  box-shadow: 0 0 40px rgba(27, 104, 48, 0.1);
 }
 
 .don-ring-reject {
@@ -806,9 +806,9 @@
 }
 
 .don-ring-approve .don-confirm-icon-inner {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #1B6830, #0A3D16);
   color: white;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 8px 24px rgba(27, 104, 48, 0.35);
 }
 
 .don-ring-reject .don-confirm-icon-inner {
@@ -823,7 +823,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #10b981;
+  background: #1B6830;
 }
 
 .don-sparkle-1 {
@@ -983,13 +983,13 @@
 }
 
 .don-btn-approve {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #1B6830, #0A3D16);
   color: white;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 16px rgba(27, 104, 48, 0.3);
 }
 
 .don-btn-approve:hover {
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 24px rgba(27, 104, 48, 0.4);
   transform: translateY(-1px);
 }
 

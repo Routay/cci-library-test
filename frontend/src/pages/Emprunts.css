@@ -1,6 +1,6 @@
 /* ─── PAGE HEADER ────────────────────────────────────────── */
 .emprunts-header {
-  background: linear-gradient(135deg, #1A3A2A 0%, #0D2218 60%, #1A3A2A 100%);
+  background: linear-gradient(135deg, #0A3D16 0%, #071A0E 60%, #0A3D16 100%);
   color: #fff;
   padding: 64px 0 48px;
   position: relative;
@@ -10,10 +10,10 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(184,146,42,0.08) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(27,104,48,0.08) 0%, transparent 60%);
 }
 .emprunts-header h1 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: clamp(1.6rem, 5vw, 3rem);
   font-weight: 300;
   margin-bottom: 10px;
@@ -39,7 +39,7 @@
   min-width: 0; /* Empêche le débordement de la grille */
 }
 .emprunt-form h2 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.5rem;
   font-weight: 400;
   color: var(--txt1);
@@ -88,7 +88,7 @@
 .emprunt-info { display: flex; flex-direction: column; gap: 20px; }
 .info-card { padding: 24px; }
 .info-card h3 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.25rem;
   font-weight: 400;
   color: var(--txt1);
@@ -101,8 +101,8 @@
 .info-contact { color: var(--gold-l) !important; font-weight: 600; margin-top: 6px; }
 
 .info-reminder {
-  background: linear-gradient(135deg, #1A3A2A, #0D2218) !important;
-  border-color: rgba(184,146,42,0.2) !important;
+  background: linear-gradient(135deg, #0A3D16, #071A0E) !important;
+  border-color: rgba(27,104,48,0.2) !important;
 }
 .info-reminder h3 { color: var(--gold-l) !important; }
 .arabic-small {
@@ -129,7 +129,7 @@
 }
 .success-icon { font-size: 3.5rem; animation: scaleIn 0.5s var(--ease-spring); }
 .success-card h2 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 2rem;
   font-weight: 400;
   color: var(--txt1);

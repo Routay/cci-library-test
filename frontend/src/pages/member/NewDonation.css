@@ -42,7 +42,7 @@
 .icon-badge {
   width: 40px;
   height: 40px;
-  background: rgba(212, 175, 55, 0.1);
+  background: rgba(27, 104, 48, 0.1);
   color: var(--gold);
   border-radius: 12px;
   display: flex;
@@ -110,7 +110,7 @@
   outline: none;
   border-color: var(--gold);
   background: var(--bg2);
-  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 0 0 4px rgba(27, 104, 48, 0.1);
 }
 
 /* Upload Zone */
@@ -132,7 +132,7 @@
 .premium-upload-zone:hover,
 .premium-upload-zone.drag-active {
   border-color: var(--gold);
-  background: rgba(212, 175, 55, 0.05);
+  background: rgba(27, 104, 48, 0.05);
 }
 
 .upload-icon-circle {
@@ -192,7 +192,7 @@
   position: absolute;
   bottom: -4px;
   right: -8px;
-  background: #10b981;
+  background: #1B6830;
   color: white;
   border-radius: 50%;
   width: 24px;
@@ -272,9 +272,9 @@
 }
 
 @keyframes pulseSuccess {
-  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-  70% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(27, 104, 48, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(27, 104, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(27, 104, 48, 0); }
 }
 
 .loader-spinner {

@@ -93,7 +93,7 @@ export default function Partnership() {
           </>
         ) : (
           <>
-            <div className="md-partner-icon" style={{ background: 'rgba(212,175,55,0.1)', color: 'var(--gold)' }}>
+            <div className="md-partner-icon" style={{ background: 'rgba(27, 104, 48,0.1)', color: 'var(--gold)' }}>
               <Handshake size={40} />
             </div>
             <h3>{t('partnership.status_none_title')}</h3>

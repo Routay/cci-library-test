@@ -2,6 +2,10 @@ import express from 'express';
 import Book    from '../models/Book.js';
 import { protect, adminOnly } from '../middleware/auth.js';
 import { upload, uploadPdf } from '../utils/cloudinary.js';
+import ActivityLog from '../models/ActivityLog.js';
+import asyncHandler from '../middleware/asyncHandler.js';
+import AppError from '../utils/AppError.js';
+import { validate, bookRules, idParam } from '../middleware/validate.js';
 
 const router = express.Router();
 
@@ -36,175 +40,169 @@ async function fetchCoverUrl(title, author) {
 }
 
 // ── GET /api/books ── liste publique avec filtres ─────────
-router.get('/', async (req, res) => {
-  try {
-    const { search, category, available, page = 1, limit = 50 } = req.query;
-    const query = {};
+router.get('/', asyncHandler(async (req, res) => {
+  const { search, category, available, page = 1, limit = 50 } = req.query;
+  const query = {};
 
-    if (search)               query.$text = { $search: search };
-    if (category)             query.category = category;
-    if (available === 'true') query.stock = { $gt: 0 };
+  if (search)               query.$text = { $search: search };
+  if (category)             query.category = category;
+  if (available === 'true') query.stock = { $gt: 0 };
 
-    const skip  = (Number(page) - 1) * Number(limit);
-    const total = await Book.countDocuments(query);
-    const books = await Book.find(query)
-      .skip(skip)
-      .limit(Number(limit))
-      .sort({ createdAt: -1 });
+  const skip  = (Number(page) - 1) * Number(limit);
+  const total = await Book.countDocuments(query);
+  const books = await Book.find(query)
+    .skip(skip)
+    .limit(Number(limit))
+    .sort({ createdAt: -1 });
 
-    res.json({
-      books,
-      total,
-      page:  Number(page),
-      pages: Math.ceil(total / Number(limit)),
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  res.json({
+    books,
+    total,
+    page:  Number(page),
+    pages: Math.ceil(total / Number(limit)),
+  });
+}));
 
 // ── GET /api/books/weekly ── livre de la semaine (public) ──
-router.get('/weekly', async (req, res) => {
-  try {
-    const book = await Book.findOne({ isWeekly: true });
-    if (!book) {
-      return res.status(404).json({ message: 'Aucun livre de la semaine défini' });
-    }
-    res.json(book);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.get('/weekly', asyncHandler(async (req, res) => {
+  const book = await Book.findOne({ isWeekly: true });
+  if (!book) {
+    throw new AppError('Aucun livre de la semaine défini', 404);
   }
-});
+  res.json(book);
+}));
 
 // ── GET /api/books/:id ── détail public ───────────────────
-router.get('/:id', async (req, res) => {
-  try {
-    const book = await Book.findById(req.params.id);
-    if (!book) {
-      return res.status(404).json({ message: 'Livre introuvable' });
-    }
-    res.json(book);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.get('/:id', idParam, validate, asyncHandler(async (req, res) => {
+  const book = await Book.findById(req.params.id);
+  if (!book) {
+    throw new AppError('Livre introuvable', 404);
   }
-});
+  res.json(book);
+}));
 
 // ── POST /api/books ── créer (admin) ──────────────────────
-router.post('/', protect, adminOnly, async (req, res) => {
-  try {
-    // Si l'administrateur n'a pas fourni d'image, on la cherche automatiquement
-    if (!req.body.cover && req.body.title) {
-      const fetchedCover = await fetchCoverUrl(req.body.title, req.body.author);
-      if (fetchedCover) {
-        req.body.cover = fetchedCover;
-      }
+router.post('/', protect, adminOnly, bookRules.create, validate, asyncHandler(async (req, res) => {
+  // Si l'administrateur n'a pas fourni d'image, on la cherche automatiquement
+  if (!req.body.cover && req.body.title) {
+    const fetchedCover = await fetchCoverUrl(req.body.title, req.body.author);
+    if (fetchedCover) {
+      req.body.cover = fetchedCover;
     }
-    const book = await Book.create(req.body);
-    res.status(201).json(book);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
-});
+  const book = await Book.create(req.body);
+
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'CREATE',
+    entity: 'Book',
+    details: `Ajout du livre: "${book.title}"`,
+  });
+
+  res.status(201).json(book);
+}));
 
 // ── POST /api/books/upload-pdf ── uploader PDF (admin) ────
-router.post('/upload-pdf', protect, adminOnly, (req, res) => {
+router.post('/upload-pdf', protect, adminOnly, (req, res, next) => {
   uploadPdf.single('pdfFile')(req, res, (err) => {
     if (err) {
       // Multer file size limit error
       if (err.code === 'LIMIT_FILE_SIZE') {
         const maxMB = Math.round(100);
-        return res.status(400).json({
-          message: `Le fichier PDF dépasse la limite de taille autorisée (${maxMB} Mo). Veuillez le compresser avant de réessayer.`,
-          error_code: 'FILE_TOO_LARGE'
-        });
+        return next(new AppError(`Le fichier PDF dépasse la limite de taille autorisée (${maxMB} Mo). Veuillez le compresser avant de réessayer.`, 400));
       }
       
       // Cloudinary specific file size error (e.g., 10MB limit on free plan)
       if (err.message && err.message.includes('File size too large')) {
-        return res.status(400).json({
-          message: "Le fichier PDF dépasse la limite de taille maximale (10 Mo) du serveur. Veuillez le compresser avant de l'importer.",
-          error_code: 'FILE_TOO_LARGE'
-        });
+        return next(new AppError("Le fichier PDF dépasse la limite de taille maximale (10 Mo) du serveur. Veuillez le compresser avant de l'importer.", 400));
       }
 
       // Other upload error
-      return res.status(400).json({
-        message: "Une erreur inattendue est survenue lors de l'import du document. Veuillez vérifier votre connexion et réessayer.",
-        error_details: err.message,
-        error_code: 'UPLOAD_ERROR'
-      });
+      return next(new AppError("Une erreur inattendue est survenue lors de l'import du document. Veuillez vérifier votre connexion et réessayer.", 400));
     }
     if (!req.file) {
-      return res.status(400).json({ message: 'Aucun fichier PDF fourni' });
+      return next(new AppError('Aucun fichier PDF fourni', 400));
     }
     res.json({ pdfUrl: req.file.path });
   });
 });
 
 // ── POST /api/books/upload-cover ── uploader image (admin) ────
-router.post('/upload-cover', protect, adminOnly, upload.single('cover'), (req, res) => {
+router.post('/upload-cover', protect, adminOnly, upload.single('cover'), (req, res, next) => {
   if (!req.file) {
-    return res.status(400).json({ message: 'Aucune image fournie' });
+    return next(new AppError('Aucune image fournie', 400));
   }
   res.json({ coverUrl: req.file.path });
 });
 
 // ── POST /api/books/upload-back-cover ── uploader page arrière (admin) ────
-router.post('/upload-back-cover', protect, adminOnly, upload.single('backCover'), (req, res) => {
+router.post('/upload-back-cover', protect, adminOnly, upload.single('backCover'), (req, res, next) => {
   if (!req.file) {
-    return res.status(400).json({ message: 'Aucune image fournie' });
+    return next(new AppError('Aucune image fournie', 400));
   }
   res.json({ backCoverUrl: req.file.path });
 });
 
 // ── PUT /api/books/:id ── modifier (admin) ────────────────
-router.put('/:id', protect, adminOnly, async (req, res) => {
-  try {
-    const book = await Book.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-    if (!book) {
-      return res.status(404).json({ message: 'Livre introuvable' });
-    }
-    res.json(book);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+router.put('/:id', protect, adminOnly, bookRules.update, validate, asyncHandler(async (req, res) => {
+  const book = await Book.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true, runValidators: true }
+  );
+  if (!book) {
+    throw new AppError('Livre introuvable', 404);
   }
-});
+
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'UPDATE',
+    entity: 'Book',
+    details: `Modification du livre: "${book.title}"`,
+  });
+
+  res.json(book);
+}));
 
 // ── PUT /api/books/:id/weekly ── définir livre de la semaine
-router.put('/:id/weekly', protect, adminOnly, async (req, res) => {
-  try {
-    // Retire le statut weekly de tous les livres
-    await Book.updateMany({ isWeekly: true }, { isWeekly: false });
-    // Définit le nouveau livre de la semaine
-    const book = await Book.findByIdAndUpdate(
-      req.params.id,
-      { isWeekly: true },
-      { new: true }
-    );
-    if (!book) {
-      return res.status(404).json({ message: 'Livre introuvable' });
-    }
-    res.json(book);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.put('/:id/weekly', protect, adminOnly, idParam, validate, asyncHandler(async (req, res) => {
+  // Retire le statut weekly de tous les livres
+  await Book.updateMany({ isWeekly: true }, { isWeekly: false });
+  // Définit le nouveau livre de la semaine
+  const book = await Book.findByIdAndUpdate(
+    req.params.id,
+    { isWeekly: true },
+    { new: true }
+  );
+  if (!book) {
+    throw new AppError('Livre introuvable', 404);
   }
-});
+
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'UPDATE',
+    entity: 'Book',
+    details: `Nouveau livre de la semaine: "${book.title}"`,
+  });
+
+  res.json(book);
+}));
 
 // ── DELETE /api/books/:id ── supprimer (admin) ────────────
-router.delete('/:id', protect, adminOnly, async (req, res) => {
-  try {
-    const book = await Book.findByIdAndDelete(req.params.id);
-    if (!book) {
-      return res.status(404).json({ message: 'Livre introuvable' });
-    }
-    res.json({ message: 'Livre supprimé avec succès' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.delete('/:id', protect, adminOnly, idParam, validate, asyncHandler(async (req, res) => {
+  const book = await Book.findByIdAndDelete(req.params.id);
+  if (!book) {
+    throw new AppError('Livre introuvable', 404);
   }
-});
+
+  await ActivityLog.create({
+    adminId: req.user._id,
+    action: 'DELETE',
+    entity: 'Book',
+    details: `Suppression du livre: "${book.title}"`,
+  });
+
+  res.json({ message: 'Livre supprimé avec succès' });
+}));
 
 export default router;

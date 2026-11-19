@@ -16,7 +16,7 @@
   padding: 28px 32px;
 }
 .semaine-form-card h2 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.15rem;
   font-weight: 500;
   color: var(--txt1);
@@ -71,7 +71,7 @@
   padding: 10px 14px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.88rem;
   color: var(--txt1);
   background: var(--bg3);
@@ -96,7 +96,7 @@
   margin-bottom: 16px;
 }
 .semaine-preview-cover {
-  background: linear-gradient(135deg, #1A3A2A, #2D5A3D);
+  background: linear-gradient(135deg, #0A3D16, #2D5A3D);
   border-radius: 12px;
   height: 130px;
   display: flex;
@@ -120,7 +120,7 @@
   margin-bottom: 12px;
 }
 .semaine-preview-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.08rem;
   font-weight: 600;
   color: var(--txt1);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, ShieldCheck, Heart, ArrowRight, Loader2 } from 'lucide-react';
+import { BookOpen, ShieldCheck, Heart, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import './Benevoles.css';
 
@@ -72,7 +72,7 @@ export default function Benevoles() {
           <h2>{t('benevoles.why_title')}</h2>
           <div className="ben-divider" />
         </div>
-        
+
         <div className="ben-features">
           <div className="ben-feature-card">
             <div className="ben-icon-wrap"><BookOpen size={28} /></div>
@@ -92,9 +92,17 @@ export default function Benevoles() {
         </div>
       </section>
 
+      {/* ── Séparateur décoratif entre features et CTA ── */}
+      <div className="ben-sep-wrapper" aria-hidden="true">
+        <div className="ben-sep-line" />
+        <div className="ben-sep-icon">
+          <Sparkles size={18} />
+        </div>
+        <div className="ben-sep-line" />
+      </div>
+
       {/* ── Call to Action ───────────────────────────────── */}
-      <section className="ben-cta-section container" style={{ paddingBottom: 100 }}>
-        <div className="ben-cta-card">
+      <section className="ben-cta-section container">        <div className="ben-cta-card">
           <div className="ben-cta-content">
             <h2>{t('benevoles.cta_title')}</h2>
             <p>{t('benevoles.cta_desc')}</p>
@@ -110,7 +118,7 @@ export default function Benevoles() {
                 )
               ) : (
                 <>
-                  <Link to="/login?type=benevole" className="btn-primary ben-btn">{t('benevoles.cta_btn_register')}</Link>
+                  <Link to="/login?type=benevole&mode=register" className="btn-primary ben-btn">{t('benevoles.cta_btn_register')}</Link>
                   <Link to="/login" className="btn-outline ben-btn">{t('benevoles.cta_btn_login')}</Link>
                 </>
               )}

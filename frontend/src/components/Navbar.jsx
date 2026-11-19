@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { Sun, Moon, Globe } from 'lucide-react';
@@ -129,27 +130,36 @@ export default function Navbar() {
       </div>
 
       {/* ── Menu mobile drawer ── */}
-      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`} aria-hidden={!menuOpen}>
-        <nav className="mobile-nav">
-          {LINKS.map(l => (
-            <Link
-              key={l.path}
-              to={l.path}
-              className={`mobile-link clickable ${location.pathname === l.path ? 'active' : ''}`}
-            >
-              {t(l.labelKey)}
-            </Link>
-          ))}
-        </nav>
-      </div>
+      {/* Rendu via Portal sur document.body : échappe à tout stacking context (backdrop-filter, etc.) */}
+      {createPortal(
+        <>
+          <div
+            className={`mobile-menu ${menuOpen ? 'open' : ''}`}
+            aria-hidden={!menuOpen}
+          >
+            <nav className="mobile-nav">
+              {LINKS.map(l => (
+                <Link
+                  key={l.path}
+                  to={l.path}
+                  className={`mobile-link clickable ${location.pathname === l.path ? 'active' : ''}`}
+                >
+                  {t(l.labelKey)}
+                </Link>
+              ))}
+            </nav>
+          </div>
 
-      {/* Overlay sombre derrière le menu */}
-      {menuOpen && (
-        <div
-          className="mobile-overlay"
-          onClick={() => setMenuOpen(false)}
-          aria-hidden="true"
-        />
+          {/* Overlay sombre derrière le menu */}
+          {menuOpen && (
+            <div
+              className="mobile-overlay"
+              onClick={() => setMenuOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+        </>,
+        document.body
       )}
     </header>
   );

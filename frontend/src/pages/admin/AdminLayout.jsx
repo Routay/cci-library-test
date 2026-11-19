@@ -23,11 +23,11 @@ export default function AdminLayout() {
     { to: '/admin/membres',   icon: <Users size={18} />,            label: 'Membres'              },
     { to: '/admin/semaine',   icon: <Star size={18} />,             label: 'Livre de la semaine'  },
     { to: '/admin/grands-hommes', icon: <Landmark size={18} />,      label: 'Grands Hommes'        },
-    { to: '/admin/benevoles',      icon: <Users size={18} />,     label: 'Comptes Bénévoles'  },
-    { to: '/admin/donations',      icon: <HeartHandshake size={18} />, label: 'Dons (Bénévoles)' },
   ];
 
   const SUPER_NAV = [
+    { to: '/admin/benevoles',      icon: <Users size={18} />,     label: 'Comptes Bénévoles'  },
+    { to: '/admin/donations',      icon: <HeartHandshake size={18} />, label: 'Dons (Bénévoles)' },
     { to: '/admin/gestion-admins', icon: <UserCog size={18} />,  label: 'Gestion Admins'     },
     { to: '/admin/partenariats',   icon: <HeartHandshake size={18} />, label: 'Partenariats'       },
     { to: '/admin/messages',       icon: <MessageSquare size={18} />, label: 'Boîte de réception' },

@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import CCI_LOGO from '../assets/logo.png';
 import BookCover from '../components/BookCover';
-import { Compass, LayoutGrid, Bookmark, PenLine, Heart, BookMarked, Home, Bell, Search, Eye, Star } from 'lucide-react';
+import { Compass, LayoutGrid, Bookmark, PenLine, Heart, BookMarked, Home, Bell, Search, Eye, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import './Catalogue.css';
 
 const CATEGORIES = ['Tous', 'Aqida', 'Fiqh', 'Sira', 'Hadith', 'Tazkiyya', 'Autres'];
@@ -20,6 +20,7 @@ const CatalogueDashboard = () => {
   const [activeTab,    setActiveTab]    = useState(location.state?.category || 'Tous');
   const carouselRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (location.state?.category) {
@@ -72,25 +73,8 @@ const CatalogueDashboard = () => {
   }
   const marqueeBooks = [...baseBooks, ...baseBooks];
 
-  useEffect(() => {
-    let animationId;
-    const scrollStep = 0.5; // Vitesse de défilement
-
-    const scroll = () => {
-      if (carouselRef.current && !isHovered) {
-        carouselRef.current.scrollLeft += scrollStep;
-        
-        // Rembobiner de façon invisible lorsque la première moitié a défilé
-        if (carouselRef.current.scrollLeft >= carouselRef.current.scrollWidth / 2) {
-          carouselRef.current.scrollLeft = 0;
-        }
-      }
-      animationId = requestAnimationFrame(scroll);
-    };
-
-    animationId = requestAnimationFrame(scroll);
-    return () => cancelAnimationFrame(animationId);
-  }, [isHovered, marqueeBooks.length]);
+  // Animation carousel gérée par CSS (@keyframes scrollMarquee)
+  // isHovered conservé pour compatibilité future
 
   useEffect(() => {
     if (displayBooks.length > 0 && !selectedBook) {
@@ -127,59 +111,96 @@ const CatalogueDashboard = () => {
     );
   }
 
+  const sidebarW = sidebarCollapsed ? 68 : 240;
+
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout" style={{ '--sidebar-w': `${sidebarW}px` }}>
 
       {/* ─── SIDEBAR ───────────────────────────────────── */}
-      <aside className="dash-sidebar">
+      <aside className={`dash-sidebar${sidebarCollapsed ? ' collapsed' : ''}`}>
+
+        {/* Bouton toggle — visible uniquement sur tablette */}
+        <button
+          className="dash-sidebar-toggle"
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          aria-label={sidebarCollapsed ? 'Déplier la sidebar' : 'Réduire la sidebar'}
+          style={{ left: `calc(var(--sidebar-w) - 14px)` }}
+        >
+          {sidebarCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+        </button>
+
         {/* Logo CCI */}
         <Link to="/" className="dash-logo-container" title={t('catalogue.home')}>
           <img src={CCI_LOGO} alt="Logo CCI" className="dash-logo-img" />
         </Link>
 
         <nav className="dash-nav">
-          <a href="#" className="dash-nav-item active">
+          <a href="#" className="dash-nav-item active" title={t('catalogue.discover')}>
             <span className="dash-nav-icon"><Compass size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.discover')}</span>
+            <span className="dash-nav-label">{t('catalogue.discover')}</span>
           </a>
-          <a href="#" className="dash-nav-item">
+          <a href="#" className="dash-nav-item" title={t('catalogue.categories')}>
             <span className="dash-nav-icon"><LayoutGrid size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.categories')}</span>
+            <span className="dash-nav-label">{t('catalogue.categories')}</span>
           </a>
-          <a href="#" className="dash-nav-item">
+          <a href="#" className="dash-nav-item" title={t('catalogue.myList')}>
             <span className="dash-nav-icon"><Bookmark size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.myList')}</span>
+            <span className="dash-nav-label">{t('catalogue.myList')}</span>
           </a>
-          
-          <Link to="/grands-hommes" className="dash-nav-item" style={{ marginTop: 10 }}>
+
+          <Link to="/grands-hommes" className="dash-nav-item" style={{ marginTop: 10 }} title={t('catalogue.greatMen')}>
             <span className="dash-nav-icon"><Star size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.greatMen')}</span>
+            <span className="dash-nav-label">{t('catalogue.greatMen')}</span>
           </Link>
 
           <div className="dash-nav-section">{t('catalogue.collection')}</div>
 
-          <a href="#" className="dash-nav-item">
+          <a href="#" className="dash-nav-item" title={t('catalogue.authors')}>
             <span className="dash-nav-icon"><PenLine size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.authors')}</span>
+            <span className="dash-nav-label">{t('catalogue.authors')}</span>
           </a>
-          <a href="#" className="dash-nav-item">
+          <a href="#" className="dash-nav-item" title={t('catalogue.favorites')}>
             <span className="dash-nav-icon"><Heart size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.favorites')}</span>
+            <span className="dash-nav-label">{t('catalogue.favorites')}</span>
           </a>
         </nav>
 
         {/* Bas de sidebar */}
         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <Link to="/emprunts" className="dash-nav-item">
+          <Link to="/emprunts" className="dash-nav-item" title={t('catalogue.borrow')}>
             <span className="dash-nav-icon"><BookMarked size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.borrow')}</span>
+            <span className="dash-nav-label">{t('catalogue.borrow')}</span>
           </Link>
-          <Link to="/" className="dash-nav-item">
+          <Link to="/" className="dash-nav-item" title={t('catalogue.home')}>
             <span className="dash-nav-icon"><Home size={18} strokeWidth={1.8} /></span>
-            <span>{t('catalogue.home')}</span>
+            <span className="dash-nav-label">{t('catalogue.home')}</span>
           </Link>
         </div>
       </aside>
+
+      {/* ─── BARRE NAV MOBILE (bottom) ─────────────────── */}
+      <nav className="dash-bottom-nav" aria-label="Navigation principale">
+        <a href="#" className="dash-bottom-nav-item active">
+          <Compass size={22} strokeWidth={1.8} />
+          <span>{t('catalogue.discover')}</span>
+        </a>
+        <a href="#" className="dash-bottom-nav-item">
+          <LayoutGrid size={22} strokeWidth={1.8} />
+          <span>{t('catalogue.categories')}</span>
+        </a>
+        <a href="#" className="dash-bottom-nav-item">
+          <Bookmark size={22} strokeWidth={1.8} />
+          <span>{t('catalogue.myList')}</span>
+        </a>
+        <Link to="/grands-hommes" className="dash-bottom-nav-item">
+          <Star size={22} strokeWidth={1.8} />
+          <span>{t('catalogue.greatMen')}</span>
+        </Link>
+        <Link to="/" className="dash-bottom-nav-item">
+          <Home size={22} strokeWidth={1.8} />
+          <span>{t('catalogue.home')}</span>
+        </Link>
+      </nav>
 
       {/* ─── MAIN ──────────────────────────────────────── */}
       <main className="dash-main">
@@ -208,13 +229,9 @@ const CatalogueDashboard = () => {
         {/* Section recommandés */}
         <section className="dash-recommended">
           <h2 className="dash-section-title">{t('catalogue.recommended')}</h2>
-          <div 
+          <div
             className="dash-carousel-wrapper"
             ref={carouselRef}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onTouchStart={() => setIsHovered(true)}
-            onTouchEnd={() => setIsHovered(false)}
           >
             <div className="dash-carousel-track">
               {marqueeBooks.map((book, idx) => (
@@ -230,6 +247,7 @@ const CatalogueDashboard = () => {
                   coverUrl={book.frontCoverImage || book.cover || book.coverUrl || book.image}
                   className="dash-carousel-img"
                   size="sm"
+                  stage={false}
                 />
                 <div className="dash-carousel-info">
                   <h3 className="dash-carousel-title">{book.title}</h3>
@@ -276,22 +294,32 @@ const CatalogueDashboard = () => {
                     }
                   }}
                 >
-                  <BookCover
-                    title={book.title}
-                    author={book.author}
-                    coverUrl={book.frontCoverImage || book.cover || book.coverUrl || book.image}
-                    className="dash-book-cover"
-                    size="md"
-                    style={{ aspectRatio: '2/3', width: '100%' }}
-                  />
-                  <div className="dash-book-info">
-                    <div className="dash-book-info-title">{book.title}</div>
-                    <div className="dash-book-info-author">{book.author || t('common.unknown')}</div>
+                  <div className="dash-book-cover-wrap">
+                    <BookCover
+                      title={book.title}
+                      author={book.author}
+                      coverUrl={book.frontCoverImage || book.cover || book.coverUrl || book.image}
+                      className="dash-book-cover"
+                      size="md"
+                      stage={false}
+                      style={{ aspectRatio: '2/3', width: '100%' }}
+                    />
+                    <Link
+                      to={`/livre/${book._id}`}
+                      className="dash-book-overlay"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Eye size={20} />
+                      <span>{t('common.seeMore')}</span>
+                    </Link>
                   </div>
-                  <Link to={`/livre/${book._id}`} className="dash-book-overlay">
-                    <Eye size={20} />
-                    <span>{t('common.seeMore')}</span>
-                  </Link>
+                  <div className="dash-book-meta">
+                    {book.category && (
+                      <span className="dash-book-category badge badge-gold">{book.category}</span>
+                    )}
+                    <h4 className="dash-book-title">{book.title}</h4>
+                    <p className="dash-book-author">{book.author || t('common.unknown')}</p>
+                  </div>
                 </div>
               );
             })}
@@ -317,6 +345,7 @@ const CatalogueDashboard = () => {
                 coverUrl={selectedBook.frontCoverImage || selectedBook.cover || selectedBook.coverUrl || selectedBook.image}
                 className="dash-right-cover"
                 size="lg"
+                stage={false}
               />
             </div>
 

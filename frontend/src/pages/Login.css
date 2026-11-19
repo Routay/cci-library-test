@@ -35,7 +35,7 @@
 .login-orb-2 {
   width: 300px;
   height: 300px;
-  background: #10b981;
+  background: #1B6830;
   bottom: -50px;
   right: -50px;
   animation-delay: -5s;
@@ -53,7 +53,8 @@
   background: var(--bg2);
   border: 1px solid var(--border-color);
   border-radius: 20px;
-  padding: 48px;
+  /* Padding fluide — respiration sur mobile */
+  padding: clamp(32px, 5vw, 48px);
   text-align: center;
   position: relative;
   z-index: 1;
@@ -76,12 +77,13 @@
   background: white;
   border-radius: 12px;
   padding: 8px;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 4px 12px rgba(27, 104, 48, 0.2);
 }
 
 .login-container h2 {
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  /* Fluide — lisible sur tous les écrans */
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 700;
   color: var(--txt1);
   margin-bottom: 8px;
@@ -90,7 +92,8 @@
 
 .login-subtitle {
   color: var(--txt3);
-  font-size: 1rem;
+  /* Min 1rem — sous-titre du formulaire lisible */
+  font-size: clamp(0.95rem, 1.1vw + 0.4rem, 1.05rem);
 }
 
 /* ── Divider ─────────────────────────────────────────── */
@@ -152,7 +155,8 @@
   background-color: var(--bg1);
   color: var(--txt1);
   font-family: inherit;
-  font-size: 0.95rem;
+  /* Min 1rem — champs de saisie confortables */
+  font-size: clamp(0.95rem, 1vw + 0.4rem, 1rem);
   transition: all 0.2s;
   appearance: none;
 }
@@ -167,7 +171,7 @@
   outline: none;
   border-color: var(--gold);
   background-color: var(--bg2);
-  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 0 0 4px rgba(27, 104, 48, 0.1);
 }
 
 .password-toggle {
@@ -200,12 +204,12 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 8px 20px rgba(27, 104, 48, 0.2);
 }
 
 .login-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 12px 24px rgba(27, 104, 48, 0.3);
 }
 
 .login-spinner {
@@ -242,21 +246,72 @@
 }
 
 .btn-link:hover {
-  background: rgba(212, 175, 55, 0.1);
+  background: rgba(27, 104, 48, 0.1);
 }
 
 /* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 600px) {
   .login-container {
-    padding: 32px 24px;
+    padding: 28px 20px;
+    border-radius: 16px;
   }
   .form-group-row {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 16px;
   }
-  .login-container h2 {
-    font-size: 1.8rem;
+  /* La taille de h2 est déjà fluide via clamp() */
+  .login-page {
+    padding: 24px 16px;
   }
+}
+
+@media (max-width: 400px) {
+  .login-container {
+    padding: 24px 16px;
+  }
+  .login-form {
+    gap: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PASSWORD STRENGTH INDICATOR
+   ═══════════════════════════════════════════════════════ */
+.input-group-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pwd-strength {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+.pwd-strength-bars {
+  display: flex;
+  gap: 6px;
+}
+
+.pwd-strength-segment {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
+.pwd-strength-segment.active {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pwd-strength-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -267,8 +322,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(16, 185, 129, 0.06));
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: linear-gradient(135deg, rgba(27, 104, 48, 0.08), rgba(27, 104, 48, 0.06));
+  border: 1px solid rgba(27, 104, 48, 0.2);
   border-radius: 10px;
   margin-bottom: 20px;
   font-size: 0.82rem;
@@ -343,7 +398,7 @@
 .login-remember input:checked + .login-remember-check {
   background: var(--gold);
   border-color: var(--gold);
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 2px 8px rgba(27, 104, 48, 0.3);
 }
 
 .login-remember input:checked + .login-remember-check::after {
@@ -382,7 +437,7 @@
   position: relative;
   overflow: hidden;
   animation: welcomeSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 80px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 80px rgba(27, 104, 48, 0.1);
 }
 
 @keyframes welcomeSlideUp {
@@ -436,19 +491,19 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #1B6830, #0A3D16);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 24px;
   color: white;
   animation: iconPulse 2s ease-in-out infinite;
-  box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 30px rgba(27, 104, 48, 0.3);
 }
 
 @keyframes iconPulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3); }
-  50% { transform: scale(1.08); box-shadow: 0 12px 40px rgba(16, 185, 129, 0.5); }
+  0%, 100% { transform: scale(1); box-shadow: 0 8px 30px rgba(27, 104, 48, 0.3); }
+  50% { transform: scale(1.08); box-shadow: 0 12px 40px rgba(27, 104, 48, 0.5); }
 }
 
 /* ── Title ───────────────────────────────────── */
@@ -492,8 +547,8 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: rgba(212, 175, 55, 0.06);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  background: rgba(27, 104, 48, 0.06);
+  border: 1px solid rgba(27, 104, 48, 0.15);
   border-radius: 10px;
   font-size: 0.85rem;
   color: var(--gold);
@@ -511,7 +566,7 @@
   align-items: center;
   gap: 10px;
   padding: 14px 32px;
-  background: linear-gradient(135deg, var(--gold), #c9952e);
+  background: linear-gradient(135deg, #1B6830, #0A3D16);
   color: #fff;
   font-weight: 600;
   font-size: 1rem;
@@ -519,13 +574,13 @@
   border-radius: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 24px rgba(27, 104, 48, 0.3);
   font-family: inherit;
 }
 
 .welcome-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 12px 32px rgba(27, 104, 48, 0.4);
 }
 
 /* ── Responsive welcome ──────────────────────── */

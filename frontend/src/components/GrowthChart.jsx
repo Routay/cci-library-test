@@ -83,7 +83,7 @@ export default function GrowthChart() {
         position: 'top',
         labels: {
           color: 'var(--txt2)',
-          font: { family: "'Outfit', sans-serif", size: 12 },
+          font: { family: "'Open Sans', sans-serif", size: 12 },
           usePointStyle: true,
           pointStyleWidth: 8,
         },
@@ -104,12 +104,12 @@ export default function GrowthChart() {
       y: {
         beginAtZero: true,
         grid: { color: 'rgba(148, 163, 184, 0.2)' },
-        ticks: { color: '#9ca3af', stepSize: 10, font: { family: "'Outfit', sans-serif" } },
+        ticks: { color: '#9ca3af', stepSize: 10, font: { family: "'Open Sans', sans-serif" } },
         border: { display: false },
       },
       x: {
         grid: { display: false },
-        ticks: { color: '#9ca3af', font: { family: "'Outfit', sans-serif" } },
+        ticks: { color: '#9ca3af', font: { family: "'Open Sans', sans-serif" } },
         border: { display: false },
       },
     },

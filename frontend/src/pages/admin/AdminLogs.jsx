@@ -159,7 +159,7 @@ export default function AdminLogs() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'bottom', labels: { color: '#9ca3af', font: { family: "'Outfit', sans-serif" }, padding: 12, usePointStyle: true, pointStyleWidth: 10 } },
+      legend: { position: 'bottom', labels: { color: '#9ca3af', font: { family: "'Open Sans', sans-serif" }, padding: 12, usePointStyle: true, pointStyleWidth: 10 } },
     },
     cutout: '65%',
   };
@@ -187,8 +187,8 @@ export default function AdminLogs() {
       legend: { display: false },
     },
     scales: {
-      x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11, family: "'Outfit', sans-serif" } } },
-      y: { grid: { color: 'rgba(148, 163, 184, 0.2)' }, ticks: { color: '#9ca3af', stepSize: 1, font: { family: "'Outfit', sans-serif" } }, beginAtZero: true },
+      x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11, family: "'Open Sans', sans-serif" } } },
+      y: { grid: { color: 'rgba(148, 163, 184, 0.2)' }, ticks: { color: '#9ca3af', stepSize: 1, font: { family: "'Open Sans', sans-serif" } }, beginAtZero: true },
     },
   };
 

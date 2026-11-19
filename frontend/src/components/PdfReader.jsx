@@ -17,8 +17,9 @@ export default function PdfReader({ url, zoom = 100 }) {
     if (!wrapperRef.current) return;
     const observer = new ResizeObserver(entries => {
       for (let entry of entries) {
-        // -32 pour tenir compte du padding/scrollbar
-        setContainerWidth(entry.contentRect.width - 32);
+        // Soustraire du padding seulement sur les grands écrans
+        const isMobile = window.innerWidth <= 600;
+        setContainerWidth(entry.contentRect.width - (isMobile ? 0 : 32));
       }
     });
     observer.observe(wrapperRef.current);

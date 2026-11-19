@@ -15,7 +15,7 @@
 .emp-search-bar input {
   flex: 1; border: none; background: transparent;
   padding: 9px 0; font-size: 0.85rem; color: var(--txt1);
-  font-family: 'Outfit', sans-serif; outline: none;
+  font-family: 'Open Sans', sans-serif; outline: none;
 }
 
 /* ─── Days Badge ───────────────────────────────────── */
@@ -44,7 +44,7 @@
   padding: 7px 14px; border-radius: var(--r-sm);
   border: 1px solid var(--border); background: var(--bg3);
   color: var(--txt2); font-size: 0.82rem; font-weight: 600;
-  cursor: pointer; transition: var(--trans); font-family: 'Outfit', sans-serif;
+  cursor: pointer; transition: var(--trans); font-family: 'Open Sans', sans-serif;
 }
 .extend-day-btn:hover { border-color: var(--txt2); color: var(--txt1); }
 .extend-day-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
@@ -52,7 +52,7 @@
   width: 60px; padding: 7px 8px; border-radius: var(--r-sm);
   border: 1px solid var(--border); background: var(--bg2);
   color: var(--txt1); font-size: 0.82rem; text-align: center;
-  font-family: 'Outfit', sans-serif; outline: none;
+  font-family: 'Open Sans', sans-serif; outline: none;
 }
 .extend-custom-input:focus { border-color: var(--gold); }
 .extend-new-date { font-size: 0.85rem; color: var(--txt2); margin-top: 12px; }
