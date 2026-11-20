@@ -87,7 +87,7 @@ const adminData = {
   nom:      'Super Admin',
   prenom:   'CCI',
   email:    'superadmin@cci.sn',
-  password: 'superadmin123',
+  password: 'Superadmin2026',
   role:     'super_admin',
   actif:    true,
 };
