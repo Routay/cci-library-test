@@ -28,7 +28,9 @@ export function AuthProvider({ children }) {
   };
 
   const adminLogin = async (email, password) => {
-    const { data } = await axios.post(`${API}/api/auth/admin-login`, { email, password });
+    // Utilise la même route /api/auth/login avec scope="admin"
+    // (la route /api/auth/admin-login avait des problèmes sur Render)
+    const { data } = await axios.post(`${API}/api/auth/login`, { email, password, scope: 'admin' });
     sessionStorage.setItem('cci_token', data.token);
     sessionStorage.setItem('cci_user', JSON.stringify(data.user));
     setAdmin({ token: data.token, ...data.user });
