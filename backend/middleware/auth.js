@@ -42,3 +42,31 @@ export const superAdminOnly = (req, res, next) => {
   }
   return res.status(403).json({ message: 'Accès réservé au Super Administrateur' });
 };
+
+// ── Gardien du compte maître ──────────────────────────────────
+// Bloque toute tentative de modification ou suppression du
+// compte isMasterAdmin via l'API, peu importe qui en fait la demande.
+export const protectMasterAdmin = async (req, res, next) => {
+  try {
+    const User = (await import('../models/User.js')).default;
+    // Vérifie la cible par ID (routes /:id)
+    if (req.params && req.params.id) {
+      const target = await User.findById(req.params.id).select('isMasterAdmin email');
+      if (target && target.isMasterAdmin) {
+        return res.status(403).json({
+          message: 'Ce compte est protégé et ne peut pas être modifié ou supprimé.'
+        });
+      }
+    }
+    // Vérifie aussi si la requête cible l'email du maître directement
+    const MASTER_EMAIL = 'manetahirou215@gmail.com';
+    if (req.body && req.body.email && req.body.email.toLowerCase() === MASTER_EMAIL) {
+      return res.status(403).json({
+        message: 'Ce compte est protégé et ne peut pas être modifié.'
+      });
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+};

@@ -1,7 +1,7 @@
 import express from 'express';
 import User    from '../models/User.js';
 import Loan    from '../models/Loan.js';
-import { protect, adminOnly } from '../middleware/auth.js';
+import { protect, adminOnly, protectMasterAdmin } from '../middleware/auth.js';
 import ActivityLog from '../models/ActivityLog.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import AppError from '../utils/AppError.js';
@@ -102,7 +102,7 @@ router.post('/', protect, adminOnly, userRules.create, validate, asyncHandler(as
 }));
 
 // ── PUT /api/users/:id ── modifier un membre (admin) ──────
-router.put('/:id', protect, adminOnly, userRules.update, validate, asyncHandler(async (req, res) => {
+router.put('/:id', protect, adminOnly, userRules.update, validate, protectMasterAdmin, asyncHandler(async (req, res) => {
   // On interdit le changement de rôle et de mot de passe ici
   const { password, role, ...rest } = req.body;
 
@@ -127,7 +127,7 @@ router.put('/:id', protect, adminOnly, userRules.update, validate, asyncHandler(
 }));
 
 // ── PATCH /api/users/:id/toggle ── activer / désactiver ───
-router.patch('/:id/toggle', protect, adminOnly, idParam, validate, asyncHandler(async (req, res) => {
+router.patch('/:id/toggle', protect, adminOnly, idParam, validate, protectMasterAdmin, asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) {
     throw new AppError('Membre introuvable', 404);

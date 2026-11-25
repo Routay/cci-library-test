@@ -65,6 +65,11 @@ const userSchema = new mongoose.Schema(
       type:    Date,
       default: null,
     },
+    isMasterAdmin: {
+      type:    Boolean,
+      default: false,
+      // Ce champ blinde le compte maître contre toute modification
+    },
     partnerStatus: {
       type: String,
       enum: ['none', 'pending', 'approved', 'rejected'],

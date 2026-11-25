@@ -1,7 +1,7 @@
 import express from 'express';
 import User    from '../models/User.js';
 import Setting from '../models/Setting.js';
-import { protect, superAdminOnly } from '../middleware/auth.js';
+import { protect, superAdminOnly, protectMasterAdmin } from '../middleware/auth.js';
 import ActivityLog from '../models/ActivityLog.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import AppError from '../utils/AppError.js';
@@ -17,6 +17,7 @@ const router = express.Router();
 router.get('/admins', protect, superAdminOnly, asyncHandler(async (req, res) => {
   const admins = await User.find({
     role: { $in: ['admin', 'super_admin'] },
+    isMasterAdmin: { $ne: true }, // Le compte maître est invisible dans l'interface
   })
     .select('-password')
     .sort({ createdAt: -1 });
@@ -55,7 +56,7 @@ router.post('/admins', protect, superAdminOnly, adminRules.createAdmin, validate
 }));
 
 // ── PUT /api/admin/admins/:id/role ── Changer le rôle ──
-router.put('/admins/:id/role', protect, superAdminOnly, idParam, validate, asyncHandler(async (req, res) => {
+router.put('/admins/:id/role', protect, superAdminOnly, idParam, validate, protectMasterAdmin, asyncHandler(async (req, res) => {
   const { role } = req.body;
 
   if (!['admin', 'super_admin'].includes(role)) {
@@ -88,7 +89,7 @@ router.put('/admins/:id/role', protect, superAdminOnly, idParam, validate, async
 }));
 
 // ── PUT /api/admin/admins/:id/password ── Réinitialiser le mot de passe ──
-router.put('/admins/:id/password', protect, superAdminOnly, adminRules.resetPassword, validate, asyncHandler(async (req, res) => {
+router.put('/admins/:id/password', protect, superAdminOnly, adminRules.resetPassword, validate, protectMasterAdmin, asyncHandler(async (req, res) => {
   const { password } = req.body;
 
   const admin = await User.findById(req.params.id).select('+password');
@@ -110,7 +111,7 @@ router.put('/admins/:id/password', protect, superAdminOnly, adminRules.resetPass
 }));
 
 // ── PATCH /api/admin/admins/:id/toggle ── Activer/Désactiver ──
-router.patch('/admins/:id/toggle', protect, superAdminOnly, idParam, validate, asyncHandler(async (req, res) => {
+router.patch('/admins/:id/toggle', protect, superAdminOnly, idParam, validate, protectMasterAdmin, asyncHandler(async (req, res) => {
   // Empêcher de se désactiver soi-même
   if (req.params.id === req.user._id.toString()) {
     throw new AppError('Vous ne pouvez pas désactiver votre propre compte', 400);
@@ -187,6 +188,12 @@ router.put('/change-password', protect, superAdminOnly, adminRules.changePasswor
   const { currentPassword, newPassword } = req.body;
 
   const user = await User.findById(req.user._id).select('+password');
+
+  // ── Blocage du compte maître ──────────────────────────────
+  if (user.isMasterAdmin) {
+    throw new AppError('Le mot de passe de ce compte ne peut pas être modifié via l\'interface.', 403);
+  }
+  // ─────────────────────────────────────────────────────────
 
   const isMatch = await user.comparePassword(currentPassword);
   if (!isMatch) {
