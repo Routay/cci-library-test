@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Handshake, CheckCircle, Clock, XCircle, Rocket, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { memberAPI } from '../../services/api';
 
 export default function Partnership() {
   const { admin: user } = useAuth();
@@ -16,9 +14,7 @@ export default function Partnership() {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await axios.get(`${API}/api/users/me`, {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+        const res = await memberAPI.partnership.getStatus();
         setStatus(res.data.partnerStatus);
         
         // Mise à jour de la session pour la persistance
@@ -37,9 +33,7 @@ export default function Partnership() {
     setLoading(true);
     setError(null);
     try {
-      await axios.post(`${API}/api/users/partner-request`, {}, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      await memberAPI.partnership.sendRequest();
       setStatus('pending');
       const updatedUser = { ...user, partnerStatus: 'pending' };
       sessionStorage.setItem('cci_user', JSON.stringify(updatedUser));

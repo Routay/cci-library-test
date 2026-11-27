@@ -1,8 +1,7 @@
 import { createContext, useContext, useState } from 'react';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext(null);
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // Lecture synchrone du sessionStorage (instantanée, pas besoin de useEffect)
 function getStoredAdmin() {
@@ -20,7 +19,7 @@ export function AuthProvider({ children }) {
   const [admin, setAdmin] = useState(getStoredAdmin);
 
   const login = async (email, password) => {
-    const { data } = await axios.post(`${API}/api/auth/login`, { email, password });
+    const { data } = await authAPI.login({ email, password });
     sessionStorage.setItem('cci_token', data.token);
     sessionStorage.setItem('cci_user', JSON.stringify(data.user));
     setAdmin({ token: data.token, ...data.user });
@@ -28,9 +27,8 @@ export function AuthProvider({ children }) {
   };
 
   const adminLogin = async (email, password) => {
-    // Utilise la même route /api/auth/login avec scope="admin"
-    // (la route /api/auth/admin-login avait des problèmes sur Render)
-    const { data } = await axios.post(`${API}/api/auth/login`, { email, password, scope: 'admin' });
+    // scope:"admin" envoyé automatiquement via authAPI.adminLogin
+    const { data } = await authAPI.adminLogin({ email, password });
     sessionStorage.setItem('cci_token', data.token);
     sessionStorage.setItem('cci_user', JSON.stringify(data.user));
     setAdmin({ token: data.token, ...data.user });

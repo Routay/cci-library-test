@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Send, MessageCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { memberAPI } from '../../services/api';
 
 export default function Messaging() {
   const { admin: user } = useAuth();
@@ -17,9 +15,7 @@ export default function Messaging() {
 
   const fetchMessages = async () => {
     try {
-      const { data } = await axios.get(`${API}/api/messages/my-conversation`, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      const { data } = await memberAPI.messages.getAll();
       setMessages(data);
     } catch (err) {
       console.error("Erreur de récupération des messages", err);
@@ -44,10 +40,7 @@ export default function Messaging() {
 
     setSending(true);
     try {
-      const { data } = await axios.post(`${API}/api/messages`,
-        { content: newMessage },
-        { headers: { Authorization: `Bearer ${user.token}` } }
-      );
+      const { data } = await memberAPI.messages.send({ content: newMessage });
       setMessages([...messages, { ...data, senderId: { _id: user.id, nom: user.nom, prenom: user.prenom } }]);
       setNewMessage('');
     } catch (err) {

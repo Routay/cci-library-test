@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Book, CheckCircle, Clock, XCircle, Info, Gift, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { memberAPI } from '../../services/api';
 
 export default function MyDonations() {
   const { admin: user } = useAuth();
@@ -16,9 +14,7 @@ export default function MyDonations() {
   useEffect(() => {
     const fetchDonations = async () => {
       try {
-        const { data } = await axios.get(`${API}/api/donations/my-donations`, {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+        const { data } = await memberAPI.donations.getAll();
         setDonations(data);
       } catch (err) {
         console.error("Erreur de récupération des dons", err);

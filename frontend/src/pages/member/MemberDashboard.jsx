@@ -5,7 +5,7 @@ import {
   BookOpen, PlusCircle, MessageSquare, Handshake, LogOut,
   User, ChevronRight, Gift, BarChart3
 } from 'lucide-react';
-import axios from 'axios';
+import { memberAPI } from '../../services/api';
 import MyDonations from './MyDonations';
 import NewDonation from './NewDonation';
 import Messaging from './Messaging';
@@ -14,13 +14,11 @@ import './MemberDashboard.css';
 import './MemberPages.css';
 import { useTranslation } from 'react-i18next';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const MIN_DONATIONS_FOR_PARTNERSHIP = 2;
-
 export default function MemberDashboard() {
   const { admin: user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [donationCount, setDonationCount] = useState(0);
+  const MIN_DONATIONS_FOR_PARTNERSHIP = 2;
   const location = useLocation();
   const { t } = useTranslation();
 
@@ -28,9 +26,7 @@ export default function MemberDashboard() {
   useEffect(() => {
     const fetchDonationCount = async () => {
       try {
-        const { data } = await axios.get(`${API}/api/donations/my-donations`, {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+        const { data } = await memberAPI.donations.getAll();
         setDonationCount(data.length);
       } catch (err) {
         console.error('Erreur récupération nombre de dons:', err);

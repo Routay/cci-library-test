@@ -1,11 +1,9 @@
 import { useState, useRef } from 'react';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Upload, CheckCircle, AlertCircle, FileText, BookOpen, UserCircle, Type, User, AlignLeft, Phone } from 'lucide-react';
-import './NewDonation.css'; // Let's use a specific CSS for this
+import './NewDonation.css';
 import { useTranslation, Trans } from 'react-i18next';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { memberAPI } from '../../services/api';
 
 export default function NewDonation() {
   const { admin: user } = useAuth();
@@ -78,8 +76,7 @@ export default function NewDonation() {
       Object.keys(formData).forEach(key => data.append(key, formData[key]));
       data.append('pdfFile', pdfFile);
 
-      await axios.post(`${API}/api/donations`, data, {
-        headers: { Authorization: `Bearer ${user.token}` },
+      await memberAPI.donations.create(data, {
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           setUploadProgress(percentCompleted);

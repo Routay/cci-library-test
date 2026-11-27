@@ -1,8 +1,13 @@
 import axios from 'axios';
 
+// ─────────────────────────────────────────────────────────────────────────────
+//  URL de base :
+//    - Développement local  : http://localhost:5000     (.env)
+//    - Production (Vercel)  : https://cci-library-backend.onrender.com  (.env.production)
+// ─────────────────────────────────────────────────────────────────────────────
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
-  timeout: 300000, // Augmenté à 5 minutes pour les requêtes IA très longues
+  timeout: 300000, // 5 minutes pour les requêtes IA très longues
 });
 
 api.interceptors.request.use(cfg => {
@@ -106,6 +111,36 @@ export const benevolesAPI = {
   getStats:     ()   => api.get('/api/benevoles/stats'),
   bulkDelete:   ids  => api.delete('/api/benevoles/bulk', { data: { ids } }),
   bulkToggle:   (ids, actif) => api.patch('/api/benevoles/bulk-toggle', { ids, actif }),
+};
+
+// ── Auth & inscription ────────────────────────────────────────────────────────
+export const authAPI = {
+  login:          data => api.post('/api/auth/login', data),
+  adminLogin:     data => api.post('/api/auth/login', { ...data, scope: 'admin' }),
+  register:       data => api.post('/api/auth/register', data),
+  becomeBenevole: ()   => api.put('/api/auth/become-benevole', {}),
+};
+
+// ── Espace membre ─────────────────────────────────────────────────────────────
+export const memberAPI = {
+  donations: {
+    // GET /api/donations/my-donations  → liste des dons du membre connecté
+    getAll:  ()            => api.get('/api/donations/my-donations'),
+    // POST /api/donations              → soumettre un nouveau don (FormData)
+    create:  (data, cfg)   => api.post('/api/donations', data, cfg),
+  },
+  messages: {
+    // GET /api/messages/my-conversation  → conversation du membre
+    getAll:  ()            => api.get('/api/messages/my-conversation'),
+    // POST /api/messages                 → envoyer un message
+    send:    (data)        => api.post('/api/messages', data),
+  },
+  partnership: {
+    // GET /api/users/me               → profil complet (contient partnerStatus)
+    getStatus:   ()        => api.get('/api/users/me'),
+    // POST /api/users/partner-request → demander le partenariat
+    sendRequest: ()        => api.post('/api/users/partner-request', {}),
+  },
 };
 
 export default api;

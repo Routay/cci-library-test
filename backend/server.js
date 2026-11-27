@@ -33,7 +33,12 @@ app.use(cors({
   origin: (origin, callback) => {
     const allowed = [
       process.env.CLIENT_URL || 'http://localhost:5173',
+      // ── Domaine de production ──────────────────────────────
+      'https://bibliothequecci.com',
+      'https://www.bibliothequecci.com',
+      // ── Ancien domaine Vercel (compatibilité) ──────────────
       'https://cci-library-test.vercel.app',
+      // ── Développement local ────────────────────────────────
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:5175',

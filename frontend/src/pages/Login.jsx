@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import { Mail, Lock, User, Phone, Building, UserCircle, Eye, EyeOff, AlertTriangle, ShieldCheck, PartyPopper, Sparkles, Heart } from 'lucide-react';
 import CCI_LOGO from '../assets/logo.png';
 import './Login.css'; 
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // ── Password strength calculator ──────────────────────
 function getPasswordStrength(password) {
@@ -116,7 +114,7 @@ export default function Login() {
 
         // Registration — always pass isBenevole based on the flow
         const payload = { ...formData, isBenevole: isBenevoleFlow };
-        await axios.post(`${API}/api/auth/register`, payload);
+        await authAPI.register(payload);
         
         // Show welcome celebration modal
         setRegisteredName(formData.prenom || formData.nom || '');

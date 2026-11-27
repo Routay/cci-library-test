@@ -94,7 +94,7 @@ async function resetPassword() {
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('  📧 Email    :', SUPERADMIN_EMAIL);
     console.log('  🔑 Password :', NEW_PASSWORD);
-    console.log('  🌐 URL      : https://cci-library-test.vercel.app/admin/login');
+    console.log('  🌐 URL      : https://bibliothequecci.com/admin/login');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     await mongoose.disconnect();

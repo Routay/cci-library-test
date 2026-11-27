@@ -3,10 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, ShieldCheck, Heart, ArrowRight, Loader2, Sparkles } from 'lucide-react';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import './Benevoles.css';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Benevoles() {
   const { t } = useTranslation();
@@ -17,10 +15,8 @@ export default function Benevoles() {
   const handleBecomeBenevole = async () => {
     try {
       setLoading(true);
-      const token = admin?.token || sessionStorage.getItem('cci_token');
-      const { data } = await axios.put(`${API}/api/auth/become-benevole`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      // authAPI.becomeBenevole utilise l'instance api.js avec intercepteur token auto
+      const { data } = await authAPI.becomeBenevole();
       updateUser({ isBenevole: true });
       setSuccessMsg("Félicitations, vous êtes maintenant bénévole !");
     } catch (err) {

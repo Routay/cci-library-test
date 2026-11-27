@@ -96,7 +96,7 @@ async function createMasterAdmin() {
     console.log('  📧 Email    : manetahirou215@gmail.com');
     console.log('  🔑 Password : [CONFIDENTIEL — ne jamais partager]');
     console.log('  🛡️  Statut  : Protégé (isMasterAdmin = true)');
-    console.log('  🌐 URL      : https://cci-library-test.vercel.app/admin/login');
+    console.log('  🌐 URL      : https://bibliothequecci.com/admin/login');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     await mongoose.disconnect();
