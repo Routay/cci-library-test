@@ -30,33 +30,33 @@ const PORT = process.env.PORT || 5000;
 // ── Middlewares ───────────────────────────────────────────
 app.use(helmet());
 
-// ── CORS : liste blanche des origines autorisées ──────────
-const ALLOWED_ORIGINS = [
-  // Domaine de production (avec et sans www)
-  'https://bibliothequecci.com',
-  'https://www.bibliothequecci.com',
-  // Ancien domaine Vercel (compatibilité pendant la transition)
-  'https://cci-library-test.vercel.app',
-  // Développement local
+// ── CORS ──────────────────────────────────────────────────
+// Origines autorisées (liste statique + regex)
+const ALLOWED_ORIGINS_EXACT = [
+  'https://cci-library-test.vercel.app', // ancien domaine Vercel
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
   'http://localhost:3000',
 ];
 
-// Si CLIENT_URL est défini dans les variables Render, l'ajouter aussi
-if (process.env.CLIENT_URL && !ALLOWED_ORIGINS.includes(process.env.CLIENT_URL)) {
-  ALLOWED_ORIGINS.push(process.env.CLIENT_URL);
+// Accepte bibliothequecci.com avec ou sans www, en http ou https
+const ALLOWED_ORIGIN_REGEX = /^https?:\/\/(www\.)?bibliothequecci\.com$/;
+
+function isOriginAllowed(origin) {
+  if (!origin) return true;                              // Postman / server-to-server
+  if (ALLOWED_ORIGIN_REGEX.test(origin)) return true;   // *.bibliothequecci.com
+  if (ALLOWED_ORIGINS_EXACT.includes(origin)) return true;
+  if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) return true;
+  return false;
 }
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Autoriser les requêtes sans origin (Postman, scripts serveur)
-    if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.includes(origin)) {
+    if (isOriginAllowed(origin)) {
       callback(null, true);
     } else {
-      console.warn(`[CORS] Origine bloquée : ${origin}`);
+      console.warn(`[CORS] Bloqué : ${origin}`);
       callback(new Error(`CORS bloqué pour : ${origin}`));
     }
   },
